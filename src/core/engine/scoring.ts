@@ -15,7 +15,7 @@ export function getElapsedTime(state: EngineState): number {
 }
 
 export function getAccuracy(state: EngineState): number {
-  const total = state.typedCharacters.length;
+  const total = state.input.length;
   if (total === 0) return 0;
 
   return (state.correctCount / total) * 100;

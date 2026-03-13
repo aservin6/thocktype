@@ -14,7 +14,7 @@ export default function TypingContainer() {
   return (
     <div>
       {/* Rendered Text */}
-      <div className="flex flex-wrap max-w-5xl text-3xl break-keep whitespace-break-spaces font-semibold leading-relaxed tracking-wider custom-font">
+      <div className="flex flex-wrap max-w-5xl text-3xl break-keep whitespace-break-spaces font-semibold leading-relaxed tracking-wider">
         {textArray.map((item, itemIndex) => {
           // SPACE
           if (item.type === "space") {

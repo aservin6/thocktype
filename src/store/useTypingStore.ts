@@ -61,7 +61,12 @@ export const useTypingStore = create<TypingStore>()((set, get) => ({
       engineUnsubscribe: unsubscribe,
     });
   },
-  setMode: (mode) => set({ mode }),
+  setMode: (mode) => {
+    const { reset } = get();
+    set({ mode });
+
+    reset();
+  },
   handleCharacter: (key) => {
     const { engine } = get();
     engine?.handleCharacter(key);
