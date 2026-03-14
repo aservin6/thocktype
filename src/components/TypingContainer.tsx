@@ -1,12 +1,11 @@
 import { useMemo } from "react";
 import transformText from "../utils/transform-text";
-import { generateText } from "../utils/generate-text";
 import { useTypingEngine } from "../hooks/useTypingEngine";
 import { useInitializeEngine } from "../hooks/useInitializeEngine";
 
 export default function TypingContainer() {
   const { state } = useTypingEngine();
-  const textArray = useMemo(() => transformText(generateText()), []);
+  const textArray = useMemo(() => transformText(state?.targetText), [state]);
   let globalIndex = 0;
 
   useInitializeEngine();
@@ -15,7 +14,7 @@ export default function TypingContainer() {
     <div>
       {/* Rendered Text */}
       <div className="flex flex-wrap max-w-5xl text-3xl break-keep whitespace-break-spaces font-semibold leading-relaxed tracking-wider">
-        {textArray.map((item, itemIndex) => {
+        {textArray?.map((item, itemIndex) => {
           // SPACE
           if (item.type === "space") {
             const index = globalIndex++;

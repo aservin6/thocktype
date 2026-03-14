@@ -1,10 +1,11 @@
 import type { TransformedText } from "../types/types";
 
-export default function transformText(text: string) {
+export default function transformText(text: string | undefined) {
   const textArray: TransformedText[] = [];
   let characters: string[] = [];
   let wordIndex = 0;
 
+  if (!text) return;
   for (const char of text) {
     if (char === " ") {
       // Flush word if it exists

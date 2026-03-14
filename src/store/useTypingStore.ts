@@ -9,12 +9,14 @@ type TypingState = {
   state: EngineState | null;
   mode: Mode;
   timeLimit: number;
+  wordCount: number;
   elapsedTime: number;
   engineUnsubscribe: (() => void) | null;
 };
 
 type TypingActions = {
   setTimeLimit: (timeLimit: number) => void;
+  setWordCount: (wordCount: number) => void;
   setEngine: (engine: TypingEngine) => void;
   setMode: (mode: Mode) => void;
   handleCharacter: (key: string) => void;
@@ -39,9 +41,11 @@ export const useTypingStore = create<TypingStore>()((set, get) => ({
   state: null,
   mode: "standard",
   timeLimit: 30000,
+  wordCount: 25,
   elapsedTime: 0,
   engineUnsubscribe: null,
   setTimeLimit: (timeLimit) => set(() => ({ timeLimit })),
+  setWordCount: (wordCount) => set(() => ({ wordCount })),
   setEngine: (engine: TypingEngine) => {
     const { engineUnsubscribe } = get();
 
@@ -81,10 +85,10 @@ export const useTypingStore = create<TypingStore>()((set, get) => ({
     engine?.start();
   },
   reset: () => {
-    const { mode, setEngine } = get();
+    const { mode, setEngine, timeLimit, wordCount } = get();
 
     // create new engine instance
-    const newEngine = getEngineFromMode(mode);
+    const newEngine = getEngineFromMode(mode, wordCount, timeLimit);
 
     setEngine(newEngine);
   },
