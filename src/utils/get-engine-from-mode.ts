@@ -8,6 +8,9 @@ export function getEngineFromMode(
   wordCount: number,
   timeLimit: number,
 ) {
+  if (mode === "timed") {
+    wordCount = 25;
+  }
   const text = generateText(wordCount);
   switch (mode) {
     case "timed":
