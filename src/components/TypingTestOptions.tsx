@@ -1,5 +1,6 @@
 import { useTypingEngine } from "../hooks/useTypingEngine";
 import { ModeSelect } from "./ModeSelect";
+import TimeSelect from "./TimeSelect";
 import WordCountSelect from "./WordCountSelect";
 
 export default function TypingTestOptions() {
@@ -14,7 +15,7 @@ export default function TypingTestOptions() {
           RESET
         </button>
         <ModeSelect />
-        {mode !== "timed" && <WordCountSelect />}
+        {mode !== "timed" ? <WordCountSelect /> : <TimeSelect />}
       </div>
     </>
   );

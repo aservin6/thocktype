@@ -8,7 +8,7 @@ export default function TypingTimer() {
   useEffect(() => {
     const interval = setInterval(() => {
       tick();
-    }, 250);
+    }, 100);
 
     return () => clearInterval(interval);
   }, [tick]);

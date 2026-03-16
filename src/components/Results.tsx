@@ -7,7 +7,7 @@ export default function Results() {
     <div className="text-white font-bold text-2xl">
       {state ? (
         <>
-          <div>Time: {(getElapsedTime(state) / 1000).toFixed(1)}s</div>
+          <div>Time: {Math.round(getElapsedTime(state) / 1000)}s</div>
           <div>WPM: {Math.round(getWPM(state))}</div>
           <div>Accuracy: {Math.round(getAccuracy(state))}%</div>
         </>
