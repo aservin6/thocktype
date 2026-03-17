@@ -1,7 +1,6 @@
 export interface EngineState {
   status: "idle" | "running" | "finished";
   targetText: string;
-  currentWordIndex: number;
   currentCharIndex: number;
   input: string;
   charStates: ("pending" | "correct" | "incorrect")[];

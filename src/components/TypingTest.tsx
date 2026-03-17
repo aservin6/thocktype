@@ -1,8 +1,8 @@
 import TypingContainer from "./TypingContainer";
-import TypingTimer from "./TypingTimer";
 import { useTypingEngine } from "../hooks/useTypingEngine";
 import Results from "./Results";
 import TypingTestOptions from "./TypingTestOptions";
+import TestWidget from "./TestWidget";
 
 export function TypingTest() {
   const { state, handleCharacter, handleBackspace } = useTypingEngine();
@@ -34,7 +34,9 @@ export function TypingTest() {
         <>
           {/* Typing Area */}
           <div className="relative font-bold">
-            <TypingTimer />
+            <div className="absolute -top-1/3 tracking-wider text-red-300 text-3xl left-0">
+              <TestWidget />
+            </div>
             {/* Hidden textarea */}
             <textarea
               onKeyDown={handleInput}

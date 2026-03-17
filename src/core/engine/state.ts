@@ -4,7 +4,6 @@ export function createInitialState(targetText: string): EngineState {
   return {
     status: "idle",
     targetText,
-    currentWordIndex: 0,
     currentCharIndex: 0,
     input: "",
     charStates: new Array(targetText.length).fill("pending"),
