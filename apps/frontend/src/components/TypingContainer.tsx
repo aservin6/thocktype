@@ -38,10 +38,10 @@ export default function TypingContainer() {
   useInitializeEngine();
 
   return (
-    <div className="h-36 overflow-clip">
+    <div className="h-40 overflow-clip">
       {/* Rendered Text */}
       <div
-        className="flex flex-wrap max-w-6xl text-3xl font-semibold leading-relaxed tracking-wider"
+        className="flex flex-wrap max-w-6xl text-[1.625rem] font-semibold leading-14 tracking-wider"
         style={{ transform: `translateY(${translateY}px)` }}
       >
         {textArray?.map((item, itemIndex) => {
@@ -56,7 +56,7 @@ export default function TypingContainer() {
                 ref={(el) => {
                   charRefs.current[index] = el;
                 }}
-                className={`relative inline-block w-3`}
+                className={`relative inline-block`}
               >
                 {" "}
                 {isCurrent && (
@@ -69,7 +69,7 @@ export default function TypingContainer() {
           // WORD
           if (item.type === "word") {
             return (
-              <div key={`word-${item.wordIndex}`} className="inline-flex">
+              <div key={`word-${item.wordIndex}`} className="inline-flex px-2">
                 {item.characters?.map((char, charIndex) => {
                   const charState = state?.charStates[globalIndex];
                   const index = globalIndex++;
