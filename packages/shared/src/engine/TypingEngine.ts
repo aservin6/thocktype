@@ -4,9 +4,8 @@ import { createInitialState } from "./state";
 import type { EngineState } from "./types";
 
 export class TypingEngine implements EngineContext {
-  private state: EngineState;
+  protected state: EngineState;
   private strategy: TypingModeStrategy;
-  private listeners: Set<(state: EngineState) => void> = new Set();
 
   constructor(targetText: string, strategy: TypingModeStrategy) {
     this.state = createInitialState(targetText);
@@ -53,38 +52,19 @@ export class TypingEngine implements EngineContext {
   public start() {
     this.state.status = "running";
     this.state.startTime = Date.now();
-    this.emit();
   }
-  private finish() {
+  protected finish() {
     this.state.status = "finished";
     this.state.endTime = Date.now();
-    this.emit();
   }
 
   public reset() {
     this.state = createInitialState(this.state.targetText);
-    this.emit();
   }
 
   public checkTime() {
     if (this.strategy.shouldFinishOnTick(this)) {
       this.finish();
-    }
-  }
-
-  public subscribe(listener: (state: EngineState) => void) {
-    this.listeners.add(listener);
-
-    return () => {
-      this.listeners.delete(listener);
-    };
-  }
-
-  private emit() {
-    const snapshot = { ...this.state };
-
-    for (const listener of this.listeners) {
-      listener(snapshot);
     }
   }
 
@@ -121,8 +101,6 @@ export class TypingEngine implements EngineContext {
     ) {
       this.finish();
     }
-
-    this.emit();
   }
 
   public handleBackspace() {
@@ -141,8 +119,6 @@ export class TypingEngine implements EngineContext {
 
     this.state.charStates[index] = "pending";
     this.state.input = this.state.input.slice(0, -1);
-
-    this.emit();
   }
 
   // =========================

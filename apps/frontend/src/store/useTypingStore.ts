@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import type { TypingEngine } from "../core/engine/TypingEngine";
-import type { EngineState, Mode } from "../core/engine/types";
+import { ObservableTypingEngine } from "../engine/ObservableTypingEngine";
+import type { EngineState, Mode } from "@typing-test/shared";
 import { getEngineFromMode } from "../utils/get-engine-from-mode";
 
 // Types of States & Actions
 type TypingState = {
-  engine: TypingEngine | null;
+  engine: ObservableTypingEngine | null;
   state: EngineState | null;
   mode: Mode;
   timeLimit: number;
@@ -17,7 +17,7 @@ type TypingState = {
 type TypingActions = {
   setTimeLimit: (timeLimit: number) => void;
   setWordCount: (wordCount: number) => void;
-  setEngine: (engine: TypingEngine) => void;
+  setEngine: (engine: ObservableTypingEngine) => void;
   setMode: (mode: Mode) => void;
   handleCharacter: (key: string) => void;
   handleBackspace: () => void;
@@ -28,7 +28,7 @@ type TypingActions = {
 
 type TypingStore = TypingState & TypingActions;
 
-function syncState(engine: TypingEngine) {
+function syncState(engine: ObservableTypingEngine) {
   return {
     state: { ...engine.getState() },
     elapsedTime: engine.getElapsedTime(),
@@ -46,7 +46,7 @@ export const useTypingStore = create<TypingStore>()((set, get) => ({
   engineUnsubscribe: null,
   setTimeLimit: (timeLimit) => set(() => ({ timeLimit })),
   setWordCount: (wordCount) => set(() => ({ wordCount })),
-  setEngine: (engine: TypingEngine) => {
+  setEngine: (engine: ObservableTypingEngine) => {
     const { engineUnsubscribe } = get();
 
     // cleanup old engine subscription

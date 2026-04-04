@@ -1,4 +1,4 @@
-import { getElapsedTime, getWPM, getAccuracy } from "../core/engine/scoring";
+import { getElapsedTime, getWPM, getAccuracy } from "@typing-test/shared";
 import { useTypingEngine } from "../hooks/useTypingEngine";
 
 export default function Results() {

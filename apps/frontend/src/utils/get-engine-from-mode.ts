@@ -1,6 +1,10 @@
-import { TimedMode, StandardMode, StrictMode } from "../core/engine/modes";
-import type { Mode } from "../core/engine/types";
-import { TypingEngine } from "../core/engine/TypingEngine";
+import {
+  TimedMode,
+  StandardMode,
+  StrictMode,
+  type Mode,
+} from "@typing-test/shared";
+import { ObservableTypingEngine } from "../engine/ObservableTypingEngine";
 import { generateText } from "./generate-text";
 
 export function getEngineFromMode(
@@ -14,10 +18,10 @@ export function getEngineFromMode(
   const text = generateText(wordCount);
   switch (mode) {
     case "timed":
-      return new TypingEngine(text, new TimedMode(timeLimit));
+      return new ObservableTypingEngine(text, new TimedMode(timeLimit));
     case "strict":
-      return new TypingEngine(text, new StrictMode());
+      return new ObservableTypingEngine(text, new StrictMode());
     default:
-      return new TypingEngine(text, new StandardMode());
+      return new ObservableTypingEngine(text, new StandardMode());
   }
 }
