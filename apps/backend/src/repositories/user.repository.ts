@@ -1,11 +1,17 @@
 import pool from "../db/pool.ts";
 import { User } from "../types/user.ts";
 
-export async function createUser(
-  email: string,
-  username: string,
-  password_hash: string,
-): Promise<User> {
+interface userCreationDetails {
+  email: string;
+  username: string;
+  password_hash: string;
+}
+
+export async function createUser({
+  email,
+  username,
+  password_hash,
+}: userCreationDetails): Promise<User> {
   const query = `
     INSERT INTO users (email, username, password_hash)
     VALUES ($1, $2, $3)
