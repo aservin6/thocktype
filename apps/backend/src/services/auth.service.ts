@@ -1,31 +1,44 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import {
   findUserByEmail,
   createUser,
 } from "../repositories/user.repository.ts";
-import { Request, Response } from "express";
+import requireEnv from "../utils/require-env.ts";
+import type { PublicUser } from "@typing-test/shared";
 
-export async function register(req: Request, res: Response) {
-  const { email, password } = req.body;
+const JWT_SECRET = requireEnv("JWT_SECRET");
+
+export async function register(
+  email: string,
+  password: string,
+): Promise<PublicUser & { token: string }> {
   const username = email.split("@")[0];
 
-  try {
-    const user = await findUserByEmail(email);
-    if (user) throw new Error("User already exists");
+  const user = await findUserByEmail(email);
+  if (user) throw new Error("User already exists");
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await createUser({
-      email,
-      username,
-      password_hash: hashedPassword,
-    });
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = await createUser({
+    email,
+    username,
+    password_hash: hashedPassword,
+  });
 
-    res.status(201).json({ message: "User created", userId: newUser.id });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
-    } else {
-      res.status(400).json({ error: "An unexpected error occured" });
-    }
-  }
+  const userPayload = {
+    id: newUser.id,
+  };
+
+  const token = jwt.sign(userPayload, JWT_SECRET, {
+    expiresIn: "1h",
+  });
+
+  return {
+    id: newUser.id,
+    username: newUser.username,
+    email: newUser.email,
+    email_verified: newUser.email_verified,
+    created_at: newUser.created_at,
+    token,
+  };
 }

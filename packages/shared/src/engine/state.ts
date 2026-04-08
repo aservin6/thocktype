@@ -1,4 +1,4 @@
-import type { EngineState } from "./types";
+import { EngineState } from "./types";
 
 export function createInitialState(targetText: string): EngineState {
   return {

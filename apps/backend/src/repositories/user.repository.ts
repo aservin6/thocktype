@@ -1,5 +1,5 @@
 import pool from "../db/pool.ts";
-import { User } from "../types/user.ts";
+import type { User } from "../types/user.ts";
 
 interface userCreationDetails {
   email: string;

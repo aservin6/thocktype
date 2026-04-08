@@ -1,13 +1,9 @@
 import express from "express";
+import { registerUser } from "../controllers/auth.controller.ts";
 
 const router = express.Router();
 
-router.post("/register", (req, res) => {
-  res.status(501).json({
-    error: "Not Implemented",
-    message: "Route has not been implemented yet.",
-  });
-});
+router.post("/register", registerUser);
 
 router.post("/signin", (req, res) => {
   res.status(501).json({
