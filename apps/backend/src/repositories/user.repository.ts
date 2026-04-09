@@ -1,6 +1,7 @@
 import pool from "../db/pool.ts";
 import type { User } from "../types/user.ts";
 
+// Minimum details needed for user creation
 interface userCreationDetails {
   email: string;
   username: string;
