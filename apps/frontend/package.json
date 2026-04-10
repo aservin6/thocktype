@@ -10,13 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@typing-test/shared": "workspace:*",
     "@fontsource-variable/victor-mono": "^5.2.8",
     "@tailwindcss/vite": "^4.2.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwindcss": "^4.2.1",
-    "zustand": "^5.0.11",
-    "@typing-test/shared": "*"
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

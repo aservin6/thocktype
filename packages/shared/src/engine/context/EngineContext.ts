@@ -1,4 +1,4 @@
-import type { EngineState } from "../types.ts";
+import type { EngineState } from "../types";
 
 // Minimal Context for Engine Modes
 export interface EngineContext {

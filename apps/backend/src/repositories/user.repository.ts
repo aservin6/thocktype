@@ -34,3 +34,14 @@ export async function findUserByEmail(email: string): Promise<User | null> {
 
   return result.rows[0] ?? null;
 }
+
+export async function findUserById(id: string): Promise<User | null> {
+  const query = `
+    SELECT * FROM users
+    WHERE id = $1
+`;
+  const values = [id];
+  const result = await pool.query(query, values);
+
+  return result.rows[0] ?? null;
+}

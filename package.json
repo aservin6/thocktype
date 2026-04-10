@@ -2,8 +2,11 @@
   "name": "typing-test-monorepo",
   "private": true,
   "version": "0.0.0",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  "scripts": {
+    "dev": "concurrently --names frontend,backend,db --prefix-colors blue,green,yellow \"pnpm --filter @typing-test/frontend dev\" \"pnpm --filter @typing-test/backend dev\" \"docker compose up -d\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "packageManager": "pnpm@10.32.1"
 }

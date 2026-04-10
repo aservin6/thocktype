@@ -1,28 +1,24 @@
-import express from "express";
-import { registerUser, signInUser } from "../controllers/auth.controller.ts";
+import express, { Router } from "express";
+import {
+  getMe,
+  registerUser,
+  signInUser,
+  signOutUser,
+} from "../controllers/auth.controller.ts";
 import {
   validateRegisterInput,
   validateSignInInput,
 } from "../middleware/validate-auth-input.ts";
+import { authenticateToken } from "../middleware/authenticate-token.ts";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.post("/register", validateRegisterInput, registerUser);
 
 router.post("/signin", validateSignInInput, signInUser);
 
-router.post("/signout", (req, res) => {
-  res.status(501).json({
-    error: "Not Implemented",
-    message: "Route has not been implemented yet.",
-  });
-});
+router.post("/signout", signOutUser);
 
-router.get("/me", (req, res) => {
-  res.status(501).json({
-    error: "Not Implemented",
-    message: "Route has not been implemented yet.",
-  });
-});
+router.get("/me", authenticateToken, getMe);
 
 export { router as authRoutes };

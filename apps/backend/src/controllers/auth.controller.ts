@@ -46,7 +46,6 @@ export async function signInUser(req: Request, res: Response): Promise<void> {
     });
   } catch (err) {
     if (err instanceof Error) {
-      console.error(err);
       if (err.message === "Confirm sign in details and try again") {
         res.status(401).json({ message: err.message });
       } else {
@@ -54,4 +53,13 @@ export async function signInUser(req: Request, res: Response): Promise<void> {
       }
     }
   }
+}
+
+export async function signOutUser(req: Request, res: Response): Promise<void> {
+  res.clearCookie("auth_token");
+  res.status(200).json({ message: "Signed out successfully" });
+}
+
+export async function getMe(req: Request, res: Response): Promise<void> {
+  res.status(200).json({ data: req.user });
 }
