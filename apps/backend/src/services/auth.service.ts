@@ -5,11 +5,13 @@ import {
 } from "../repositories/user.repository.ts";
 import type { PublicUser } from "@typing-test/shared";
 import generateToken from "../utils/generate-token.ts";
+import { createRefreshToken } from "../repositories/refresh-token.repository.ts";
+import generateRefreshToken from "../utils/generate-refresh-token.ts";
 
 export async function register(
   email: string,
   password: string,
-): Promise<PublicUser & { token: string }> {
+): Promise<PublicUser & { accessToken: string; refreshToken: string }> {
   // Throw error if user with email exists already
   const user = await findUserByEmail(email);
   if (user) throw new Error("User already exists");
@@ -27,8 +29,11 @@ export async function register(
     password_hash: hashedPassword,
   });
 
-  // Generate token
-  const token = generateToken(newUser.id);
+  // Generate tokens
+  const accessToken = generateToken(newUser.id);
+  const { token, expiresAt } = generateRefreshToken();
+
+  await createRefreshToken(newUser.id, token, expiresAt);
 
   return {
     id: newUser.id,
@@ -36,14 +41,15 @@ export async function register(
     email: newUser.email,
     email_verified: newUser.email_verified,
     created_at: newUser.created_at,
-    token,
+    accessToken,
+    refreshToken: token,
   };
 }
 
 export async function signIn(
   email: string,
   password: string,
-): Promise<PublicUser & { token: string }> {
+): Promise<PublicUser & { accessToken: string; refreshToken: string }> {
   // Throw error if user doesn't exist
   const user = await findUserByEmail(email);
   if (!user) throw new Error("Confirm sign in details and try again");
@@ -53,13 +59,20 @@ export async function signIn(
   if (!isValid) throw new Error("Confirm sign in details and try again");
 
   // Generate token and return user
-  const token = generateToken(user.id);
+  const accessToken = generateToken(user.id);
+  const { token, expiresAt } = generateRefreshToken();
+
+  await createRefreshToken(user.id, token, expiresAt);
+
   return {
     id: user.id,
     username: user.username,
     email: user.email,
     email_verified: user.email_verified,
     created_at: user.created_at,
-    token,
+    accessToken,
+    refreshToken: token,
   };
 }
+
+export async function refresh() {}
