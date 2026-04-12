@@ -1,0 +1,13 @@
+name: Sign In
+description: Sign in with existing credentials
+method: POST
+url: http://localhost:3000/api/auth/signin
+body:
+  content: |-
+    {
+      "email": "test@example.com",
+      "password": "Test123!@"
+    }
+headers:
+- name: Content-Type
+  value: application/json

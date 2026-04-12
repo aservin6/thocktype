@@ -29,7 +29,7 @@ export async function findRefreshToken(
   const values = [token];
   const result = await pool.query(query, values);
 
-  return result.rows[0];
+  return result.rows[0] ?? null;
 }
 
 export async function deleteRefreshToken(token: string): Promise<void> {

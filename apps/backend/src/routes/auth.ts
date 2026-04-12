@@ -1,6 +1,7 @@
 import express, { Router } from "express";
 import {
   getMe,
+  refreshTokens,
   registerUser,
   signInUser,
   signOutUser,
@@ -21,4 +22,5 @@ router.post("/signout", signOutUser);
 
 router.get("/me", authenticateToken, getMe);
 
+router.post("/refresh", refreshTokens);
 export { router as authRoutes };

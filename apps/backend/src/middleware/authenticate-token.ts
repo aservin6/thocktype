@@ -10,7 +10,7 @@ export async function authenticateToken(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const token = req.cookies.auth_token;
+  const token = req.cookies.access_token;
 
   if (!token) {
     res.status(401).json({ message: "No token provided" });

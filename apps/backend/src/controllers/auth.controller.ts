@@ -1,65 +1,126 @@
-import type { Request, Response } from "express";
-import { register, signIn } from "../services/auth.service.ts";
+import type { NextFunction, Request, Response } from "express";
+import { refresh, register, signIn } from "../services/auth.service.ts";
+import { deleteRefreshToken } from "../repositories/refresh-token.repository.ts";
 
-export async function registerUser(req: Request, res: Response): Promise<void> {
+const isProduction = process.env.NODE_ENV === "production";
+
+export async function registerUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   const { email, password } = req.body;
-
   // Pass user input into register flow
   try {
     const user = await register(email, password);
-    const { token, ...publicUser } = user;
-
-    // Set auth cookie upon successful user registration
-    res.cookie("auth_token", token, {
+    const { accessToken, refreshToken, ...publicUser } = user;
+    // Set auth cookies upon successful user registration
+    res.cookie("access_token", accessToken, {
       httpOnly: true,
+      secure: isProduction,
+      sameSite: "strict",
+    });
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: "strict",
     });
     res.status(201).json({
       data: publicUser,
       message: "New user registered successfully",
     });
   } catch (err) {
-    if (err instanceof Error) {
-      if (err.message === "User already exists") {
-        res.status(409).json({ message: err.message });
-      } else {
-        res.status(500).json({ message: "A server side error occurred" });
-      }
-    }
+    next(err);
   }
 }
 
-export async function signInUser(req: Request, res: Response): Promise<void> {
+export async function signInUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   const { email, password } = req.body;
-
   // Pass user input into sign in flow
   try {
     const user = await signIn(email, password);
-    const { token, ...publicUser } = user;
-
-    // Set auth cookie upon successful user sign in
-    res.cookie("auth_token", token, {
+    const { accessToken, refreshToken, ...publicUser } = user;
+    // Set auth cookies upon successful user sign in
+    res.cookie("access_token", accessToken, {
       httpOnly: true,
+      secure: isProduction,
+      sameSite: "strict",
+    });
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: "strict",
     });
     res.status(200).json({
       data: publicUser,
       message: "User signed in successfully",
     });
   } catch (err) {
-    if (err instanceof Error) {
-      if (err.message === "Confirm sign in details and try again") {
-        res.status(401).json({ message: err.message });
-      } else {
-        res.status(500).json({ message: "A server side error occurred" });
-      }
-    }
+    next(err);
   }
 }
 
-export async function signOutUser(req: Request, res: Response): Promise<void> {
-  res.clearCookie("auth_token");
-  res.status(200).json({ message: "Signed out successfully" });
+export async function signOutUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  // Delete current refresh token from DB
+  const refreshTokenString = req.cookies.refresh_token;
+  if (!refreshTokenString) {
+    res.clearCookie("access_token");
+    res.clearCookie("refresh_token");
+    res.status(200).json({ message: "Signed out successfully" });
+    return;
+  }
+  try {
+    await deleteRefreshToken(refreshTokenString);
+    // then clear both local cookies (access + refresh)
+    res.clearCookie("access_token");
+    res.clearCookie("refresh_token");
+
+    res.status(200).json({ message: "Signed out successfully" });
+  } catch (err) {
+    next(err);
+  }
 }
 
 export async function getMe(req: Request, res: Response): Promise<void> {
   res.status(200).json({ data: req.user });
+}
+
+export async function refreshTokens(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  // Grab local refresh token string
+  const refreshTokenString = req.cookies.refresh_token;
+  if (!refreshTokenString) {
+    res.clearCookie("access_token");
+    res.clearCookie("refresh_token");
+    res.status(401).json({ message: "No token found. Unauthorized access" });
+    return;
+  }
+  // Refresh tokens and set new cookies
+  try {
+    const { accessToken, refreshToken } = await refresh(refreshTokenString);
+    res.cookie("access_token", accessToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: "strict",
+    });
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: "strict",
+    });
+    res.status(200).json({ message: "Tokens refreshed successfully" });
+  } catch (err) {
+    next(err);
+  }
 }

@@ -3,7 +3,7 @@ import requireEnv from "./require-env.ts";
 
 const JWT_SECRET = requireEnv("JWT_SECRET");
 
-export default function generateToken(userId: string): string {
+export default function generateAccessToken(userId: string): string {
   // Create payload for JWT token
   const userPayload = {
     id: userId,
@@ -11,7 +11,7 @@ export default function generateToken(userId: string): string {
 
   // Token config
   const token = jwt.sign(userPayload, JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "15m",
   });
 
   return token;

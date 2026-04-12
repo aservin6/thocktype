@@ -1,0 +1,6 @@
+name: Get Me
+description: Get the currently authenticated user
+method: GET
+url: http://localhost:3000/api/auth/me
+options:
+  attach_cookies: true
