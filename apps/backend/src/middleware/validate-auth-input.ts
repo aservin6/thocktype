@@ -8,7 +8,7 @@ export function validateRegisterInput(
   const { email, password } = req.body;
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const emailIsValid = emailRegex.test(email);
+  const emailIsValid = emailRegex.test(email) && email.length < 255;
 
   // Email validation
   if (!emailIsValid) {
@@ -19,6 +19,7 @@ export function validateRegisterInput(
   // Password validation
   if (
     password.length < 8 ||
+    password.length > 72 ||
     !/[A-Z]/.test(password) ||
     !/[0-9]/.test(password) ||
     !/[!@#$%^&*]/.test(password)

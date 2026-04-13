@@ -5,6 +5,9 @@ const errorCodes: Record<string, number> = {
   "Confirm sign in details and try again": 401,
   "Could not refresh tokens": 401,
   "No token found. Unauthorized access": 401,
+  "Unauthorized request": 401,
+  "User does not exist": 401,
+  "Result data is invalid": 400,
 };
 
 export function errorHandler(
