@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import {
+  getLeaderboardResults,
   getUsersResults,
   postResult,
 } from "../controllers/result.controller.ts";
@@ -7,12 +8,7 @@ import { authenticateToken } from "../middleware/authenticate-token.ts";
 
 const router: Router = express.Router();
 
-router.get("/leaderboard/:mode", (req, res) => {
-  res.status(501).json({
-    error: "Not Implemented",
-    message: "Route has not been implemented yet.",
-  });
-});
+router.get("/leaderboard/:mode", getLeaderboardResults);
 
 router.get("/me/results", authenticateToken, getUsersResults);
 

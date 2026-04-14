@@ -8,7 +8,7 @@ interface userCreationDetails {
   password_hash: string;
 }
 
-export async function createUser({
+export async function insertUser({
   email,
   username,
   password_hash,
@@ -24,7 +24,7 @@ export async function createUser({
   return result.rows[0];
 }
 
-export async function findUserByEmail(email: string): Promise<User | null> {
+export async function selectUserByEmail(email: string): Promise<User | null> {
   const query = `
     SELECT * FROM users
     WHERE email = $1
@@ -35,7 +35,7 @@ export async function findUserByEmail(email: string): Promise<User | null> {
   return result.rows[0] ?? null;
 }
 
-export async function findUserById(id: string): Promise<User | null> {
+export async function selectUserById(id: string): Promise<User | null> {
   const query = `
     SELECT * FROM users
     WHERE id = $1

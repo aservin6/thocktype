@@ -10,3 +10,15 @@ export type Result = {
   incorrect: number;
   created_at: Date;
 };
+
+export type LeaderboardResult = {
+  username: string;
+  wpm: number;
+  time_elapsed: number;
+  accuracy: number;
+  mode: string;
+  mode_value: number;
+  correct: number;
+  incorrect: number;
+  created_at: Date;
+};

@@ -1,7 +1,7 @@
 import pool from "../db/pool.ts";
 import type { RefreshToken } from "../types/token.ts";
 
-export async function createRefreshToken(
+export async function insertRefreshToken(
   userId: string,
   token: string,
   expiresAt: Date,
@@ -18,7 +18,7 @@ export async function createRefreshToken(
   return result.rows[0];
 }
 
-export async function findRefreshToken(
+export async function selectRefreshToken(
   token: string,
 ): Promise<RefreshToken | null> {
   const query = `

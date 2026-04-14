@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import requireEnv from "../utils/require-env.ts";
-import { findUserById } from "../repositories/user.repository.ts";
+import { selectUserById } from "../repositories/user.repository.ts";
 
 const JWT_SECRET = requireEnv("JWT_SECRET");
 
@@ -19,7 +19,7 @@ export async function authenticateToken(
 
   try {
     const payload = jwt.verify(token, JWT_SECRET) as { id: string };
-    const user = await findUserById(payload.id);
+    const user = await selectUserById(payload.id);
     if (!user) {
       res.status(401).json({ message: "User not found" });
       return;

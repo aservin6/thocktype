@@ -1,5 +1,5 @@
-import { createResultDb } from "../repositories/result.repository.ts";
-import { findUserById } from "../repositories/user.repository.ts";
+import { insertResult } from "../repositories/result.repository.ts";
+import { selectUserById } from "../repositories/user.repository.ts";
 import type { Result } from "../types/result.ts";
 
 export interface resultCreationDetails {
@@ -13,7 +13,7 @@ export interface resultCreationDetails {
   incorrect: number;
 }
 
-export async function createResult({
+export async function submitResult({
   user_id,
   wpm,
   time_elapsed,
@@ -23,11 +23,11 @@ export async function createResult({
   correct,
   incorrect,
 }: resultCreationDetails): Promise<Result> {
-  const user = await findUserById(user_id);
+  const user = await selectUserById(user_id);
   if (!user) throw new Error("User does not exist");
   if (wpm < 0 || accuracy < 0) throw new Error("Result data is invalid");
 
-  const result = await createResultDb({
+  const result = await insertResult({
     user_id,
     wpm,
     time_elapsed,
