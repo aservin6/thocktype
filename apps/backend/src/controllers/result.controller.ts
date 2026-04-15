@@ -67,7 +67,7 @@ export async function getLeaderboardResults(
     page = 1;
   }
 
-  if (isNaN(limit) || limit < 1) {
+  if (isNaN(limit) || limit < 1 || limit > 100) {
     limit = 25;
   }
 
