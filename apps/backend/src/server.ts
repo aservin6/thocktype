@@ -4,11 +4,12 @@ import cookieParser from "cookie-parser";
 import { authRoutes } from "./routes/auth.ts";
 import { resultsRoutes } from "./routes/results.ts";
 import { errorHandler } from "./middleware/error-handler.ts";
-import redis from "./db/redis.ts";
 import pool from "./db/pool.ts";
+import redis from "./db/redis.ts";
+import requireEnv from "./utils/require-env.ts";
 
-const PORT = process.env.PORT || 3000;
-const FRONTEND_PORT = process.env.FRONTEND_PORT || 5173;
+const PORT = requireEnv("PORT");
+const FRONTEND_PORT = requireEnv("FRONTEND_PORT");
 const app = express();
 
 app.use(

@@ -1,9 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
-import { submitResult } from "../services/result.service.ts";
-import {
-  selectLeaderboardResults,
-  selectResultsByUser,
-} from "../repositories/result.repository.ts";
+import { submitResult, getLeaderboard } from "../services/result.service.ts";
+import { selectResultsByUser } from "../repositories/result.repository.ts";
 
 export async function postResult(
   req: Request,
@@ -72,7 +69,7 @@ export async function getLeaderboardResults(
   }
 
   try {
-    const results = await selectLeaderboardResults(mode, page, limit);
+    const results = await getLeaderboard(mode, page, limit);
     res.status(200).json({
       data: results,
       message: "Results found",
