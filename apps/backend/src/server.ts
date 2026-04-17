@@ -7,15 +7,24 @@ import { errorHandler } from "./middleware/error-handler.ts";
 import pool from "./db/pool.ts";
 import redis from "./db/redis.ts";
 import requireEnv from "./utils/require-env.ts";
+import { createRateLimiter } from "./middleware/rate-limit.ts";
 
 const PORT = requireEnv("PORT");
 const FRONTEND_PORT = requireEnv("FRONTEND_PORT");
 const app = express();
 
+const globalLimiter = createRateLimiter({
+  windowMs: 900000,
+  max: 100,
+  keyPrefix: "ratelimit:global",
+  failOpen: true,
+});
+
 app.use(
   express.json(),
   cors({ origin: `http://localhost:${FRONTEND_PORT}`, credentials: true }),
   cookieParser(),
+  globalLimiter,
 );
 
 // Routes

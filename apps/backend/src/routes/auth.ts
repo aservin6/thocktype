@@ -11,16 +11,32 @@ import {
   validateSignInInput,
 } from "../middleware/validate-auth-input.ts";
 import { authenticateToken } from "../middleware/authenticate-token.ts";
+import { createRateLimiter } from "../middleware/rate-limit.ts";
 
 const router: Router = express.Router();
 
-router.post("/register", validateRegisterInput, registerUser);
+const registerLimiter = createRateLimiter({
+  windowMs: 900000,
+  max: 10,
+  keyPrefix: "ratelimit:register",
+  failOpen: false,
+});
 
-router.post("/signin", validateSignInInput, signInUser);
+const signinLimiter = createRateLimiter({
+  windowMs: 900000,
+  max: 10,
+  keyPrefix: "ratelimit:signin",
+  failOpen: false,
+});
+
+router.post("/register", registerLimiter, validateRegisterInput, registerUser);
+
+router.post("/signin", signinLimiter, validateSignInInput, signInUser);
 
 router.post("/signout", signOutUser);
 
 router.get("/me", authenticateToken, getMe);
 
 router.post("/refresh", refreshTokens);
+
 export { router as authRoutes };
