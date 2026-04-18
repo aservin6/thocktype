@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { authRoutes } from "./routes/auth.ts";
 import { resultsRoutes } from "./routes/results.ts";
+import { meRoutes } from "./routes/me.ts";
 import { errorHandler } from "./middleware/error-handler.ts";
 import pool from "./db/pool.ts";
 import redis from "./db/redis.ts";
@@ -28,8 +29,9 @@ app.use(
 );
 
 // Routes
-app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
 app.use("/api", resultsRoutes);
+app.use("/me", meRoutes);
 
 // Error handling
 app.use(errorHandler);

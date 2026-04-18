@@ -29,13 +29,12 @@ const signinLimiter = createRateLimiter({
   failOpen: false,
 });
 
+// Results prefixed with /auth
 router.post("/register", registerLimiter, validateRegisterInput, registerUser);
 
 router.post("/signin", signinLimiter, validateSignInInput, signInUser);
 
 router.post("/signout", signOutUser);
-
-router.get("/me", authenticateToken, getMe);
 
 router.post("/refresh", refreshTokens);
 

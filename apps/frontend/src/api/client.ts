@@ -26,33 +26,65 @@ function waitForRefresh(): Promise<void> {
 }
 
 async function attemptRefresh(): Promise<void> {
-  const res = await fetch(`${BASE_URL}/api/auth/refresh`, {
+  const res = await fetch(`${BASE_URL}/auth/refresh`, {
     method: "POST",
     credentials: "include",
   });
   if (!res.ok) throw new Error("Refresh failed");
 }
 
-// TODO: Implement apiClient
-// 1. Make the fetch request to BASE_URL + endpoint, always passing credentials: "include"
-//    so httpOnly cookies are sent with every request
-// 2. If the response is not a 401, return it as-is
-// 3. If a refresh is already in-flight (isRefreshing), wait in the queue via waitForRefresh(),
-//    then retry the original request once the refresh completes
-// 4. Otherwise, set isRefreshing = true, call attemptRefresh(), drain the queue,
-//    reset isRefreshing, and retry the original request
-// 5. If attemptRefresh() throws, drain the queue with the error, reset isRefreshing,
-//    and re-throw so callers can redirect to sign-in
 export async function apiClient(
   endpoint: string,
   config?: RequestInit,
 ): Promise<Response> {
+  // Original request
   const res = await fetch(`${BASE_URL + endpoint}`, {
     credentials: "include",
     ...config,
   });
 
+  // If no 401 return response
   if (res.status != 401) return res;
 
-  return res;
+  // If 401 hit refresh route
+  let retry: Response;
+  try {
+    // If already refreshing
+    // Promise is pushed to queue
+    if (isRefreshing) {
+      await waitForRefresh();
+
+      // Retry fetch
+      retry = await fetch(`${BASE_URL + endpoint}`, {
+        credentials: "include",
+        ...config,
+      });
+    } else {
+      // Else, set isRefreshing to true
+      // attemptRefresh()
+      // then drainQueue()
+      // set isRefreshing  to false
+      isRefreshing = true;
+      await attemptRefresh();
+      drainQueue();
+      isRefreshing = false;
+
+      // Retry fetch
+      retry = await fetch(`${BASE_URL + endpoint}`, {
+        credentials: "include",
+        ...config,
+      });
+    }
+  } catch (err) {
+    // Catch error
+    // drainQueue with err,
+    // all Promises in queue are rejected
+    // isRefreshing is reset
+    // new Error thrown
+    drainQueue(err);
+    isRefreshing = false;
+    throw new Error("Token refresh failed");
+  }
+  if (retry.status === 401) throw new Error("Unauthorized after token refresh");
+  return retry;
 }
