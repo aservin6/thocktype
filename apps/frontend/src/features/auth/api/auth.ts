@@ -1,17 +1,21 @@
 import { type PublicUser } from "@typing-test/shared";
-import { apiClient } from "./client";
+import { apiClient } from "../../../shared/api/client";
 
 export async function signIn(
   email: string,
   password: string,
 ): Promise<PublicUser> {
-  const res = await apiClient("/auth/signin", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const res = await apiClient(
+    "/auth/signin",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
     },
-    body: JSON.stringify({ email, password }),
-  });
+    { skipRefresh: true },
+  );
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.message || "Unknown error");
@@ -24,13 +28,17 @@ export async function register(
   email: string,
   password: string,
 ): Promise<PublicUser> {
-  const res = await apiClient("/auth/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const res = await apiClient(
+    "/auth/register",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
     },
-    body: JSON.stringify({ email, password }),
-  });
+    { skipRefresh: true },
+  );
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.message || "Unknown error");
@@ -40,9 +48,13 @@ export async function register(
 }
 
 export async function signOut(): Promise<void> {
-  const res = await apiClient("/auth/signout", {
-    method: "POST",
-  });
+  const res = await apiClient(
+    "/auth/signout",
+    {
+      method: "POST",
+    },
+    { skipRefresh: true },
+  );
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.message || "Unknown error");

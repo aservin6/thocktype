@@ -1,5 +1,5 @@
 import { type Result } from "@typing-test/shared";
-import { apiClient } from "./client";
+import { apiClient } from "../../../shared/api/client";
 
 export async function postResult(result: Result): Promise<Result> {
   const res = await apiClient("/api/results", {

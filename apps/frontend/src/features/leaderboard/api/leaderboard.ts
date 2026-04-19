@@ -1,5 +1,5 @@
 import { type Result } from "@typing-test/shared";
-import { apiClient } from "./client";
+import { apiClient } from "../../../shared/api/client";
 
 export async function getLeaderboardResults(mode: string): Promise<Result[]> {
   const res = await apiClient(`/api/leaderboard/${mode}`);

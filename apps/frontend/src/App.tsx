@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { TypingTest } from "./components/TypingTest";
-import { getMe } from "./api/auth";
-import { useAuthStore } from "./store/useAuthStore";
+import { TypingTest } from "./features/typing/components/TypingTest";
+import { getMe } from "./features/auth/api/auth";
+import { useAuthStore } from "./features/auth/store/useAuthStore";
 
 function App() {
   const setUser = useAuthStore((s) => s.setUser);

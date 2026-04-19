@@ -36,6 +36,7 @@ async function attemptRefresh(): Promise<void> {
 export async function apiClient(
   endpoint: string,
   config?: RequestInit,
+  options?: { skipRefresh: boolean },
 ): Promise<Response> {
   // Original request
   const res = await fetch(`${BASE_URL + endpoint}`, {
@@ -43,6 +44,8 @@ export async function apiClient(
     ...config,
   });
 
+  // If 401 but skipRefresh is true, return response
+  if (res.status === 401 && options?.skipRefresh) return res;
   // If no 401 return response
   if (res.status != 401) return res;
 
