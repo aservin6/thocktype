@@ -72,3 +72,19 @@ export async function getMe(): Promise<PublicUser> {
   const body = await res.json();
   return body.data;
 }
+
+export async function checkSession(): Promise<PublicUser> {
+  const res = await apiClient(
+    "/me",
+    {
+      method: "GET",
+    },
+    { skipRefresh: true },
+  );
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Unknown error");
+  }
+  const body = await res.json();
+  return body.data;
+}

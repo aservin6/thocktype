@@ -12,24 +12,30 @@ import "./index.css";
 import App from "./App.tsx";
 // Supports weights 100-700
 import "@fontsource-variable/victor-mono";
+import AuthLayout from "./features/auth/components/AuthLayout.tsx";
+import Navigation from "./features/navigation/components/Navigation.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/leaderboard" element={<LeaderboardPage />} />
-        <Route path="/signin" element={<SignInPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route
-          path="/account"
-          element={
-            <ProtectedRoute>
-              <AccountPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/" element={<App />} />
+        <Route element={<AuthLayout />}>
+          <Route element={<Navigation />}>
+            <Route path="/" element={<App />} />
+            <Route path="/signin" element={<SignInPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route
+              path="/account"
+              element={
+                <ProtectedRoute>
+                  <AccountPage />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   </StrictMode>,

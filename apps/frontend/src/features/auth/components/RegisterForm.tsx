@@ -1,5 +1,5 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { signIn } from "../api/auth";
+import { register as registerUser } from "../api/auth";
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 
@@ -8,7 +8,7 @@ type Inputs = {
   password: string;
 };
 
-export default function SignInForm() {
+export default function RegisterForm() {
   const {
     register,
     handleSubmit,
@@ -20,7 +20,7 @@ export default function SignInForm() {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const { email, password } = data;
     try {
-      const user = await signIn(email, password);
+      const user = await registerUser(email, password);
       if (user) {
         setUser(user);
         setInitialized(true);
