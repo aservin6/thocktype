@@ -1,23 +1,15 @@
-import { useNavigate } from "react-router";
-import SignInForm from "../components/SignInForm";
+import { Navigate } from "react-router";
 import { useAuthStore } from "../store/useAuthStore";
-import SignInFormTest from "../components/SignInFormTest";
+import SignInForm from "../components/SignInForm";
 
 export default function SignInPage() {
   const user = useAuthStore((s) => s.user);
-  const navigate = useNavigate();
 
-  if (user) navigate("/account");
+  if (user) return <Navigate to="/account" replace />;
 
   return (
     <div>
-      <div>Sign in</div>
-      <div>
-        <SignInForm />
-      </div>
-      <div>
-        <SignInFormTest />
-      </div>
+      <SignInForm />
     </div>
   );
 }

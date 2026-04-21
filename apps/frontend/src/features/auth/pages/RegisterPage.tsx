@@ -1,19 +1,15 @@
-import { useNavigate } from "react-router";
+import { Navigate } from "react-router";
 import RegisterForm from "../components/RegisterForm";
 import { useAuthStore } from "../store/useAuthStore";
 
 export default function RegisterPage() {
   const user = useAuthStore((s) => s.user);
-  const navigate = useNavigate();
 
-  if (user) navigate("/account");
+  if (user) return <Navigate to="/account" replace />;
 
   return (
     <div>
-      <div>Register</div>
-      <div>
-        <RegisterForm />
-      </div>
+      <RegisterForm />
     </div>
   );
 }

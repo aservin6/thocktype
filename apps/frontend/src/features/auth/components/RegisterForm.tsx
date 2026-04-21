@@ -1,26 +1,44 @@
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { register as registerUser } from "../api/auth";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import {
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+  FieldSet,
+  FieldGroup,
+  FieldTitle,
+} from "@/components/ui/field";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { register } from "../api/auth";
 import { useAuthStore } from "../store/useAuthStore";
+import { useState } from "react";
 
-type Inputs = {
-  email: string;
-  password: string;
-};
+const formSchema = z.object({
+  email: z
+    .string()
+    .email("Enter a valid email address.")
+    .max(254, "Email is too long (255+ characters)"),
+  password: z
+    .string()
+    .min(8, "Password is too short. Minimum of 8 characters")
+    .max(72, "Password is too long. Maximum 72 characters."),
+});
 
 export default function RegisterForm() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<Inputs>();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  });
   const setUser = useAuthStore((s) => s.setUser);
   const setInitialized = useAuthStore((s) => s.setInitialized);
   const [error, setError] = useState<string | null>(null);
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const { email, password } = data;
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const { email, password } = values;
     try {
-      const user = await registerUser(email, password);
+      const user = await register(email, password);
       if (user) {
         setUser(user);
         setInitialized(true);
@@ -30,22 +48,47 @@ export default function RegisterForm() {
         setError(err.message);
       }
     }
-  };
+  }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input
-        placeholder="example@email.com"
-        {...register("email", {
-          required: true,
-          max: 254,
-        })}
-      />
-      <input {...register("password", { required: true })} />
-      {error && <span>{error}</span>}
-      {errors.email && <span>Email is required</span>}
-      {errors.password && <span>Password is required</span>}
-      <input type="submit" />
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="space-y-8 max-w-xl mx-auto w-full py-10"
+    >
+      <FieldSet>
+        <FieldTitle className="text-xl font-bold">Register</FieldTitle>
+        <FieldGroup>
+          <Field>
+            <FieldLabel htmlFor="email" className="text-base font-medium">
+              Email
+            </FieldLabel>
+            <Input
+              id="email"
+              placeholder="example@email.com"
+              {...form.register("email")}
+            />
+
+            <FieldError>{form.formState.errors.email?.message}</FieldError>
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="password" className="text-base font-medium">
+              Password
+            </FieldLabel>
+            <Input
+              id="password"
+              placeholder="********"
+              type="password"
+              {...form.register("password")}
+            />
+            <FieldDescription>Enter your password.</FieldDescription>
+            <FieldError>{form.formState.errors.password?.message}</FieldError>
+          </Field>
+        </FieldGroup>
+      </FieldSet>
+      {error && <FieldError>{error}</FieldError>}
+      <Button type="submit" className="text-[1em]">
+        Submit
+      </Button>
     </form>
   );
 }
