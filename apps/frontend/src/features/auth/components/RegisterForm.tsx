@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { register } from "../api/auth";
 import { useAuthStore } from "../store/useAuthStore";
 import { useState } from "react";
+import { Link } from "react-router";
 
 const formSchema = z.object({
   email: z
@@ -53,7 +54,7 @@ export default function RegisterForm() {
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
-      className="space-y-8 max-w-xl mx-auto w-full py-10"
+      className="mx-auto w-full max-w-xl space-y-8 py-10"
     >
       <FieldSet>
         <FieldTitle className="text-xl font-bold">Register</FieldTitle>
@@ -68,7 +69,11 @@ export default function RegisterForm() {
               {...form.register("email")}
             />
 
-            <FieldError>{form.formState.errors.email?.message}</FieldError>
+            <div className="relative py-1">
+              <FieldError className="absolute">
+                {form.formState.errors.email?.message}
+              </FieldError>
+            </div>
           </Field>
           <Field>
             <FieldLabel htmlFor="password" className="text-base font-medium">
@@ -81,10 +86,23 @@ export default function RegisterForm() {
               {...form.register("password")}
             />
             <FieldDescription>Enter your password.</FieldDescription>
-            <FieldError>{form.formState.errors.password?.message}</FieldError>
+            <div className="relative py-1">
+              <FieldError className="absolute">
+                {form.formState.errors.password?.message}
+              </FieldError>
+            </div>
           </Field>
         </FieldGroup>
       </FieldSet>
+      <div className="text-sm">
+        Already have an account?{" "}
+        <Link
+          to="/signin"
+          className="font-bold text-blue-400 hover:text-sky-600"
+        >
+          Sign in
+        </Link>
+      </div>
       {error && <FieldError>{error}</FieldError>}
       <Button type="submit" className="text-[1em]">
         Submit

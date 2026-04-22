@@ -14,7 +14,7 @@ export default function SignOutButton() {
   return (
     <Button
       onClick={handleClick}
-      className="bg-red-400 rounded-lg text-white p-2 font-bold"
+      className="rounded-lg bg-red-400 p-2 font-bold text-white"
     >
       Sign out
     </Button>

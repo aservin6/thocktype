@@ -7,10 +7,10 @@ export default function TypingTestOptions() {
   const { reset, mode } = useTypingEngine();
   return (
     <>
-      <div className="flex absolute z-50 bg-neutral-900 p-3 top-1/5 rounded-lg items-center space-x-4">
+      <div className="absolute top-1/5 z-50 flex items-center space-x-4 rounded-lg bg-neutral-900 p-3">
         <button
           onClick={reset}
-          className="bg-red-500 p-2 text-white font-bold text-lg rounded-lg hover:cursor-pointer"
+          className="rounded-lg bg-red-500 p-2 text-lg font-bold text-white hover:cursor-pointer"
         >
           RESET
         </button>

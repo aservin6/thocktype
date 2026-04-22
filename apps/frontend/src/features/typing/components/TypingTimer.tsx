@@ -16,7 +16,7 @@ export default function TypingTimer() {
   return (
     <>
       {state?.status === "running" && (
-        <div className="absolute -top-full text-red-300 text-3xl left-0">
+        <div className="absolute -top-full left-0 text-3xl text-red-300">
           {Math.floor(remainingTime / 1000)}
         </div>
       )}

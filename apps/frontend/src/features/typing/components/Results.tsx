@@ -4,7 +4,7 @@ import { useTypingEngine } from "../hooks/useTypingEngine";
 export default function Results() {
   const { state } = useTypingEngine();
   return (
-    <div className="text-white font-bold text-2xl">
+    <div className="text-2xl font-bold text-white">
       {state ? (
         <>
           <div>Time: {Math.round(getElapsedTime(state) / 1000)}s</div>

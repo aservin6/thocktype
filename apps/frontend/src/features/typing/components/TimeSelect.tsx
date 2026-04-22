@@ -3,7 +3,7 @@ import { useTypingEngine } from "../hooks/useTypingEngine";
 export default function TimeSelect() {
   const { timeLimit, setTimeLimit } = useTypingEngine();
   return (
-    <div className="flex items-center *:p-1.5 *:rounded font-bold space-x-3 text-white">
+    <div className="flex items-center space-x-3 font-bold text-white *:rounded *:p-1.5">
       <button
         onClick={() => setTimeLimit(15000)}
         className={timeLimit === 15000 ? "bg-blue-500" : ""}

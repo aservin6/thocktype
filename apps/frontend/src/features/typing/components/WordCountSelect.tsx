@@ -4,7 +4,7 @@ export default function WordCountSelect() {
   const { setWordCount, wordCount } = useTypingStore();
 
   return (
-    <div className="flex items-center *:p-1.5 *:rounded font-bold space-x-3 text-white">
+    <div className="flex items-center space-x-3 font-bold text-white *:rounded *:p-1.5">
       <button
         onClick={() => setWordCount(10)}
         className={wordCount === 10 ? "bg-blue-500" : ""}

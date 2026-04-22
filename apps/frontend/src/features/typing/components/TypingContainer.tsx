@@ -41,7 +41,7 @@ export default function TypingContainer() {
     <div className="h-40 overflow-clip">
       {/* Rendered Text */}
       <div
-        className="flex flex-wrap max-w-6xl text-[1.625rem] font-semibold leading-14 tracking-wider"
+        className="flex max-w-6xl flex-wrap text-[1.625rem] leading-14 font-semibold tracking-wider"
         style={{ transform: `translateY(${translateY}px)` }}
       >
         {textArray?.map((item, itemIndex) => {
@@ -60,7 +60,7 @@ export default function TypingContainer() {
               >
                 {" "}
                 {isCurrent && (
-                  <span className="absolute left-0 top-0 w-0.5 h-full bg-white animate-pulse" />
+                  <span className="absolute top-0 left-0 h-full w-0.5 animate-pulse bg-white" />
                 )}
               </span>
             );
@@ -93,7 +93,7 @@ export default function TypingContainer() {
                       {char}
 
                       {isCurrent && (
-                        <span className="absolute left-0 top-0 w-0.5 h-full bg-white animate-pulse" />
+                        <span className="absolute top-0 left-0 h-full w-0.5 animate-pulse bg-white" />
                       )}
                     </span>
                   );

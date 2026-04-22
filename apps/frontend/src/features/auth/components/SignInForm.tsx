@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { signIn } from "../api/auth";
 import { useAuthStore } from "../store/useAuthStore";
 import { useState } from "react";
+import { Link } from "react-router";
 
 const formSchema = z.object({
   email: z.string().email("Enter a valid email address."),
@@ -45,44 +46,63 @@ export default function SignInForm() {
   }
 
   return (
-    <form
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="space-y-8 max-w-xl mx-auto w-full py-10"
-    >
-      <FieldSet>
-        <FieldTitle className="text-xl font-bold">Sign In</FieldTitle>
-        <FieldGroup>
-          <Field>
-            <FieldLabel htmlFor="email" className="text-base font-medium">
-              Email
-            </FieldLabel>
-            <Input
-              id="email"
-              placeholder="example@email.com"
-              {...form.register("email")}
-            />
+    <>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mx-auto w-full max-w-xl space-y-8 py-10"
+      >
+        <FieldSet>
+          <FieldTitle className="text-xl font-bold">Sign In</FieldTitle>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="email" className="text-base font-medium">
+                Email
+              </FieldLabel>
+              <Input
+                id="email"
+                placeholder="example@email.com"
+                {...form.register("email")}
+              />
+              <div className="relative py-1">
+                <FieldError className="absolute">
+                  {form.formState.errors.email?.message}
+                </FieldError>
+              </div>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="password" className="text-base font-medium">
+                Password
+              </FieldLabel>
+              <Input
+                id="password"
+                placeholder="********"
+                type="password"
+                {...form.register("password")}
+              />
+              <FieldDescription>Enter your password.</FieldDescription>
+              <div className="relative py-1">
+                <FieldError className="absolute">
+                  {form.formState.errors.password?.message}
+                </FieldError>
+              </div>
+            </Field>
+          </FieldGroup>
+        </FieldSet>
 
-            <FieldError>{form.formState.errors.email?.message}</FieldError>
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="password" className="text-base font-medium">
-              Password
-            </FieldLabel>
-            <Input
-              id="password"
-              placeholder="********"
-              type="password"
-              {...form.register("password")}
-            />
-            <FieldDescription>Enter your password.</FieldDescription>
-            <FieldError>{form.formState.errors.password?.message}</FieldError>
-          </Field>
-        </FieldGroup>
-      </FieldSet>
-      {error && <FieldError>{error}</FieldError>}
-      <Button type="submit" className="text-[1em]">
-        Submit
-      </Button>
-    </form>
+        <div className="text-sm">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="font-bold text-blue-400 hover:text-sky-600"
+          >
+            Create account
+          </Link>
+        </div>
+        {error && <FieldError>{error}</FieldError>}
+        <Button type="submit" className="text-[1em]">
+          Submit
+        </Button>
+      </form>
+    </>
   );
 }
