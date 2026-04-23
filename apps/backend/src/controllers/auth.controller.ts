@@ -1,8 +1,16 @@
 import type { NextFunction, Request, Response } from "express";
-import { refresh, register, signIn } from "../services/auth.service.ts";
+import {
+  refresh,
+  register,
+  signIn,
+  verifyResetRequest,
+} from "../services/auth.service.ts";
 import { deleteRefreshToken } from "../repositories/refresh-token.repository.ts";
+import { Resend } from "resend";
+import requireEnv from "../utils/require-env.ts";
 
 const isProduction = process.env.NODE_ENV === "production";
+const resend = new Resend(requireEnv("RESEND_API_KEY"));
 
 export async function registerUser(
   req: Request,
@@ -120,6 +128,29 @@ export async function refreshTokens(
       sameSite: "strict",
     });
     res.status(200).json({ message: "Tokens refreshed successfully" });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function requestPasswordReset(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  const { email } = req.body;
+
+  try {
+    const { token } = await verifyResetRequest(email);
+    if (token) {
+      await resend.emails.send({
+        from: `thockr.io <support@${process.env.RESEND_DOMAIN}>`,
+        to: email,
+        subject: "Reset your password",
+        html: `<p>Click <a href="http://localhost:3000/reset-password?token=${token}">here</a> to reset your password.</p>`,
+      });
+      res.status(200).json({ message: "Password reset email sent" });
+    }
   } catch (err) {
     next(err);
   }

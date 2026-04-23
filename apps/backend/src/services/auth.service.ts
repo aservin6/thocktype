@@ -11,6 +11,9 @@ import {
   selectRefreshToken,
 } from "../repositories/refresh-token.repository.ts";
 import generateRefreshToken from "../utils/generate-refresh-token.ts";
+import { User } from "../types/user.ts";
+import generateResetToken from "../utils/generate-reset-token.ts";
+import { insertPasswordResetToken } from "../repositories/password_reset_token.repository.ts";
 
 export async function register(
   email: string,
@@ -93,4 +96,19 @@ export async function refresh(
   const accessToken = generateAccessToken(user_id);
 
   return { accessToken, refreshToken: token };
+}
+
+export async function verifyResetRequest(
+  email: string,
+): Promise<{ token: string }> {
+  const user = await selectUserByEmail(email);
+
+  if (!user) throw new Error("User account not found");
+
+  const { token, expiresAt } = generateResetToken();
+  const hashedToken = await bcrypt.hash(token, 10);
+
+  await insertPasswordResetToken(user.id, token, expiresAt);
+
+  return { token: hashedToken };
 }
