@@ -3,7 +3,8 @@ import {
   refresh,
   register,
   signIn,
-  verifyResetRequest,
+  createPasswordResetToken,
+  resetPassword as resetPasswordService,
 } from "../services/auth.service.ts";
 import { deleteRefreshToken } from "../repositories/refresh-token.repository.ts";
 import { Resend } from "resend";
@@ -133,7 +134,7 @@ export async function refreshTokens(
   }
 }
 
-export async function requestPasswordReset(
+export async function forgotPassword(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -141,16 +142,37 @@ export async function requestPasswordReset(
   const { email } = req.body;
 
   try {
-    const { token } = await verifyResetRequest(email);
+    const { token } = await createPasswordResetToken(email);
     if (token) {
       await resend.emails.send({
-        from: `thockr.io <support@${process.env.RESEND_DOMAIN}>`,
-        to: email,
+        from: `onboarding@resend.dev`,
+        to: email.toLowerCase(),
         subject: "Reset your password",
-        html: `<p>Click <a href="http://localhost:3000/reset-password?token=${token}">here</a> to reset your password.</p>`,
+        html: `<p>Click <a href="http://localhost:3000/reset-password?token=${token}&email=${email.toLowerCase()}">here</a> to reset your password.</p>`,
       });
-      res.status(200).json({ message: "Password reset email sent" });
     }
+    res.status(200).json({ message: "Password reset email sent" });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function resetPassword(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  const token = req.query.token as string;
+  const { password } = req.body;
+
+  if (!token) {
+    res.status(401).json({ message: "No token found. Unauthorized access" });
+    return;
+  }
+
+  try {
+    await resetPasswordService(token, password);
+    res.status(200).json({ message: "Password reset successfully" });
   } catch (err) {
     next(err);
   }

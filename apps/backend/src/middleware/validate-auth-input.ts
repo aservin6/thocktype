@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
+import { selectUserByEmail } from "../repositories/user.repository.ts";
 
 export function validateRegisterInput(
   req: Request,
@@ -40,6 +41,32 @@ export function validateSignInInput(
 
   if (!email || !password) {
     res.status(400).json({ message: "Confirm sign in details and try again" });
+    return;
+  }
+
+  next();
+}
+
+export async function validatePasswordResetInput(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  const { password, confirmedPassword } = req.body;
+
+  if (password !== confirmedPassword) {
+    res.status(400).json({ message: "Password fields do not match" });
+    return;
+  }
+
+  if (
+    password.length < 8 ||
+    password.length > 72 ||
+    !/[A-Z]/.test(password) ||
+    !/[0-9]/.test(password) ||
+    !/[!@#$%^&*]/.test(password)
+  ) {
+    res.status(400).json({ message: "Password does not meet requirements" });
     return;
   }
 

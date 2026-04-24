@@ -45,3 +45,17 @@ export async function selectUserById(id: string): Promise<User | null> {
 
   return result.rows[0] ?? null;
 }
+
+export async function updateUserPassword(
+  userId: string,
+  hashedPassword: string,
+): Promise<void> {
+  const query = `
+    UPDATE users
+    SET password_hash = $1
+    WHERE id = $2
+`;
+
+  const values = [hashedPassword, userId];
+  await pool.query(query, values);
+}

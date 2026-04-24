@@ -8,6 +8,7 @@ const errorCodes: Record<string, number> = {
   "Unauthorized request": 401,
   "User does not exist": 401,
   "Result data is invalid": 400,
+  "Email sent": 200,
 };
 
 export function errorHandler(

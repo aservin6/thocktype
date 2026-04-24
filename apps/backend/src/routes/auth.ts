@@ -2,11 +2,13 @@ import express, { Router } from "express";
 import {
   refreshTokens,
   registerUser,
-  requestPasswordReset,
+  forgotPassword,
+  resetPassword,
   signInUser,
   signOutUser,
 } from "../controllers/auth.controller.ts";
 import {
+  validatePasswordResetInput,
   validateRegisterInput,
   validateSignInInput,
 } from "../middleware/validate-auth-input.ts";
@@ -28,6 +30,13 @@ const signinLimiter = createRateLimiter({
   failOpen: false,
 });
 
+const forgotPasswordLimiter = createRateLimiter({
+  windowMs: 900000,
+  max: 10,
+  keyPrefix: "ratelimit:forgotpassword",
+  failOpen: false,
+});
+
 // Results prefixed with /auth
 router.post("/register", registerLimiter, validateRegisterInput, registerUser);
 
@@ -37,6 +46,8 @@ router.post("/signout", signOutUser);
 
 router.post("/refresh", refreshTokens);
 
-router.post("/forgot-password", requestPasswordReset);
+router.post("/forgot-password", forgotPasswordLimiter, forgotPassword);
+
+router.post("/reset-password", validatePasswordResetInput, resetPassword);
 
 export { router as authRoutes };

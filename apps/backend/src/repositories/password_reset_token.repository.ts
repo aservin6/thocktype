@@ -19,23 +19,23 @@ export async function insertPasswordResetToken(
 }
 
 export async function selectPasswordResetToken(
-  token: string,
+  hashedToken: string,
 ): Promise<PasswordResetToken | null> {
   const query = `
     SELECT * FROM password_reset_tokens
     WHERE token = $1
 `;
-  const values = [token];
+  const values = [hashedToken];
   const result = await pool.query(query, values);
 
   return result.rows[0] ?? null;
 }
 
-export async function deletePasswordResetToken(token: string): Promise<void> {
+export async function deletePasswordResetToken(id: string): Promise<void> {
   const query = `
     DELETE FROM password_reset_tokens
-    WHERE token = $1
+    WHERE id = $1
 `;
-  const values = [token];
+  const values = [id];
   await pool.query(query, values);
 }

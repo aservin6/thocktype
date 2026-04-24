@@ -1,7 +1,9 @@
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import {
   selectUserByEmail,
   insertUser,
+  updateUserPassword,
 } from "../repositories/user.repository.ts";
 import type { PublicUser } from "@typing-test/shared";
 import generateAccessToken from "../utils/generate-access-token.ts";
@@ -11,19 +13,23 @@ import {
   selectRefreshToken,
 } from "../repositories/refresh-token.repository.ts";
 import generateRefreshToken from "../utils/generate-refresh-token.ts";
-import { User } from "../types/user.ts";
-import generateResetToken from "../utils/generate-reset-token.ts";
-import { insertPasswordResetToken } from "../repositories/password_reset_token.repository.ts";
+import generatePasswordResetToken from "../utils/generate-reset-token.ts";
+import {
+  deletePasswordResetToken,
+  insertPasswordResetToken,
+  selectPasswordResetToken,
+} from "../repositories/password_reset_token.repository.ts";
 
 export async function register(
   email: string,
   password: string,
 ): Promise<PublicUser & { accessToken: string; refreshToken: string }> {
+  email = email.toLowerCase();
   // Throw error if user with email exists already
-  const user = await selectUserByEmail(email);
+  const user = await selectUserByEmail(email.toLowerCase());
   if (user) throw new Error("User already exists");
   // Generate username
-  const username = email.split("@")[0];
+  const username = email.toLowerCase().split("@")[0];
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
   // Create user with given details
@@ -52,6 +58,7 @@ export async function signIn(
   email: string,
   password: string,
 ): Promise<PublicUser & { accessToken: string; refreshToken: string }> {
+  email = email.toLowerCase();
   // Throw error if user doesn't exist
   const user = await selectUserByEmail(email);
   if (!user) throw new Error("Confirm sign in details and try again");
@@ -98,17 +105,34 @@ export async function refresh(
   return { accessToken, refreshToken: token };
 }
 
-export async function verifyResetRequest(
+export async function createPasswordResetToken(
   email: string,
 ): Promise<{ token: string }> {
+  email = email.toLowerCase();
   const user = await selectUserByEmail(email);
 
-  if (!user) throw new Error("User account not found");
+  if (!user) return { token: "" };
 
-  const { token, expiresAt } = generateResetToken();
-  const hashedToken = await bcrypt.hash(token, 10);
+  const { token, hashedToken, expiresAt } = generatePasswordResetToken();
 
-  await insertPasswordResetToken(user.id, token, expiresAt);
+  await insertPasswordResetToken(user.id, hashedToken, expiresAt);
 
-  return { token: hashedToken };
+  return { token };
+}
+
+export async function resetPassword(
+  token: string,
+  password: string,
+): Promise<void> {
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  const resetToken = await selectPasswordResetToken(hashedToken);
+  if (!resetToken) throw new Error("Invalid token");
+  if (new Date() > new Date(resetToken.expires_at))
+    throw new Error("Invalid token");
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await updateUserPassword(resetToken.user_id, hashedPassword);
+
+  await deletePasswordResetToken(resetToken.id);
 }
