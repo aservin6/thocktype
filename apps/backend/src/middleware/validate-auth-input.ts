@@ -52,9 +52,9 @@ export async function validatePasswordResetInput(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const { password, confirmedPassword } = req.body;
+  const { password, confirmPassword } = req.body;
 
-  if (password !== confirmedPassword) {
+  if (password !== confirmPassword) {
     res.status(400).json({ message: "Password fields do not match" });
     return;
   }

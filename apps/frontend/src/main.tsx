@@ -14,6 +14,7 @@ import App from "./App.tsx";
 import "@fontsource-variable/victor-mono";
 import AuthLayout from "./features/auth/components/AuthLayout.tsx";
 import Navigation from "./features/navigation/components/Navigation.tsx";
+import ForgotPasswordPage from "./features/auth/pages/ForgotPasswordPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -24,6 +25,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/" element={<App />} />
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route
