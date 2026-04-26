@@ -3,18 +3,31 @@ import ResetPasswordForm from "../components/ResetPasswordForm";
 import { useEffect, useState } from "react";
 
 export default function ResetPasswordPage() {
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [token, setToken] = useState(null);
+  const [isInitialized, setInitialized] = useState(false);
   const [searchParams] = useSearchParams();
+  const [isValid, setIsValid] = useState(false);
   useEffect(() => {
     const tokenParam = searchParams.get("token");
-    async function fetchToken(token: string) {
-      await fetch(`/auth/verify-reset-token?token=${tokenParam}`);
+    async function fetchToken() {
+      try {
+        if (!tokenParam) {
+          return;
+        }
+        const res = await fetch(`/auth/verify-reset-token?token=${tokenParam}`);
+        if (!res.ok) {
+          return;
+        }
+        setIsValid(true);
+      } catch (err) {
+      } finally {
+        setInitialized(true);
+      }
     }
+    fetchToken();
   }, [searchParams]);
 
   if (!isInitialized) return <div>Loading...</div>;
-  if (!token) return <Navigate to="/" replace />;
+  if (!isValid) return <Navigate to="/" replace />;
   return (
     <div>
       <ResetPasswordForm />
