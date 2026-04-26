@@ -8,6 +8,7 @@ import RegisterPage from "./features/auth/pages/RegisterPage.tsx";
 import LeaderboardPage from "./features/leaderboard/pages/LeaderboardPage.tsx";
 import AccountPage from "./features/account/pages/AccountPage.tsx";
 import SettingsPage from "./features/settings/pages/SettingsPage.tsx";
+
 import "./index.css";
 import App from "./App.tsx";
 // Supports weights 100-700
@@ -15,6 +16,7 @@ import "@fontsource-variable/victor-mono";
 import AuthLayout from "./features/auth/components/AuthLayout.tsx";
 import Navigation from "./features/navigation/components/Navigation.tsx";
 import ForgotPasswordPage from "./features/auth/pages/ForgotPasswordPage.tsx";
+import ResetPasswordForm from "./features/auth/components/ResetPasswordForm.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -26,6 +28,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordForm />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route

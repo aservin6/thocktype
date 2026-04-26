@@ -165,11 +165,6 @@ export async function resetPassword(
   const token = req.query.token as string;
   const { password } = req.body;
 
-  if (!token) {
-    res.status(401).json({ message: "No token found. Unauthorized access" });
-    return;
-  }
-
   try {
     await resetPasswordService(token, password);
     res.status(200).json({ message: "Password reset successfully" });

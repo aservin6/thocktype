@@ -13,6 +13,7 @@ import {
   validateSignInInput,
 } from "../middleware/validate-auth-input.ts";
 import { createRateLimiter } from "../middleware/rate-limit.ts";
+import { authenticateResetToken } from "../middleware/authenticate-reset-token.ts";
 
 const router: Router = express.Router();
 
@@ -48,6 +49,15 @@ router.post("/refresh", refreshTokens);
 
 router.post("/forgot-password", forgotPasswordLimiter, forgotPassword);
 
-router.post("/reset-password", validatePasswordResetInput, resetPassword);
+router.post(
+  "/reset-password",
+  authenticateResetToken,
+  validatePasswordResetInput,
+  resetPassword,
+);
+
+router.get("/verify-reset-token", authenticateResetToken, (req, res) =>
+  res.status(200).json({ message: "Token is valid" }),
+);
 
 export { router as authRoutes };

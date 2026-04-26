@@ -10,23 +10,15 @@ import {
   Field,
   FieldLabel,
   FieldError,
-  FieldDescription,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router";
 
-const formSchema = z
-  .object({
-    password: z
-      .string()
-      .min(8, "Password is too short. Minimum of 8 characters")
-      .max(72, "Password is too long. Maximum 72 characters."),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+const formSchema = z.object({
+  email: z
+    .string()
+    .email("Enter a valid email address.")
+    .max(254, "Email is too long (255+ characters)"),
+});
 
 export default function ForgotPasswordForm() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -35,9 +27,9 @@ export default function ForgotPasswordForm() {
   const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { password, confirmPassword } = values;
+    const { email } = values;
     try {
-      console.log("Update password flow");
+      console.log("sent", email);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -51,7 +43,7 @@ export default function ForgotPasswordForm() {
       className="mx-auto w-full max-w-xl space-y-8 py-10"
     >
       <FieldSet>
-        <FieldTitle className="text-xl font-bold">Register</FieldTitle>
+        <FieldTitle className="text-xl font-bold">Forgot Password?</FieldTitle>
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor="email" className="text-base font-medium">
@@ -69,34 +61,8 @@ export default function ForgotPasswordForm() {
               </FieldError>
             </div>
           </Field>
-          <Field>
-            <FieldLabel htmlFor="password" className="text-base font-medium">
-              Password
-            </FieldLabel>
-            <Input
-              id="password"
-              placeholder="********"
-              type="password"
-              {...form.register("password")}
-            />
-            <FieldDescription>Enter your password.</FieldDescription>
-            <div className="relative py-1">
-              <FieldError className="absolute">
-                {form.formState.errors.password?.message}
-              </FieldError>
-            </div>
-          </Field>
         </FieldGroup>
       </FieldSet>
-      <div className="text-sm">
-        Already have an account?{" "}
-        <Link
-          to="/signin"
-          className="font-bold text-blue-400 hover:text-sky-600"
-        >
-          Sign in
-        </Link>
-      </div>
       {error && <FieldError>{error}</FieldError>}
       <Button type="submit" className="text-[1em]">
         Submit
