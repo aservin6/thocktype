@@ -12,7 +12,7 @@ export default function Navigation() {
   const user = useAuthStore((s) => s.user);
   return (
     <>
-      <nav className="mx-auto flex max-w-5xl items-center justify-between">
+      <nav className="flex items-center justify-between">
         <Link to="/">
           <div className="text-3xl font-bold">thockr</div>
         </Link>

@@ -12,6 +12,7 @@ import {
   FieldError,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { apiClient } from "@/shared/api/client";
 
 const formSchema = z.object({
   email: z
@@ -20,16 +21,28 @@ const formSchema = z.object({
     .max(254, "Email is too long (255+ characters)"),
 });
 
-export default function ForgotPasswordForm() {
+export default function ForgotPasswordForm({
+  onSuccess,
+}: {
+  onSuccess: () => void;
+}) {
+  const [error, setError] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
-  const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { email } = values;
     try {
-      console.log("sent", email);
+      const res = await apiClient("/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (res.ok) onSuccess();
+      setError(await res.json());
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -64,7 +77,10 @@ export default function ForgotPasswordForm() {
         </FieldGroup>
       </FieldSet>
       {error && <FieldError>{error}</FieldError>}
-      <Button type="submit" className="text-[1em]">
+      <Button
+        type="submit"
+        className="w-full py-5 text-base hover:cursor-pointer"
+      >
         Submit
       </Button>
     </form>

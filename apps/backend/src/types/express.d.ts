@@ -1,9 +1,11 @@
 import { PublicUser } from "@typing-test/shared";
+import { PasswordResetToken } from "./token.ts";
 
 declare global {
   namespace Express {
     interface Request {
       user?: PublicUser;
+      passwordResetToken?: PasswordResetToken;
     }
   }
 }

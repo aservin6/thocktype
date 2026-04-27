@@ -104,7 +104,10 @@ export default function RegisterForm() {
         </Link>
       </div>
       {error && <FieldError>{error}</FieldError>}
-      <Button type="submit" className="text-[1em]">
+      <Button
+        type="submit"
+        className="w-full py-5 text-base hover:cursor-pointer"
+      >
         Submit
       </Button>
     </form>

@@ -89,17 +89,28 @@ export default function SignInForm() {
           </FieldGroup>
         </FieldSet>
 
-        <div className="text-sm">
-          Don't have an account?{" "}
+        <div className="flex flex-col items-start space-y-3 text-sm">
+          <div>
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="font-bold text-blue-400 hover:text-sky-600"
+            >
+              Create account
+            </Link>
+          </div>
           <Link
-            to="/register"
+            to="/forgot-password"
             className="font-bold text-blue-400 hover:text-sky-600"
           >
-            Create account
+            Forgot password?
           </Link>
         </div>
         {error && <FieldError>{error}</FieldError>}
-        <Button type="submit" className="text-[1em]">
+        <Button
+          type="submit"
+          className="w-full py-5 text-base hover:cursor-pointer"
+        >
           Submit
         </Button>
       </form>

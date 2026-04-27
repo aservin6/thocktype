@@ -28,7 +28,7 @@ export function TypingTest() {
   }
 
   return (
-    <div className="custom-font relative flex min-h-screen flex-col items-center justify-center gap-8 bg-neutral-800 font-mono">
+    <div className="custom-font relative flex min-h-screen flex-col items-center justify-center gap-8">
       {state?.status !== "running" && <TypingTestOptions />}
       {state?.status !== "finished" ? (
         <>

@@ -1,5 +1,4 @@
 import bcrypt from "bcrypt";
-import crypto from "crypto";
 import {
   selectUserByEmail,
   insertUser,
@@ -17,7 +16,6 @@ import generatePasswordResetToken from "../utils/generate-reset-token.ts";
 import {
   deletePasswordResetToken,
   insertPasswordResetToken,
-  selectPasswordResetToken,
 } from "../repositories/password_reset_token.repository.ts";
 
 export async function register(
@@ -121,18 +119,12 @@ export async function createPasswordResetToken(
 }
 
 export async function resetPassword(
-  token: string,
+  userId: string,
   password: string,
+  tokenId: string,
 ): Promise<void> {
-  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-  const resetToken = await selectPasswordResetToken(hashedToken);
-  if (!resetToken) throw new Error("Invalid token");
-  if (new Date() > new Date(resetToken.expires_at))
-    throw new Error("Invalid token");
-
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  await updateUserPassword(resetToken.user_id, hashedPassword);
-
-  await deletePasswordResetToken(resetToken.id);
+  await updateUserPassword(userId, hashedPassword);
+  await deletePasswordResetToken(tokenId);
 }

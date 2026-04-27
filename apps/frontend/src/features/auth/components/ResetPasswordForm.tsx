@@ -8,35 +8,49 @@ import {
   FieldError,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { apiClient } from "@/shared/api/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useSearchParams } from "react-router";
 import z from "zod";
 
-export default function ResetPasswordForm() {
-  const formSchema = z
-    .object({
-      password: z
-        .string()
-        .min(8, "Password is too short. Minimum of 8 characters")
-        .max(72, "Password is too long. Maximum 72 characters."),
-      confirmPassword: z.string(),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords don't match",
-      path: ["confirmPassword"],
-    });
+const formSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "Password is too short. Minimum of 8 characters")
+      .max(72, "Password is too long. Maximum 72 characters."),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
+export default function ResetPasswordForm({
+  onSuccess,
+}: {
+  onSuccess: () => void;
+}) {
+  const [error, setError] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
-  const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { password, confirmPassword } = values;
     try {
-      console.log("password: ", password);
-      console.log("confirm password: ", confirmPassword);
+      const res = await apiClient(`/auth/reset-password?token=${token}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password, confirmPassword }),
+      });
+
+      if (res.ok) onSuccess();
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -59,6 +73,7 @@ export default function ResetPasswordForm() {
             <Input
               id="password"
               placeholder="********"
+              type="password"
               {...form.register("password")}
             />
 
@@ -90,7 +105,10 @@ export default function ResetPasswordForm() {
         </FieldGroup>
       </FieldSet>
       {error && <FieldError>{error}</FieldError>}
-      <Button type="submit" className="text-[1em]">
+      <Button
+        type="submit"
+        className="w-full py-5 text-base hover:cursor-pointer"
+      >
         Submit
       </Button>
     </form>

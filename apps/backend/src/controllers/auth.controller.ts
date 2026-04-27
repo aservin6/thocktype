@@ -148,7 +148,7 @@ export async function forgotPassword(
         from: `onboarding@resend.dev`,
         to: email.toLowerCase(),
         subject: "Reset your password",
-        html: `<p>Click <a href="http://localhost:3000/reset-password?token=${token}&email=${email.toLowerCase()}">here</a> to reset your password.</p>`,
+        html: `<p>Click <a href="http://localhost:5173/reset-password?token=${token}&email=${email.toLowerCase()}">here</a> to reset your password.</p>`,
       });
     }
     res.status(200).json({ message: "Password reset email sent" });
@@ -162,11 +162,10 @@ export async function resetPassword(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const token = req.query.token as string;
   const { password } = req.body;
-
+  const { user_id, id } = req.passwordResetToken!;
   try {
-    await resetPasswordService(token, password);
+    await resetPasswordService(user_id, password, id);
     res.status(200).json({ message: "Password reset successfully" });
   } catch (err) {
     next(err);
