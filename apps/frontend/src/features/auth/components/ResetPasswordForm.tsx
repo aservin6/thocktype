@@ -8,7 +8,7 @@ import {
   FieldError,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { apiClient } from "@/shared/api/client";
+import { changePassword } from "@/features/account/api/account";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -44,13 +44,8 @@ export default function ResetPasswordForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { password, confirmPassword } = values;
     try {
-      const res = await apiClient(`/auth/reset-password?token=${token}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password, confirmPassword }),
-      });
-
-      if (res.ok) onSuccess();
+      await changePassword(token, password, confirmPassword);
+      onSuccess();
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);

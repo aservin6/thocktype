@@ -88,3 +88,19 @@ export async function checkSession(): Promise<PublicUser> {
   const body = await res.json();
   return body.data;
 }
+
+export async function fetchToken(tokenParam: string | null) {
+  if (!tokenParam) throw new Error("Invalid token param");
+
+  const res = await apiClient(
+    `/auth/verify-reset-token?token=${tokenParam}`,
+    { method: "GET" },
+    { skipRefresh: true },
+  );
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Unknown error");
+  }
+  const body = await res.json();
+  return body.data;
+}
