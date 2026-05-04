@@ -81,8 +81,7 @@ export class TypingEngine implements EngineContext {
 
     const index = this.state.input.length;
 
-    // Ignore input beyond target length
-    if (index > this.state.targetText.length) return;
+    if (index >= this.state.targetText.length) return;
 
     const expected = this.state.targetText[index];
 

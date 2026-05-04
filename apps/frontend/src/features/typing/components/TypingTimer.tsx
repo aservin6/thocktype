@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useTypingEngine } from "../hooks/useTypingEngine";
 
 export default function TypingTimer() {
-  const { tick, state, elapsedTime, timeLimit } = useTypingEngine();
-  const remainingTime = timeLimit - elapsedTime;
+  const { tick, state, timeElapsed, timeLimit } = useTypingEngine();
+  const remainingTime = timeLimit - timeElapsed;
 
   useEffect(() => {
     const interval = setInterval(() => {

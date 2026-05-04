@@ -4,6 +4,7 @@ export default function transformText(text: string | undefined) {
   const textArray: TransformedText[] = [];
   let characters: string[] = [];
   let wordIndex = 0;
+  let offset = 0;
 
   if (!text) return;
   for (const char of text) {
@@ -14,13 +15,16 @@ export default function transformText(text: string | undefined) {
           type: "word",
           characters,
           wordIndex,
+          startIndex: offset,
         });
         wordIndex++;
+        offset += characters.length;
         characters = [];
       }
 
       // Add space after each word
-      textArray.push({ type: "space" });
+      textArray.push({ type: "space", startIndex: offset });
+      offset++;
     } else {
       // Else push char to characters
       characters.push(char);
@@ -32,6 +36,7 @@ export default function transformText(text: string | undefined) {
       type: "word",
       characters,
       wordIndex,
+      startIndex: offset,
     });
   }
   return textArray;

@@ -10,7 +10,7 @@ type TypingState = {
   mode: Mode;
   timeLimit: number;
   wordCount: number;
-  elapsedTime: number;
+  timeElapsed: number;
   engineUnsubscribe: (() => void) | null;
 };
 
@@ -31,7 +31,7 @@ type TypingStore = TypingState & TypingActions;
 function syncState(engine: ObservableTypingEngine) {
   return {
     state: { ...engine.getState() },
-    elapsedTime: engine.getElapsedTime(),
+    timeElapsed: engine.getElapsedTime(),
   };
 }
 
@@ -42,7 +42,7 @@ export const useTypingStore = create<TypingStore>()((set, get) => ({
   mode: "standard",
   timeLimit: 30000,
   wordCount: 25,
-  elapsedTime: 0,
+  timeElapsed: 0,
   engineUnsubscribe: null,
   setTimeLimit: (timeLimit) => set(() => ({ timeLimit })),
   setWordCount: (wordCount) => set(() => ({ wordCount })),
@@ -55,7 +55,7 @@ export const useTypingStore = create<TypingStore>()((set, get) => ({
     const unsubscribe = engine.subscribe((state) => {
       set({
         state,
-        elapsedTime: engine.getElapsedTime(),
+        timeElapsed: engine.getElapsedTime(),
       });
     });
 

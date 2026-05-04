@@ -12,7 +12,7 @@ export class ObservableTypingEngine extends TypingEngine {
   }
 
   private emit() {
-    const snapshot = { ...this.state };
+    const snapshot = { ...this.state, charStates: [...this.state.charStates] };
 
     for (const listener of this.listeners) {
       listener(snapshot);

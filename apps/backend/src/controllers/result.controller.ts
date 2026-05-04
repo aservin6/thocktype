@@ -15,8 +15,8 @@ export async function postResult(
     if (!userId) throw Error("Unauthorized request");
     const result = await submitResult({
       user_id: userId,
-      wpm,
       time_elapsed: timeElapsed,
+      wpm,
       accuracy,
       mode,
       mode_value: modeValue,

@@ -3,6 +3,7 @@ import { useTypingEngine } from "../hooks/useTypingEngine";
 
 export default function Results() {
   const { state } = useTypingEngine();
+
   return (
     <div className="text-2xl font-bold text-white">
       {state ? (

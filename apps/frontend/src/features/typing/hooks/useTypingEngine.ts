@@ -3,7 +3,7 @@ import { useTypingStore } from "../store/useTypingStore";
 export function useTypingEngine() {
   const engine = useTypingStore((s) => s.engine);
   const state = useTypingStore((s) => s.state);
-  const elapsedTime = useTypingStore((s) => s.elapsedTime);
+  const timeElapsed = useTypingStore((s) => s.timeElapsed);
   const mode = useTypingStore((s) => s.mode);
   const timeLimit = useTypingStore((s) => s.timeLimit);
   const wordCount = useTypingStore((s) => s.wordCount);
@@ -22,7 +22,7 @@ export function useTypingEngine() {
   return {
     engine,
     state,
-    elapsedTime,
+    timeElapsed,
     mode,
     timeLimit,
     wordCount,

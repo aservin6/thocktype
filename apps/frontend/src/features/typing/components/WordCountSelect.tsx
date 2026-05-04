@@ -1,7 +1,7 @@
-import { useTypingStore } from "../store/useTypingStore";
+import { useTypingEngine } from "../hooks/useTypingEngine";
 
 export default function WordCountSelect() {
-  const { setWordCount, wordCount } = useTypingStore();
+  const { setWordCount, wordCount } = useTypingEngine();
 
   return (
     <div className="flex items-center space-x-3 font-bold text-white *:rounded *:p-1.5">

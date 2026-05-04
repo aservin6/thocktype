@@ -1,11 +1,14 @@
 import { type Result } from "@typing-test/shared";
 import { apiClient } from "../../../shared/api/client";
+import type { CreateResultPayload } from "@/features/typing/types/types";
 
-export async function postResult(result: Result): Promise<Result> {
+export async function postResult(
+  resultPayload: CreateResultPayload,
+): Promise<Result> {
   const res = await apiClient("/api/results", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(result),
+    body: JSON.stringify(resultPayload),
   });
   if (!res.ok) {
     const error = await res.json();

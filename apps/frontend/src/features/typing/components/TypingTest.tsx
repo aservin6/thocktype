@@ -3,9 +3,48 @@ import { useTypingEngine } from "../hooks/useTypingEngine";
 import Results from "./Results";
 import TypingTestOptions from "./TypingTestOptions";
 import TestWidget from "./TestWidget";
+import { useEffect, useRef, useState } from "react";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { postResult } from "@/features/account/api/results";
+import { getAccuracy, getWPM } from "@typing-test/shared";
 
 export function TypingTest() {
-  const { state, handleCharacter, handleBackspace } = useTypingEngine();
+  const [error, setError] = useState<string | null>(null);
+  const {
+    state,
+    handleCharacter,
+    handleBackspace,
+    timeElapsed,
+    timeLimit,
+    wordCount,
+  } = useTypingEngine();
+  const user = useAuthStore((s) => s.user);
+  const hasPosted = useRef(false);
+
+  useEffect(() => {
+    if (state?.status === "idle") {
+      hasPosted.current = false;
+      return;
+    }
+    if (state?.status !== "finished") return;
+    if (hasPosted.current || !user) return;
+    (async () => {
+      try {
+        await postResult({
+          wpm: getWPM(state),
+          timeElapsed: timeElapsed / 1000,
+          accuracy: getAccuracy(state),
+          mode: state.mode,
+          correct: state.correctCount,
+          incorrect: state.incorrectCount,
+          modeValue: state.mode === "timed" ? timeLimit : wordCount,
+        });
+        hasPosted.current = true;
+      } catch {
+        setError("Error occured while trying to save results");
+      }
+    })();
+  }, [state?.status]);
 
   function handleInput(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (!state) return;
@@ -50,6 +89,7 @@ export function TypingTest() {
         <>
           {/* Results shown on finish */}
           <Results />
+          {error && <div>{error}</div>}
         </>
       )}
     </div>
