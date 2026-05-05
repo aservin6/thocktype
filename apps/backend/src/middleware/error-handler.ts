@@ -1,5 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 
+// Maps known service-layer error messages to HTTP status codes.
+// Anything not listed here is treated as an unexpected 500 and the message is scrubbed from the response.
 const errorCodes: Record<string, number> = {
   "User already exists": 409,
   "Confirm sign in details and try again": 401,

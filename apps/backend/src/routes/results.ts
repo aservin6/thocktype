@@ -1,15 +1,16 @@
 import express, { Router } from "express";
 import {
   getLeaderboardResults,
-  postResult,
+  createResult,
 } from "../controllers/result.controller.ts";
 import { authenticateToken } from "../middleware/authenticate-token.ts";
 
+// All routes are mounted under /api/v1 in server.ts.
+// Leaderboard is public; posting a result requires authentication.
 const router: Router = express.Router();
 
-// Results prefixed with /api
 router.get("/leaderboard/:mode", getLeaderboardResults);
 
-router.post("/results", authenticateToken, postResult);
+router.post("/results", authenticateToken, createResult);
 
 export { router as resultsRoutes };

@@ -1,5 +1,4 @@
-import type { LeaderboardResult, Result } from "../types/result.ts";
-import type { resultCreationDetails } from "../services/result.service.ts";
+import type { LeaderboardResult, Result, ResultCreationDetails } from "../types/result.ts";
 import pool from "../db/pool.ts";
 
 export async function insertResult({
@@ -11,7 +10,7 @@ export async function insertResult({
   mode_value,
   correct,
   incorrect,
-}: resultCreationDetails): Promise<Result> {
+}: ResultCreationDetails): Promise<Result> {
   const query = `
     INSERT INTO results (user_id, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -28,9 +27,9 @@ export async function insertResult({
     correct,
     incorrect,
   ];
-  const result = await pool.query(query, values);
+  const queryResult = await pool.query(query, values);
 
-  return result.rows[0];
+  return queryResult.rows[0];
 }
 
 export async function selectResultsByUser(user_id: string): Promise<Result[]> {
@@ -40,9 +39,9 @@ export async function selectResultsByUser(user_id: string): Promise<Result[]> {
 `;
 
   const values = [user_id];
-  const result = await pool.query(query, values);
+  const queryResult = await pool.query(query, values);
 
-  return result.rows;
+  return queryResult.rows;
 }
 
 export async function selectLeaderboardResults(
@@ -61,7 +60,7 @@ export async function selectLeaderboardResults(
 `;
 
   const values = [mode, limit, offset];
-  const result = await pool.query(query, values);
+  const queryResult = await pool.query(query, values);
 
-  return result.rows;
+  return queryResult.rows;
 }

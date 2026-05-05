@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { submitResult, getLeaderboard } from "../services/result.service.ts";
 import { selectResultsByUser } from "../repositories/result.repository.ts";
 
-export async function postResult(
+export async function createResult(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -33,7 +33,7 @@ export async function postResult(
   }
 }
 
-export async function getUsersResults(
+export async function getUserResults(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -60,13 +60,9 @@ export async function getLeaderboardResults(
   let page = parseInt(req.query.page as string);
   let limit = parseInt(req.query.limit as string);
 
-  if (isNaN(page) || page < 1) {
-    page = 1;
-  }
-
-  if (isNaN(limit) || limit < 1 || limit > 100) {
-    limit = 25;
-  }
+  // Default and clamp pagination params so the leaderboard endpoint is safe to call without query params.
+  if (isNaN(page) || page < 1) page = 1;
+  if (isNaN(limit) || limit < 1 || limit > 100) limit = 25;
 
   try {
     const results = await getLeaderboard(mode, page, limit);

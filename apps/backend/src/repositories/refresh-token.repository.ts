@@ -13,9 +13,9 @@ export async function insertRefreshToken(
 `;
 
   const values = [userId, token, expiresAt];
-  const result = await pool.query(query, values);
+  const queryResult = await pool.query(query, values);
 
-  return result.rows[0];
+  return queryResult.rows[0];
 }
 
 export async function selectRefreshToken(
@@ -27,9 +27,9 @@ export async function selectRefreshToken(
 `;
 
   const values = [token];
-  const result = await pool.query(query, values);
+  const queryResult = await pool.query(query, values);
 
-  return result.rows[0] ?? null;
+  return queryResult.rows[0] ?? null;
 }
 
 export async function deleteRefreshToken(token: string): Promise<void> {
@@ -42,6 +42,7 @@ export async function deleteRefreshToken(token: string): Promise<void> {
   await pool.query(query, values);
 }
 
+// Used to revoke all active sessions for a user, e.g. on password change.
 export async function deleteAllUserRefreshTokens(
   userId: string,
 ): Promise<void> {

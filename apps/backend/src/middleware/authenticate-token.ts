@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import requireEnv from "../utils/require-env.ts";
 import { selectUserById } from "../repositories/user.repository.ts";
 
+const { TokenExpiredError, JsonWebTokenError } = jwt;
+
 const JWT_SECRET = requireEnv("JWT_SECRET");
 
 export async function authenticateToken(
@@ -35,9 +37,16 @@ export async function authenticateToken(
 
     next();
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(401).json({ message: "Invalid token signature" });
+    // TokenExpiredError is a subclass of JsonWebTokenError, so order matters here.
+    // The client uses the "Token expired" message to know a refresh is worth attempting.
+    if (err instanceof TokenExpiredError) {
+      res.status(401).json({ message: "Token expired" });
       return;
     }
+    if (err instanceof JsonWebTokenError) {
+      res.status(401).json({ message: "Invalid token" });
+      return;
+    }
+    next(err);
   }
 }

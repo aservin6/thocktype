@@ -29,9 +29,9 @@ app.use(
 );
 
 // Routes
-app.use("/auth", authRoutes);
-app.use("/api", resultsRoutes);
-app.use("/me", meRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1", resultsRoutes);
+app.use("/api/v1/me", meRoutes);
 
 // Error handling
 app.use(errorHandler);
@@ -40,8 +40,9 @@ app.listen(PORT, () => {
   console.log(`LISTENING ON PORT ${PORT}`);
 });
 
+// Closes Redis and Postgres connections before the process exits.
+// The 5s timeout forces an exit if either hangs during teardown.
 async function shutdown() {
-  // Cleanup
   setTimeout(() => {
     console.error("Shutdown timed out, forcing exit");
     process.exit(1);
@@ -64,7 +65,6 @@ async function shutdown() {
   });
 
   const anyFailed = results.some((result) => result.status === "rejected");
-
   process.exit(anyFailed ? 1 : 0);
 }
 

@@ -17,7 +17,7 @@ export function validateRegisterInput(
     return;
   }
 
-  // Password validation
+  // 72-char max is bcrypt's effective input limit. Anything beyond is silently truncated by the algorithm.
   if (
     password.length < 8 ||
     password.length > 72 ||
@@ -59,6 +59,7 @@ export async function validatePasswordResetInput(
     return;
   }
 
+  // Same rules as registration. 72-char max is bcrypt's effective input limit.
   if (
     password.length < 8 ||
     password.length > 72 ||

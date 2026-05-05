@@ -26,7 +26,7 @@ function waitForRefresh(): Promise<void> {
 }
 
 async function attemptRefresh(): Promise<void> {
-  const res = await fetch(`${BASE_URL}/auth/refresh`, {
+  const res = await fetch(`${BASE_URL}/api/v1/auth/refresh`, {
     method: "POST",
     credentials: "include",
   });

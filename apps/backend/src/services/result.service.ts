@@ -3,15 +3,19 @@ import {
   selectLeaderboardResults,
 } from "../repositories/result.repository.ts";
 import { selectUserById } from "../repositories/user.repository.ts";
-import type { LeaderboardResult, Result } from "../types/result.ts";
+import type {
+  LeaderboardResult,
+  Result,
+  ResultCreationDetails,
+} from "../types/result.ts";
 import redis from "../db/redis.ts";
 
 const CACHE_TTL = 300;
+// Cap the number of entries fetched from the DB and held in Redis per mode.
+// Pagination is then served by slicing this in-memory array rather than hitting the DB on every page.
 const LEADERBOARD_TOP_N = 500;
 
-// Cache-aside pattern: check Redis → miss → query Postgres → store in Redis → return
-// On Redis failure: fall through to Postgres (fail-open)
-// Pagination is done in-memory by slicing the cached array
+// Cache-aside: check Redis first, fall back to Postgres on miss or Redis failure (fail-open).
 export async function getLeaderboard(
   mode: string,
   page: number,
@@ -21,10 +25,10 @@ export async function getLeaderboard(
   let results = null;
 
   try {
-    const value = await redis.get(cacheKey);
+    const cached = await redis.get(cacheKey);
 
-    if (value) {
-      results = JSON.parse(value);
+    if (cached) {
+      results = JSON.parse(cached);
       console.log("Cache hit");
     } else {
       results = await selectLeaderboardResults(mode, 1, LEADERBOARD_TOP_N);
@@ -39,17 +43,6 @@ export async function getLeaderboard(
   return results.slice(limit * (page - 1), limit * page);
 }
 
-export interface resultCreationDetails {
-  user_id: string;
-  wpm: number;
-  time_elapsed: number;
-  accuracy: number;
-  mode: string;
-  mode_value: number;
-  correct: number;
-  incorrect: number;
-}
-
 export async function submitResult({
   user_id,
   wpm,
@@ -59,7 +52,7 @@ export async function submitResult({
   mode_value,
   correct,
   incorrect,
-}: resultCreationDetails): Promise<Result> {
+}: ResultCreationDetails): Promise<Result> {
   const user = await selectUserById(user_id);
   if (!user) throw new Error("User does not exist");
   if (wpm < 0 || accuracy < 0) throw new Error("Result data is invalid");
@@ -75,6 +68,7 @@ export async function submitResult({
     incorrect,
   });
 
+  // Invalidate the leaderboard cache for this mode so the next read reflects the new result.
   const cacheKey = `leaderboard:${mode}`;
   try {
     await redis.del(cacheKey);

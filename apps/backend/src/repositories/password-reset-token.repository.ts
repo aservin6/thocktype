@@ -13,11 +13,12 @@ export async function insertPasswordResetToken(
 `;
 
   const values = [userId, token, expiresAt];
-  const result = await pool.query(query, values);
+  const queryResult = await pool.query(query, values);
 
-  return result.rows[0];
+  return queryResult.rows[0];
 }
 
+// Looks up by the hashed token. The raw token only ever exists in the email sent to the user.
 export async function selectPasswordResetToken(
   hashedToken: string,
 ): Promise<PasswordResetToken | null> {
@@ -26,9 +27,9 @@ export async function selectPasswordResetToken(
     WHERE token = $1
 `;
   const values = [hashedToken];
-  const result = await pool.query(query, values);
+  const queryResult = await pool.query(query, values);
 
-  return result.rows[0] ?? null;
+  return queryResult.rows[0] ?? null;
 }
 
 export async function deletePasswordResetToken(id: string): Promise<void> {

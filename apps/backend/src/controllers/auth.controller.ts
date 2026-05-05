@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 import {
-  refresh,
+  refreshAuthTokens,
   register,
   signIn,
   createPasswordResetToken,
-  resetPassword as resetPasswordService,
+  updatePassword,
 } from "../services/auth.service.ts";
 import { deleteRefreshToken } from "../repositories/refresh-token.repository.ts";
 import { Resend } from "resend";
@@ -79,15 +79,15 @@ export async function signOutUser(
   next: NextFunction,
 ): Promise<void> {
   // Delete current refresh token from DB
-  const refreshTokenString = req.cookies.refresh_token;
-  if (!refreshTokenString) {
+  const refreshToken = req.cookies.refresh_token;
+  if (!refreshToken) {
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");
     res.status(200).json({ message: "Signed out successfully" });
     return;
   }
   try {
-    await deleteRefreshToken(refreshTokenString);
+    await deleteRefreshToken(refreshToken);
     // then clear both local cookies (access + refresh)
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");
@@ -107,9 +107,8 @@ export async function refreshTokens(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  // Grab local refresh token string
-  const refreshTokenString = req.cookies.refresh_token;
-  if (!refreshTokenString) {
+  const refreshToken = req.cookies.refresh_token;
+  if (!refreshToken) {
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");
     res.status(401).json({ message: "No token found. Unauthorized access" });
@@ -117,13 +116,13 @@ export async function refreshTokens(
   }
   // Refresh tokens and set new cookies
   try {
-    const { accessToken, refreshToken } = await refresh(refreshTokenString);
+    const { accessToken, refreshToken: newRefreshToken } = await refreshAuthTokens(refreshToken);
     res.cookie("access_token", accessToken, {
       httpOnly: true,
       secure: isProduction,
       sameSite: "strict",
     });
-    res.cookie("refresh_token", refreshToken, {
+    res.cookie("refresh_token", newRefreshToken, {
       httpOnly: true,
       secure: isProduction,
       sameSite: "strict",
@@ -134,6 +133,8 @@ export async function refreshTokens(
   }
 }
 
+// Always responds with 200 regardless of whether the email exists.
+// This prevents leaking which emails are registered.
 export async function forgotPassword(
   req: Request,
   res: Response,
@@ -165,7 +166,7 @@ export async function resetPassword(
   const { password } = req.body;
   const { user_id, id } = req.passwordResetToken!;
   try {
-    await resetPasswordService(user_id, password, id);
+    await updatePassword(user_id, password, id);
     res.status(200).json({ message: "Password reset successfully" });
   } catch (err) {
     next(err);

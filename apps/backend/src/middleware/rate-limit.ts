@@ -4,12 +4,10 @@ import redis from "../db/redis.ts";
 interface RateLimitConfig {
   windowMs: number;
   max: number;
-  keyPrefix: string; // ex: "ratelimit:signin", "ratelimit:register"
-  failOpen: boolean;
+  keyPrefix: string; // e.g. "ratelimit:signin", "ratelimit:register"
+  failOpen: boolean; // if true, allows requests through when Redis is unavailable
 }
 
-// takes config, returns Express middleware
-// Usage: app.use("/auth/signin", createRateLimiter({ windowMs: 900000, max: 10, keyPrefix: "ratelimit:signin" }))
 export function createRateLimiter({
   windowMs,
   max,
@@ -22,6 +20,8 @@ export function createRateLimiter({
     next: NextFunction,
   ): Promise<void> {
     const ip = req.ip;
+    // windowId groups requests into fixed time buckets keyed by IP.
+    // The key naturally expires at the end of the window via redis.expire.
     const windowId = Math.floor(Date.now() / windowMs);
     const key = `${keyPrefix}:${ip}:${windowId}`;
 
@@ -29,6 +29,7 @@ export function createRateLimiter({
     try {
       count = await redis.incr(key);
       if (count === 1) {
+        // Set TTL only on first increment to avoid resetting the window on every request.
         await redis.expire(key, Math.ceil(windowMs / 1000));
       }
 

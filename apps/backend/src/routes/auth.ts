@@ -15,6 +15,7 @@ import {
 import { createRateLimiter } from "../middleware/rate-limit.ts";
 import { authenticateResetToken } from "../middleware/authenticate-reset-token.ts";
 
+// All routes are mounted under /api/v1/auth in server.ts
 const router: Router = express.Router();
 
 const registerLimiter = createRateLimiter({

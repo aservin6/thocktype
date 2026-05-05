@@ -5,7 +5,7 @@ import type { CreateResultPayload } from "@/features/typing/types/types";
 export async function postResult(
   resultPayload: CreateResultPayload,
 ): Promise<Result> {
-  const res = await apiClient("/api/results", {
+  const res = await apiClient("/api/v1/results", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(resultPayload),
@@ -19,7 +19,7 @@ export async function postResult(
 }
 
 export async function getMeResults(): Promise<Result[]> {
-  const res = await apiClient("/me/results");
+  const res = await apiClient("/api/v1/me/results");
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.message || "Unknown error");

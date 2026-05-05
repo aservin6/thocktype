@@ -1,5 +1,6 @@
 import crypto from "crypto";
 
+// Opaque random token, not a JWT. Stored in the DB and rotated on each use.
 export default function generateRefreshToken(): {
   token: string;
   expiresAt: Date;

@@ -1,7 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import * as scoring from "../engine/scoring.ts";
-import { TypingEngine } from "../engine/engine";
-import { TimedMode } from "../engine/modes/TimedMode.ts";
+import { TypingEngine, TimedMode } from "@typing-test/shared";
 
 describe("TypingEngine - TimedMode", () => {
   beforeEach(() => {
@@ -14,7 +12,7 @@ describe("TypingEngine - TimedMode", () => {
   });
 
   it("starts running on first character input", () => {
-    const engine = new TypingEngine("hello", new TimedMode(30));
+    const engine = new TypingEngine("hello", new TimedMode(30000));
 
     engine.handleCharacter("h");
 
@@ -24,20 +22,20 @@ describe("TypingEngine - TimedMode", () => {
     expect(state.startTime).not.toBeNull();
   });
 
-  it("sets timeLimit on first input", () => {
-    const engine = new TypingEngine("hello", new TimedMode(30));
+  it("returns timeLimit from strategy", () => {
+    const engine = new TypingEngine("hello", new TimedMode(30000));
 
     engine.handleCharacter("h");
 
-    expect(engine.getState().timeLimit).toBe(30);
+    expect(engine.getTimeLimit()).toBe(30000);
   });
 
   it("does not finish before time limit", () => {
-    const engine = new TypingEngine("hello world", new TimedMode(30));
+    const engine = new TypingEngine("hello world", new TimedMode(30000));
 
     engine.handleCharacter("h");
 
-    vi.spyOn(scoring, "getElapsedTime").mockReturnValue(29000);
+    vi.spyOn(engine, "getElapsedTime").mockReturnValue(29000);
 
     engine.checkTime();
 
@@ -45,11 +43,11 @@ describe("TypingEngine - TimedMode", () => {
   });
 
   it("finishes when time limit is reached", () => {
-    const engine = new TypingEngine("hello world", new TimedMode(30));
+    const engine = new TypingEngine("hello world", new TimedMode(30000));
 
     engine.handleCharacter("h");
 
-    vi.spyOn(scoring, "getElapsedTime").mockReturnValue(30000);
+    vi.spyOn(engine, "getElapsedTime").mockReturnValue(30000);
 
     engine.checkTime();
 
@@ -60,16 +58,16 @@ describe("TypingEngine - TimedMode", () => {
   });
 
   it("does not accept input after time expires", () => {
-    const engine = new TypingEngine("hello", new TimedMode(30));
+    const engine = new TypingEngine("hello", new TimedMode(30000));
 
     engine.handleCharacter("h");
 
-    vi.spyOn(scoring, "getElapsedTime").mockReturnValue(30000);
+    vi.spyOn(engine, "getElapsedTime").mockReturnValue(30000);
 
     engine.checkTime();
 
     engine.handleCharacter("e");
 
-    expect(engine.getState().typedCharacters.length).toBe(1);
+    expect(engine.getState().input.length).toBe(1);
   });
 });

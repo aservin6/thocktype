@@ -6,7 +6,7 @@ export async function signIn(
   password: string,
 ): Promise<PublicUser> {
   const res = await apiClient(
-    "/auth/signin",
+    "/api/v1/auth/signin",
     {
       method: "POST",
       headers: {
@@ -29,7 +29,7 @@ export async function register(
   password: string,
 ): Promise<PublicUser> {
   const res = await apiClient(
-    "/auth/register",
+    "/api/v1/auth/register",
     {
       method: "POST",
       headers: {
@@ -49,7 +49,7 @@ export async function register(
 
 export async function signOut(): Promise<void> {
   const res = await apiClient(
-    "/auth/signout",
+    "/api/v1/auth/signout",
     {
       method: "POST",
     },
@@ -62,7 +62,7 @@ export async function signOut(): Promise<void> {
 }
 
 export async function getMe(): Promise<PublicUser> {
-  const res = await apiClient("/me", {
+  const res = await apiClient("/api/v1/me", {
     method: "GET",
   });
   if (!res.ok) {
@@ -74,13 +74,9 @@ export async function getMe(): Promise<PublicUser> {
 }
 
 export async function checkSession(): Promise<PublicUser> {
-  const res = await apiClient(
-    "/me",
-    {
-      method: "GET",
-    },
-    { skipRefresh: true },
-  );
+  const res = await apiClient("/api/v1/me", {
+    method: "GET",
+  });
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.message || "Unknown error");
@@ -93,7 +89,7 @@ export async function fetchToken(tokenParam: string | null) {
   if (!tokenParam) throw new Error("Invalid token param");
 
   const res = await apiClient(
-    `/auth/verify-reset-token?token=${tokenParam}`,
+    `/api/v1/auth/verify-reset-token?token=${tokenParam}`,
     { method: "GET" },
     { skipRefresh: true },
   );
