@@ -29,20 +29,50 @@ export default function TypingContainer() {
       >
         <TypingCaret caretPos={caretPos} />
         {textArray?.map((item, itemIndex) => {
-          // SPACE
-          if (item.type === "space") {
-            const { startIndex } = item;
-            return (
-              <span
-                key={`space-${itemIndex}`}
-                ref={(el) => {
-                  charRefs.current[startIndex] = el;
-                }}
-                className="relative inline-block"
-              >
-                {" "}
-              </span>
-            );
+          {
+            /* // SPACE */
+          }
+          {
+            /* if (item.type === "space") { */
+          }
+          {
+            /*   const { startIndex } = item; */
+          }
+          {
+            /*   return ( */
+          }
+          {
+            /*     <span */
+          }
+          {
+            /*       key={`space-${itemIndex}`} */
+          }
+          {
+            /*       ref={(el) => { */
+          }
+          {
+            /*         charRefs.current[startIndex] = el; */
+          }
+          {
+            /*       }} */
+          }
+          {
+            /*       className="relative inline-block" */
+          }
+          {
+            /*     > */
+          }
+          {
+            /*       {" "} */
+          }
+          {
+            /*     </span> */
+          }
+          {
+            /*   ); */
+          }
+          {
+            /* } */
           }
           // WORD
           if (item.type === "word" && state) {

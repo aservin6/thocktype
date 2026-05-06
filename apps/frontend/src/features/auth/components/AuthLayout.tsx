@@ -9,7 +9,8 @@ export default function AuthLayout() {
   const setInitialized = useAuthStore((s) => s.setInitialized);
 
   useEffect(() => {
-    async function fetchGetMe() {
+    if (isInitialized) return;
+    (async () => {
       try {
         setUser(await checkSession());
         setInitialized(true);
@@ -17,9 +18,7 @@ export default function AuthLayout() {
         if (err) setUser(null);
         setInitialized(true);
       }
-    }
-    if (isInitialized) return;
-    fetchGetMe();
+    })();
   }, [setUser, setInitialized, isInitialized]);
   if (!isInitialized) return <div>Loading...</div>;
   return <Outlet />;
