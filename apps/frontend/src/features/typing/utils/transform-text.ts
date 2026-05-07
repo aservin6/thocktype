@@ -1,5 +1,10 @@
 import type { TransformedText } from "../types/types";
 
+// Splits the target text into word and space tokens. startIndex tracks each
+// token's position in the original flat string so charStates (indexed by
+// character position) can be mapped onto individual rendered characters.
+// Space tokens are emitted to keep startIndex in sync but are currently not
+// rendered by TypingContainer.
 export default function transformText(text: string | undefined) {
   const textArray: TransformedText[] = [];
   let characters: string[] = [];
@@ -9,7 +14,6 @@ export default function transformText(text: string | undefined) {
   if (!text) return;
   for (const char of text) {
     if (char === " ") {
-      // Flush word if it exists
       if (characters.length > 0) {
         textArray.push({
           type: "word",
@@ -22,15 +26,12 @@ export default function transformText(text: string | undefined) {
         characters = [];
       }
 
-      // Add space after each word
       textArray.push({ type: "space", startIndex: offset });
       offset++;
     } else {
-      // Else push char to characters
       characters.push(char);
     }
   }
-  // Final flush (end of input)
   if (characters.length > 0) {
     textArray.push({
       type: "word",

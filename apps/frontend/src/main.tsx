@@ -19,6 +19,10 @@ import ForgotPasswordPage from "./features/auth/pages/ForgotPasswordPage.tsx";
 import ResetPasswordPage from "./features/auth/pages/ResetPasswordPage.tsx";
 import Container from "./components/ui/container.tsx";
 
+// Route layout layers (outermost to innermost):
+//   AuthLayout  — runs the session check once before any route renders
+//   Container   — global page width, background, and padding
+//   Navigation  — nav bar rendered above every page via Outlet
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>

@@ -73,16 +73,20 @@ export async function getMe(): Promise<PublicUser> {
   return body.data;
 }
 
-export async function checkSession(): Promise<PublicUser> {
-  const res = await apiClient("/api/v1/me", {
-    method: "GET",
-  });
+export async function forgotPassword(email: string): Promise<void> {
+  const res = await apiClient(
+    "/api/v1/auth/forgot-password",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    },
+    { skipRefresh: true },
+  );
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.message || "Unknown error");
   }
-  const body = await res.json();
-  return body.data;
 }
 
 export async function fetchToken(tokenParam: string | null) {

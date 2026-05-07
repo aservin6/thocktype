@@ -1,5 +1,7 @@
 import { useTypingStore } from "../store/useTypingStore";
 
+// Facade over useTypingStore. Components should use this hook rather than
+// accessing the store directly so they don't need to know about its shape.
 export function useTypingEngine() {
   const engine = useTypingStore((s) => s.engine);
   const state = useTypingStore((s) => s.state);

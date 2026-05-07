@@ -36,6 +36,9 @@ export default function SignInForm() {
       const user = await signIn(email, password);
       if (user) {
         setUser(user);
+        // AuthLayout only runs its session check once on mount. Signing in after
+        // that point requires manually setting isInitialized so ProtectedRoute
+        // doesn't block access.
         setInitialized(true);
       }
     } catch (err) {

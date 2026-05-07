@@ -8,6 +8,7 @@ import { useCaretTracking } from "../hooks/useCaretTracking";
 
 export default function TypingContainer() {
   const { state } = useTypingEngine();
+  // Re-transform only when the target text changes (i.e. on reset), not on every keystroke.
   const textArray = useMemo(
     () => transformText(state?.targetText),
     [state?.targetText],
@@ -29,52 +30,8 @@ export default function TypingContainer() {
       >
         <TypingCaret caretPos={caretPos} />
         {textArray?.map((item, itemIndex) => {
-          {
-            /* // SPACE */
-          }
-          {
-            /* if (item.type === "space") { */
-          }
-          {
-            /*   const { startIndex } = item; */
-          }
-          {
-            /*   return ( */
-          }
-          {
-            /*     <span */
-          }
-          {
-            /*       key={`space-${itemIndex}`} */
-          }
-          {
-            /*       ref={(el) => { */
-          }
-          {
-            /*         charRefs.current[startIndex] = el; */
-          }
-          {
-            /*       }} */
-          }
-          {
-            /*       className="relative inline-block" */
-          }
-          {
-            /*     > */
-          }
-          {
-            /*       {" "} */
-          }
-          {
-            /*     </span> */
-          }
-          {
-            /*   ); */
-          }
-          {
-            /* } */
-          }
-          // WORD
+          // Space tokens from transformText are intentionally skipped here.
+          // Spaces are rendered implicitly via word padding (px-2 on TypingWord).
           if (item.type === "word" && state) {
             return (
               <TypingWord

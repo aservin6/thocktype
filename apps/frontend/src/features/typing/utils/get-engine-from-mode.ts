@@ -12,6 +12,9 @@ export function getEngineFromMode(
   wordCount: number,
   timeLimit: number,
 ) {
+  // Timed mode ignores the user-selected word count and uses a fixed pool.
+  // The test ends on time, not when words run out, so the count just needs to
+  // be large enough that a fast typist doesn't exhaust the text mid-test.
   if (mode === "timed") {
     wordCount = 25;
   }

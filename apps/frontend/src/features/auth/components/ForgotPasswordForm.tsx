@@ -12,7 +12,7 @@ import {
   FieldError,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { apiClient } from "@/shared/api/client";
+import { forgotPassword } from "../api/auth";
 
 const formSchema = z.object({
   email: z
@@ -35,14 +35,8 @@ export default function ForgotPasswordForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { email } = values;
     try {
-      const res = await apiClient("/api/v1/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      if (res.ok) onSuccess();
-      setError(await res.json());
+      await forgotPassword(email);
+      onSuccess();
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);

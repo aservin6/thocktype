@@ -4,6 +4,9 @@ export function generateText(wordCount: number) {
   let currentIndex = words.length,
     randomIndex;
 
+  // Fisher-Yates shuffle. Note: this mutates the module-level words array,
+  // so the order changes globally on every call. This is fine here since we
+  // always shuffle before slicing, but be aware if words is ever read elsewhere.
   while (currentIndex !== 0) {
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;

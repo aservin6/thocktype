@@ -19,6 +19,8 @@ export function TypingTest() {
     wordCount,
   } = useTypingEngine();
   const user = useAuthStore((s) => s.user);
+  // Ref instead of state so changes don't trigger a re-render. Guards against
+  // React StrictMode double-invoking the effect and posting the result twice.
   const hasPosted = useRef(false);
 
   useEffect(() => {
@@ -27,6 +29,7 @@ export function TypingTest() {
       return;
     }
     if (state?.status !== "finished") return;
+    // Skip posting if the user is not logged in — results are guest-only.
     if (hasPosted.current || !user) return;
     (async () => {
       try {
@@ -76,7 +79,8 @@ export function TypingTest() {
             <div className="absolute -top-1/3 left-0 text-3xl tracking-wider text-red-300">
               <TestWidget />
             </div>
-            {/* Hidden textarea */}
+            {/* Invisible textarea overlaid on the text. Captures keyboard input
+                without exposing a visible input field to the user. */}
             <textarea
               onKeyDown={handleInput}
               className="absolute inset-0 z-50 opacity-0"

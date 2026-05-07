@@ -12,6 +12,8 @@ export default function ResetPasswordPage() {
   const onSuccess = () => setStatus("success");
   const [timeLeft, setTimeLeft] = useState(5);
 
+  // Validate the token from the URL before showing the form. Redirects to "/"
+  // on failure so users can't see the reset form with an expired/invalid token.
   useEffect(() => {
     const tokenParam = searchParams.get("token");
     (async () => {
@@ -24,6 +26,8 @@ export default function ResetPasswordPage() {
     })();
   }, []);
 
+  // On success, run a visual countdown and then navigate to /signin.
+  // Both the interval and the timeout are cleaned up if the component unmounts.
   useEffect(() => {
     if (status === "success") {
       const countdownId = setInterval(() => {

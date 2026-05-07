@@ -1,8 +1,11 @@
 import { useEffect } from "react";
-import { checkSession } from "../api/auth";
+import { getMe } from "../api/auth";
 import { useAuthStore } from "../store/useAuthStore";
 import { Outlet } from "react-router";
 
+// Root layout for all routes. Runs one session check on mount to hydrate the
+// auth store before any route renders. isInitialized gates the Outlet so
+// protected routes never flash before the check resolves.
 export default function AuthLayout() {
   const setUser = useAuthStore((s) => s.setUser);
   const isInitialized = useAuthStore((s) => s.isInitialized);
@@ -12,7 +15,7 @@ export default function AuthLayout() {
     if (isInitialized) return;
     (async () => {
       try {
-        setUser(await checkSession());
+        setUser(await getMe());
         setInitialized(true);
       } catch (err) {
         if (err) setUser(null);

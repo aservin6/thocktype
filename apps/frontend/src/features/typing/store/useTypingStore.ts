@@ -3,7 +3,8 @@ import { ObservableTypingEngine } from "../engine/ObservableTypingEngine";
 import type { EngineState, Mode } from "@typing-test/shared";
 import { getEngineFromMode } from "../utils/get-engine-from-mode";
 
-// Types of States & Actions
+// engineUnsubscribe holds the cleanup function returned by ObservableTypingEngine.subscribe.
+// It must be called before swapping in a new engine to avoid stale listeners accumulating.
 type TypingState = {
   engine: ObservableTypingEngine | null;
   state: EngineState | null;
@@ -28,6 +29,8 @@ type TypingActions = {
 
 type TypingStore = TypingState & TypingActions;
 
+// Pull a consistent snapshot out of the engine for Zustand. Called both on
+// setEngine (initial sync) and on tick (timed mode only).
 function syncState(engine: ObservableTypingEngine) {
   return {
     state: { ...engine.getState() },
@@ -35,7 +38,6 @@ function syncState(engine: ObservableTypingEngine) {
   };
 }
 
-// States & Action values
 export const useTypingStore = create<TypingStore>()((set, get) => ({
   engine: null,
   state: null,
@@ -48,8 +50,6 @@ export const useTypingStore = create<TypingStore>()((set, get) => ({
   setWordCount: (wordCount) => set(() => ({ wordCount })),
   setEngine: (engine: ObservableTypingEngine) => {
     const { engineUnsubscribe } = get();
-
-    // cleanup old engine subscription
     engineUnsubscribe?.();
 
     const unsubscribe = engine.subscribe((state) => {
@@ -86,12 +86,12 @@ export const useTypingStore = create<TypingStore>()((set, get) => ({
   },
   reset: () => {
     const { mode, setEngine, timeLimit, wordCount } = get();
-
-    // create new engine instance
     const newEngine = getEngineFromMode(mode, wordCount, timeLimit);
-
     setEngine(newEngine);
   },
+  // tick is called on a 100ms interval by TypingTimer (timed mode only).
+  // It asks the engine to check whether the time limit has been reached,
+  // then syncs the elapsed time into the store for the countdown display.
   tick: () => {
     const { engine, mode } = get();
 

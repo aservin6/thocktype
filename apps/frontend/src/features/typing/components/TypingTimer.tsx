@@ -5,6 +5,8 @@ export default function TypingTimer() {
   const { tick, state, timeElapsed, timeLimit } = useTypingEngine();
   const remainingTime = timeLimit - timeElapsed;
 
+  // 100ms interval keeps the displayed countdown smooth. The engine's checkTime
+  // call inside tick() is what actually ends the test, not the interval itself.
   useEffect(() => {
     const interval = setInterval(() => {
       tick();

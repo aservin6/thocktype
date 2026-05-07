@@ -7,6 +7,9 @@ export default function SignOutButton() {
   const setUser = useAuthStore((s) => s.setUser);
   const navigate = useNavigate();
   async function handleClick() {
+    // Clear local state optimistically before the API call so the nav updates
+    // immediately. If signOut fails the user is already on /account which will
+    // redirect them away via ProtectedRoute anyway.
     setUser(null);
     await signOut();
     navigate("/account");

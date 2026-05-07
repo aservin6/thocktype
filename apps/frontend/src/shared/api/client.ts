@@ -1,6 +1,9 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
-// Prevents concurrent refresh attempts, subsequent 401s queue until the first resolves.
+// Module-level state is intentional here. All in-flight requests share the same
+// refresh lock so only one token refresh happens regardless of how many 401s fire
+// concurrently. The queue holds the resolve/reject callbacks of callers waiting
+// on that refresh.
 let isRefreshing = false;
 
 let refreshQueue: Array<{
@@ -27,6 +30,9 @@ async function attemptRefresh(): Promise<void> {
   if (!res.ok) throw new Error("Refresh failed");
 }
 
+// skipRefresh should be set on auth endpoints (signin, signout, register) where
+// a 401 means bad credentials, not an expired token. Attempting a refresh there
+// would loop infinitely.
 export async function apiClient(
   endpoint: string,
   config?: RequestInit,
