@@ -36,7 +36,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/leaderboard" element={<LeaderboardPage />} />
+              <Route path="/leaderboard/:mode" element={<LeaderboardPage />} />
               <Route
                 path="/account"
                 element={
