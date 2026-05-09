@@ -12,6 +12,7 @@ export type Result = {
 };
 
 export type LeaderboardResult = {
+  id: string;
   username: string;
   wpm: number;
   time_elapsed: number;

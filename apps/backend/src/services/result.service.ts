@@ -18,10 +18,11 @@ const LEADERBOARD_TOP_N = 500;
 // Cache-aside: check Redis first, fall back to Postgres on miss or Redis failure (fail-open).
 export async function getLeaderboard(
   mode: string,
+  mode_value: number,
   page: number,
   limit: number,
 ): Promise<LeaderboardResult[]> {
-  const cacheKey = `leaderboard:${mode}`;
+  const cacheKey = `leaderboard:${mode}:${mode_value}`;
   let results = null;
 
   try {
@@ -31,13 +32,18 @@ export async function getLeaderboard(
       results = JSON.parse(cached);
       console.log("Cache hit");
     } else {
-      results = await selectLeaderboardResults(mode, 1, LEADERBOARD_TOP_N);
+      results = await selectLeaderboardResults(
+        mode,
+        mode_value,
+        1,
+        LEADERBOARD_TOP_N,
+      );
       await redis.set(cacheKey, JSON.stringify(results), "EX", CACHE_TTL);
       console.log("Cache miss");
     }
   } catch (err) {
     console.error("Redis read failed, falling through to DB: ", err);
-    return await selectLeaderboardResults(mode, page, limit);
+    return await selectLeaderboardResults(mode, mode_value, page, limit);
   }
 
   return results.slice(limit * (page - 1), limit * page);
@@ -69,7 +75,7 @@ export async function submitResult({
   });
 
   // Invalidate the leaderboard cache for this mode so the next read reflects the new result.
-  const cacheKey = `leaderboard:${mode}`;
+  const cacheKey = `leaderboard:${mode}:${mode_value}`;
   try {
     await redis.del(cacheKey);
   } catch (err) {

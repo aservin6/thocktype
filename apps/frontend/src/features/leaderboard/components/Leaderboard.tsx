@@ -1,21 +1,11 @@
-import { useParams } from "react-router";
-import { getLeaderboardResults } from "../api/leaderboard";
-import { use } from "react";
+import type { LeaderboardResult } from "@typing-test/shared";
 
-export default function Leaderboard() {
-  const { mode } = useParams();
-  // const leaderboardPromise = getLeaderboardResults(mode);
-  //
-  // const data = use(leaderboardPromise);
-  //
+export default function Leaderboard({ data }: { data: LeaderboardResult[] }) {
   return (
-    <>
-      <div>MODE: {mode}</div>
-      <div>
-        {data.map((r) => {
-          return <div>{r.id}</div>;
-        })}
-      </div>
-    </>
+    <div>
+      {data?.map((r) => {
+        return <div key={r.id}>{r.username}</div>;
+      })}
+    </div>
   );
 }

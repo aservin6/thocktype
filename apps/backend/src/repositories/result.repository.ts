@@ -1,4 +1,8 @@
-import type { LeaderboardResult, Result, ResultCreationDetails } from "../types/result.ts";
+import type {
+  LeaderboardResult,
+  Result,
+  ResultCreationDetails,
+} from "../types/result.ts";
 import pool from "../db/pool.ts";
 
 export async function insertResult({
@@ -46,20 +50,21 @@ export async function selectResultsByUser(user_id: string): Promise<Result[]> {
 
 export async function selectLeaderboardResults(
   mode: string,
+  mode_value: number,
   page: number,
   limit: number,
 ): Promise<LeaderboardResult[]> {
   const offset = (page - 1) * limit;
   const query = `
-    SELECT username, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, results.created_at FROM results
+    SELECT results.id, username, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, results.created_at FROM results
     INNER JOIN users
     ON results.user_id = users.id
-    WHERE mode = $1
+    WHERE mode = $1 AND mode_value = $2
     ORDER BY wpm DESC
-    LIMIT $2 OFFSET $3
+    LIMIT $3 OFFSET $4
 `;
 
-  const values = [mode, limit, offset];
+  const values = [mode, mode_value, limit, offset];
   const queryResult = await pool.query(query, values);
 
   return queryResult.rows;

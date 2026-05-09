@@ -56,16 +56,20 @@ export async function getLeaderboardResults(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const mode = req.params.mode as string;
+  let mode = req.query.mode as string;
+  let mode_value = parseInt(req.query.mode_value as string);
   let page = parseInt(req.query.page as string);
   let limit = parseInt(req.query.limit as string);
 
   // Default and clamp pagination params so the leaderboard endpoint is safe to call without query params.
+  if (!["standard", "timed", "strict"].includes(mode)) mode = "standard";
+  if (isNaN(mode_value) || mode_value < 1)
+    mode_value = mode === "timed" ? 30 : 25;
   if (isNaN(page) || page < 1) page = 1;
   if (isNaN(limit) || limit < 1 || limit > 100) limit = 25;
 
   try {
-    const results = await getLeaderboard(mode, page, limit);
+    const results = await getLeaderboard(mode, mode_value, page, limit);
     res.status(200).json({
       data: results,
       message: "Results found",

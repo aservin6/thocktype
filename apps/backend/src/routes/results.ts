@@ -9,7 +9,7 @@ import { authenticateToken } from "../middleware/authenticate-token.ts";
 // Leaderboard is public; posting a result requires authentication.
 const router: Router = express.Router();
 
-router.get("/leaderboard/:mode", getLeaderboardResults);
+router.get("/leaderboard", getLeaderboardResults);
 
 router.post("/results", authenticateToken, createResult);
 
