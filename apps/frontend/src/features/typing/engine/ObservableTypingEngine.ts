@@ -15,9 +15,15 @@ export class ObservableTypingEngine extends TypingEngine {
   }
 
   private emit() {
-    // Shallow copy to prevent listeners from holding a reference to internal
-    // state. charStates needs its own copy since it's an array on the object.
-    const snapshot = { ...this.state, charStates: [...this.state.charStates] };
+    // Snapshot the state before delivering to listeners so they can't mutate
+    // engine internals through the reference. The words array and each word
+    // object are copied (the rest is primitives), giving consumers like
+    // Zustand a fresh top-level reference on every emit so equality checks
+    // detect the change.
+    const snapshot = {
+      ...this.state,
+      words: this.state.words.map((w) => ({ ...w })),
+    };
 
     for (const listener of this.listeners) {
       listener(snapshot);

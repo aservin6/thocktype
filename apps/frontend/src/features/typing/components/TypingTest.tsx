@@ -6,7 +6,12 @@ import TestWidget from "./TestWidget";
 import { useEffect, useRef, useState } from "react";
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { postResult } from "@/features/account/api/results";
-import { getAccuracy, getWPM } from "@typing-test/shared";
+import {
+  countCorrect,
+  countTyped,
+  getAccuracy,
+  getWPM,
+} from "@typing-test/shared";
 
 export function TypingTest() {
   const [error, setError] = useState<string | null>(null);
@@ -38,8 +43,8 @@ export function TypingTest() {
           timeElapsed: timeElapsed / 1000,
           accuracy: getAccuracy(state),
           mode: state.mode,
-          correct: state.correctCount,
-          incorrect: state.incorrectCount,
+          correct: countCorrect(state),
+          incorrect: countTyped(state) - countCorrect(state),
           modeValue: state.mode === "timed" ? timeLimit : wordCount,
         });
         hasPosted.current = true;

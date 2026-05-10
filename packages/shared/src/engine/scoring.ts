@@ -1,4 +1,5 @@
 import type { EngineState } from "./types";
+import { countCorrect, countTyped } from "./utils";
 
 export function getElapsedTime(state: EngineState): number {
   if (!state.startTime) return 0;
@@ -15,18 +16,21 @@ export function getElapsedTime(state: EngineState): number {
 }
 
 export function getAccuracy(state: EngineState): number {
-  const total = state.input.length;
+  const total = countTyped(state);
   if (total === 0) return 0;
 
-  return (state.correctCount / total) * 100;
+  const correctCount = countCorrect(state);
+  return (correctCount / total) * 100;
 }
 
+// Standard WPM convention: a "word" is 5 correctly typed characters. Counting
+// actual word boundaries would penalize long words and reward short ones.
 export function getWPM(state: EngineState): number {
   const elapsedMs = getElapsedTime(state);
   if (elapsedMs === 0) return 0;
 
   const minutes = elapsedMs / 60000;
-  const words = state.correctCount / 5;
+  const words = countCorrect(state) / 5;
 
   return words / minutes;
 }

@@ -4,3 +4,4 @@ export * from "./engine/scoring.ts";
 export * from "./engine/modes/index.ts";
 export * from "./types/user.ts";
 export * from "./types/result.ts";
+export * from "./engine/utils.ts";

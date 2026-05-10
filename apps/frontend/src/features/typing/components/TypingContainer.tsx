@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-import transformText from "../utils/transform-text";
 import { useTypingEngine } from "../hooks/useTypingEngine";
 import { useInitializeEngine } from "../hooks/useInitializeEngine";
 import TypingWord from "./TypingWord";
@@ -8,13 +6,16 @@ import { useCaretTracking } from "../hooks/useCaretTracking";
 
 export default function TypingContainer() {
   const { state } = useTypingEngine();
-  // Re-transform only when the target text changes (i.e. on reset), not on every keystroke.
-  const textArray = useMemo(
-    () => transformText(state?.targetText),
-    [state?.targetText],
-  );
-  const setRef = (index: number, el: HTMLSpanElement | null) => {
-    charRefs.current[index] = el;
+  // Builds a 2D ref structure indexed by [wordIndex][charIndex] so the caret
+  // hook can look up any rendered character span by its position in the word
+  // grid. Inner arrays are created lazily as words register their first ref.
+  const setRef = (
+    wordIndex: number,
+    charIndex: number,
+    el: HTMLSpanElement | null,
+  ) => {
+    if (!charRefs.current[wordIndex]) charRefs.current[wordIndex] = [];
+    charRefs.current[wordIndex][charIndex] = el;
   };
 
   const { caretPos, translateY, charRefs, wrapperRef } = useCaretTracking();
@@ -29,22 +30,17 @@ export default function TypingContainer() {
         style={{ transform: `translateY(${translateY}px)` }}
       >
         <TypingCaret caretPos={caretPos} />
-        {textArray?.map((item, itemIndex) => {
-          // Space tokens from transformText are intentionally skipped here.
-          // Spaces are rendered implicitly via word padding (px-2 on TypingWord).
-          if (item.type === "word" && state) {
-            return (
-              <TypingWord
-                characters={item.characters}
-                charStates={state.charStates}
-                startIndex={item.startIndex}
-                setRef={setRef}
-                key={item.wordIndex}
-              />
-            );
-          }
-          return null;
-        })}{" "}
+        {state?.words.map((word, wordIndex) => {
+          return (
+            <TypingWord
+              target={word.target}
+              typed={word.typed}
+              wordIndex={wordIndex}
+              setRef={setRef}
+              key={wordIndex}
+            />
+          );
+        })}
       </div>
     </div>
   );

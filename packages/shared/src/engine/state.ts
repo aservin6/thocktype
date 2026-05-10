@@ -1,14 +1,18 @@
 import { EngineState } from "./types";
 
+// Splits the target sentence into per-word state. filter(Boolean) drops empty
+// entries from leading/trailing/duplicate spaces so the engine never has to
+// guard against zero-length target words.
 export function createInitialState(targetText: string): EngineState {
+  const words = targetText
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => ({ target: word, typed: "" }));
+
   return {
     status: "idle",
-    targetText,
-    currentCharIndex: 0,
-    input: "",
-    charStates: new Array(targetText.length).fill("pending"),
-    correctCount: 0,
-    incorrectCount: 0,
+    words,
+    currentWordIndex: 0,
     mode: "standard",
     startTime: null,
     endTime: null,
