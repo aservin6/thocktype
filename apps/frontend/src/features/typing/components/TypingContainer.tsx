@@ -9,6 +9,13 @@ export default function TypingContainer() {
   // Builds a 2D ref structure indexed by [wordIndex][charIndex] so the caret
   // hook can look up any rendered character span by its position in the word
   // grid. Inner arrays are created lazily as words register their first ref.
+  //
+  // On reset to a shorter test, trailing rows past the new word count may
+  // linger. This is safe because (a) React fires ref callbacks with null on
+  // unmount, so stale slots hold null rather than detached DOM nodes, and
+  // (b) the caret only indexes by currentWordIndex, which is always bounded
+  // by the active word count. Do not iterate charRefs.current without
+  // filtering, or this assumption breaks.
   const setRef = (
     wordIndex: number,
     charIndex: number,

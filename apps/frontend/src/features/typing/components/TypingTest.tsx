@@ -98,7 +98,7 @@ export function TypingTest() {
         <>
           {/* Results shown on finish */}
           <Results />
-          {error && <div>{error}</div>}
+          {error && <div className="font-bold text-red-300">{error}</div>}
         </>
       )}
     </div>

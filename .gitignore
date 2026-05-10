@@ -18,7 +18,11 @@ packages/shared/node_modules/
 
 # Backend (future)
 apps/backend/dist/
-apps/backend/.env
+
+# Env files (all apps)
+**/.env
+**/.env.*
+!**/.env.example
 
 # Editor directories and files
 .vscode/*
