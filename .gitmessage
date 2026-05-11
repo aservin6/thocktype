@@ -1,0 +1,27 @@
+# <type>(<scope>): <subject>
+# |<---- 72 chars max ----------------------------------->|
+#
+# Types: feat, fix, refactor, perf, docs, test, build, ci, chore
+#
+# Scopes (optional but encouraged):
+#   app boundary: frontend, backend, shared
+#   feature area: auth, typing, leaderboard, api, db, redis, cache
+#   other:        deps, release
+#
+# Subject rules:
+#   - imperative mood: "add x" not "added x"
+#   - lowercase first word
+#   - no trailing period
+#   - describe the change, not the file
+#   - if you need "and", split into two commits
+
+# --- Why did you make this change? (body, optional) ---
+#
+# Explain the motivation, hidden constraints, or trade-offs.
+# The diff shows WHAT changed. This explains WHY.
+# Wrap at 72 characters.
+
+# --- Footer (optional) ---
+# Refs #<issue>
+# Closes #<issue>
+# BREAKING CHANGE: <description>
