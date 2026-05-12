@@ -15,7 +15,10 @@ export function getCharPos(
       edge === "left"
         ? charRect.left - wrapperRect.left
         : charRect.right - wrapperRect.left,
-    y: charRect.top - wrapperRect.top,
-    height: charEl.offsetHeight,
+    y:
+      charRect.top -
+      wrapperRect.top +
+      (charRect.height - parseFloat(getComputedStyle(charEl).fontSize)) / 3,
+    height: parseFloat(getComputedStyle(charEl).fontSize) + 12,
   };
 }
