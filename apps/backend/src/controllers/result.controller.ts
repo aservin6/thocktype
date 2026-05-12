@@ -1,6 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
 import { submitResult, getLeaderboard } from "../services/result.service.ts";
-import { selectResultsByUser } from "../repositories/result.repository.ts";
+import {
+  selectResultsByUser,
+  selectUserStats,
+} from "../repositories/result.repository.ts";
 
 export async function createResult(
   req: Request,
@@ -45,6 +48,24 @@ export async function getUserResults(
     res.status(200).json({
       data: result,
       message: "Results found",
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getUserStats(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const userId = req.user?.id;
+    if (!userId) throw Error("Unauthorized request");
+    const stats = await selectUserStats(userId);
+    res.status(200).json({
+      data: stats,
+      message: "Stats found",
     });
   } catch (err) {
     next(err);

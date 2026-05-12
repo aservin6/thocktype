@@ -1,4 +1,9 @@
-export type { Result, LeaderboardResult } from "@typing-test/shared";
+export type {
+  Result,
+  LeaderboardResult,
+  UserStats,
+  ModeStats,
+} from "@typing-test/shared";
 
 export interface ResultCreationDetails {
   user_id: string;

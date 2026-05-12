@@ -1,7 +1,9 @@
 import type {
   LeaderboardResult,
+  ModeStats,
   Result,
   ResultCreationDetails,
+  UserStats,
 } from "../types/result.ts";
 import pool from "../db/pool.ts";
 
@@ -46,6 +48,30 @@ export async function selectResultsByUser(user_id: string): Promise<Result[]> {
   const queryResult = await pool.query(query, values);
 
   return queryResult.rows;
+}
+
+export async function selectUserStats(user_id: string): Promise<UserStats> {
+  const overallQuery = `
+    SELECT MAX(wpm) AS best_wpm, ROUND(AVG(wpm)::numeric, 1) AS avg_wpm, ROUND(AVG(accuracy)::numeric, 1) AS avg_accuracy, COUNT(*) AS total_tests
+    FROM results
+    WHERE user_id = $1
+`;
+  const byModeQuery = `
+    SELECT mode, mode_value, MAX(wpm) AS best_wpm, ROUND(AVG(wpm)::numeric, 1) AS avg_wpm, ROUND(AVG(accuracy)::numeric, 1) AS avg_accuracy, COUNT(*) AS test_count
+    FROM results
+    WHERE user_id = $1
+    GROUP BY (mode, mode_value)
+`;
+
+  const [overallResult, byModeResult] = await Promise.all([
+    pool.query(overallQuery, [user_id]),
+    pool.query(byModeQuery, [user_id]),
+  ]);
+
+  return {
+    overall: overallResult.rows[0],
+    by_mode: byModeResult.rows as ModeStats[],
+  };
 }
 
 export async function selectLeaderboardResults(

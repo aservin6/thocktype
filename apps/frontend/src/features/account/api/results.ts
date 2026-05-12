@@ -1,6 +1,6 @@
-import { type Result } from "@typing-test/shared";
-import { apiClient } from "../../../shared/api/client";
+import type { Result, UserStats } from "@typing-test/shared";
 import type { CreateResultPayload } from "@/features/typing/types/types";
+import { apiClient } from "../../../shared/api/client";
 
 export async function postResult(
   resultPayload: CreateResultPayload,
@@ -20,6 +20,16 @@ export async function postResult(
 
 export async function getMeResults(): Promise<Result[]> {
   const res = await apiClient("/api/v1/me/results");
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Unknown error");
+  }
+  const body = await res.json();
+  return body.data;
+}
+
+export async function getMeStats(): Promise<UserStats> {
+  const res = await apiClient("/api/v1/me/stats");
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.message || "Unknown error");
