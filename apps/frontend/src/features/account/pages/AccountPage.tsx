@@ -4,6 +4,7 @@ import SignOutButton from "../../auth/components/SignOutButton";
 import { getMeStats, getMeResults } from "../api/results";
 import type { ModeStats } from "@typing-test/shared";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 const MODES = ["standard", "timed", "strict"] as const;
 type Mode = (typeof MODES)[number];
@@ -27,15 +28,6 @@ export default function AccountPage() {
     queryFn: getMeResults,
   });
 
-  // TODO: Add state for the active tab (mode) and active sub-mode (mode_value).
-  // - activeTab should default to "standard"
-  // - activeSubMode should default to DEFAULT_MODE_VALUE[activeTab]
-  // - When the user switches tabs, activeSubMode should reset to that mode's default
-  //
-  // Hint: you'll need two useState calls. When activeTab changes, what should
-  // happen to activeSubMode? Think about whether a single handler that sets
-  // both at once would be cleaner than two separate setters.
-
   const [activeTab, setActiveTab] = useState<Mode>("standard");
   const [activeSubMode, setActiveSubMode] = useState(
     DEFAULT_MODE_VALUE[activeTab],
@@ -46,17 +38,6 @@ export default function AccountPage() {
     setActiveSubMode(() => DEFAULT_MODE_VALUE[activeTab]);
   };
 
-  // TODO: Derive the available sub-modes and the selected ModeStats from statsQuery.data.
-  // Given an activeTab (e.g. "timed"), filter statsQuery.data.by_mode to find all
-  // entries where mode === activeTab. Those are your sub-mode options.
-  // Then find the single ModeStats entry where mode === activeTab AND mode_value === activeSubMode.
-  //
-  // Hint: these are just .filter() and .find() calls on the by_mode array.
-  // Guard against statsQuery.data being undefined.
-
-  const subModes: ModeStats[] = []; // replace with derived value
-  const activeModeStats: ModeStats | undefined = undefined; // replace with derived value
-
   if (statsQuery.isLoading || resultsQuery.isLoading)
     return <div>Loading...</div>;
   if (statsQuery.isError || resultsQuery.isError)
@@ -65,6 +46,13 @@ export default function AccountPage() {
   const stats = statsQuery.data!;
   const results = resultsQuery.data!;
   const recentResults = results.slice(-20).reverse();
+
+  const subModes: ModeStats[] = statsQuery.data!.by_mode.filter(
+    (entry) => entry.mode === activeTab,
+  ); // replace with derived value
+  const activeModeStats: ModeStats | undefined = statsQuery.data!.by_mode.find(
+    (entry) => entry.mode === activeTab && entry.mode_value === activeSubMode,
+  ); // replace with derived value
 
   return (
     <div>
@@ -81,14 +69,16 @@ export default function AccountPage() {
       {/* Mode tabs */}
       <div>
         {MODES.map((mode) => (
-          <button key={mode}>{mode}</button>
+          <Button onClick={() => handleActiveModeChange(mode)} key={mode}>
+            {mode}
+          </Button>
         ))}
       </div>
 
       {/* Sub-mode toggles for the active tab */}
       <div>
         {subModes.map((s) => (
-          <button key={s.mode_value}>{s.mode_value}</button>
+          <Button key={s.mode_value}>{s.mode_value}</Button>
         ))}
       </div>
 
