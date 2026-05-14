@@ -68,6 +68,6 @@ describe("TypingEngine - TimedMode", () => {
 
     engine.handleCharacter("e");
 
-    expect(engine.getState().input.length).toBe(1);
+    expect(engine.getState().words[0].typed.length).toBe(1);
   });
 });
