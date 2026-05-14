@@ -1,15 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
-import { useAuthStore } from "@/features/auth/store/useAuthStore";
-import SignOutButton from "../../auth/components/SignOutButton";
-import { getMeStats, getMeResults } from "../api/results";
-import type { ModeStats } from "@typing-test/shared";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { AccountHeader } from "../components/AccountHeader";
+import {
+  type AccountMode,
+  ModeStatsPanel,
+} from "../components/ModeStatsPanel";
+import { RecentResultsTable } from "../components/RecentResultsTable";
+import { StatsOverview } from "../components/StatsOverview";
+import { getMeResults, getMeStats } from "../api/results";
 
-const MODES = ["standard", "timed", "strict"] as const;
-type Mode = (typeof MODES)[number];
-
-const DEFAULT_MODE_VALUE: Record<Mode, number> = {
+const DEFAULT_MODE_VALUE: Record<AccountMode, number> = {
   standard: 25,
   timed: 30,
   strict: 25,
@@ -28,95 +29,54 @@ export default function AccountPage() {
     queryFn: getMeResults,
   });
 
-  const [activeTab, setActiveTab] = useState<Mode>("standard");
+  const [activeMode, setActiveMode] = useState<AccountMode>("standard");
   const [activeSubMode, setActiveSubMode] = useState(
-    DEFAULT_MODE_VALUE[activeTab],
+    DEFAULT_MODE_VALUE.standard,
   );
 
-  const handleActiveModeChange = (mode: Mode) => {
-    setActiveTab(mode);
-    setActiveSubMode(() => DEFAULT_MODE_VALUE[activeTab]);
+  const handleActiveModeChange = (mode: AccountMode) => {
+    setActiveMode(mode);
+    setActiveSubMode(DEFAULT_MODE_VALUE[mode]);
   };
 
-  if (statsQuery.isLoading || resultsQuery.isLoading)
-    return <div>Loading...</div>;
-  if (statsQuery.isError || resultsQuery.isError)
-    return <div>Error loading stats</div>;
+  if (statsQuery.isLoading || resultsQuery.isLoading) {
+    return <AccountPageMessage>Loading...</AccountPageMessage>;
+  }
+
+  if (statsQuery.isError || resultsQuery.isError) {
+    return <AccountPageMessage>Error loading account data.</AccountPageMessage>;
+  }
 
   const stats = statsQuery.data!;
   const results = resultsQuery.data!;
   const recentResults = results.slice(-20).reverse();
 
-  const subModes: ModeStats[] = statsQuery.data!.by_mode.filter(
-    (entry) => entry.mode === activeTab,
-  ); // replace with derived value
-  const activeModeStats: ModeStats | undefined = statsQuery.data!.by_mode.find(
-    (entry) => entry.mode === activeTab && entry.mode_value === activeSubMode,
-  ); // replace with derived value
+  const subModes = stats.by_mode.filter((entry) => entry.mode === activeMode);
+  const activeModeStats = stats.by_mode.find(
+    (entry) => entry.mode === activeMode && entry.mode_value === activeSubMode,
+  );
 
   return (
-    <div>
-      <h1>{user?.username}</h1>
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 py-10 text-foreground">
+      <AccountHeader user={user} />
+      <StatsOverview stats={stats.overall} />
+      <ModeStatsPanel
+        activeMode={activeMode}
+        activeModeValue={activeSubMode}
+        modeStats={subModes}
+        onModeChange={handleActiveModeChange}
+        onModeValueChange={setActiveSubMode}
+        selectedStats={activeModeStats}
+      />
+      <RecentResultsTable results={recentResults} />
+    </div>
+  );
+}
 
-      {/* Overall aggregate stats */}
-      <div>
-        <div>Best WPM: {stats.overall.best_wpm}</div>
-        <div>Avg WPM: {stats.overall.avg_wpm}</div>
-        <div>Avg Accuracy: {stats.overall.avg_accuracy}%</div>
-        <div>Total Tests: {stats.overall.total_tests}</div>
-      </div>
-
-      {/* Mode tabs */}
-      <div>
-        {MODES.map((mode) => (
-          <Button onClick={() => handleActiveModeChange(mode)} key={mode}>
-            {mode}
-          </Button>
-        ))}
-      </div>
-
-      {/* Sub-mode toggles for the active tab */}
-      <div>
-        {subModes.map((s) => (
-          <Button key={s.mode_value}>{s.mode_value}</Button>
-        ))}
-      </div>
-
-      {/* Per-mode stats for the selected (mode, mode_value) */}
-      {activeModeStats && (
-        <div>
-          <div>Best WPM: {activeModeStats.best_wpm}</div>
-          <div>Avg WPM: {activeModeStats.avg_wpm}</div>
-          <div>Avg Accuracy: {activeModeStats.avg_accuracy}%</div>
-          <div>Tests: {activeModeStats.test_count}</div>
-        </div>
-      )}
-
-      {/* Recent history table */}
-      <table>
-        <thead>
-          <tr>
-            <th>WPM</th>
-            <th>Accuracy</th>
-            <th>Mode</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {recentResults.map((r) => (
-            <tr key={r.id}>
-              <td>{r.wpm}</td>
-              <td>{r.accuracy}%</td>
-              <td>
-                {r.mode}/{r.mode_value}
-              </td>
-              <td>{new Date(r.created_at).toLocaleDateString()}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <SignOutButton />
+function AccountPageMessage({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="py-16 text-sm text-muted-foreground">
+      {children}
     </div>
   );
 }
