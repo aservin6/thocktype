@@ -29,7 +29,7 @@ export default function TypingContainer() {
   useInitializeEngine();
 
   return (
-    <div className="h-40 overflow-clip">
+    <div className="h-44 overflow-clip rounded-none px-4">
       {/* Rendered Text */}
       <div
         ref={wrapperRef}

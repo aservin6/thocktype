@@ -75,13 +75,14 @@ export function TypingTest() {
   }
 
   return (
-    <div className="custom-font relative flex min-h-screen flex-col items-center justify-center gap-8">
+    <div className="custom-font relative flex min-h-[calc(100vh-5rem)] flex-col items-center justify-center gap-8 overflow-hidden">
+      <div className="pointer-events-none absolute inset-x-0 top-10 -z-10 h-80 bg-[radial-gradient(circle_at_50%_0%,oklch(0.75_0.075_220/.16),transparent_45%)]" />
       {state?.status !== "running" && <TypingTestOptions />}
       {state?.status !== "finished" ? (
         <>
           {/* Typing Area */}
-          <div className="relative font-bold">
-            <div className="absolute -top-1/3 left-0 text-3xl tracking-wider text-red-300">
+          <div className="absolute top-1/3 font-bold">
+            <div className="text-primary absolute -top-1/3 left-0 text-3xl tracking-wider">
               <TestWidget />
             </div>
             {/* Invisible textarea overlaid on the text. Captures keyboard input
@@ -98,7 +99,7 @@ export function TypingTest() {
         <>
           {/* Results shown on finish */}
           <Results />
-          {error && <div className="font-bold text-red-300">{error}</div>}
+          {error && <div className="text-destructive font-bold">{error}</div>}
         </>
       )}
     </div>

@@ -24,10 +24,10 @@ export default function TypingWord({
       {target.split("").map((char, i) => {
         const colorClass =
           i >= typed.length
-            ? "text-neutral-400"
+            ? "text-muted-foreground"
             : typed[i] === target[i]
-              ? "text-white"
-              : "text-red-400";
+              ? "text-foreground"
+              : "text-destructive";
         return (
           <span
             ref={(el) => setRef(wordIndex, i, el)}
@@ -45,7 +45,7 @@ export default function TypingWord({
           return (
             <span
               ref={(el) => setRef(wordIndex, target.length + i, el)}
-              className="text-red-300"
+              className="text-destructive/80"
               key={i}
             >
               {char}

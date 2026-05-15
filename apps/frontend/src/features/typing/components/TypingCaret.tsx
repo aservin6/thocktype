@@ -8,7 +8,7 @@ export default function TypingCaret({
   const { state } = useTypingEngine();
   return (
     <div
-      className={`${state?.status !== "running" ? "animate-caret-blink" : "ease-out"} pointer-events-none absolute top-0 left-0 w-0.5 bg-white transition-transform duration-100`}
+      className={`${state?.status !== "running" ? "animate-caret-blink" : "ease-out"} bg-primary pointer-events-none absolute top-0 left-0 w-0.5 shadow-[0_0_14px_var(--primary)] transition-transform duration-100`}
       style={{
         transform: `translate(${caretPos.x}px, ${caretPos.y}px)`,
         height: caretPos.height || "1em",
