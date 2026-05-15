@@ -39,7 +39,7 @@ const forgotPasswordLimiter = createRateLimiter({
   failOpen: false,
 });
 
-// Results prefixed with /auth
+// Results prefixed with /api/v1/auth
 router.post("/register", registerLimiter, validateRegisterInput, registerUser);
 
 router.post("/signin", signinLimiter, validateSignInInput, signInUser);
