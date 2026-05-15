@@ -12,9 +12,9 @@ export default function Navigation() {
   const user = useAuthStore((s) => s.user);
   return (
     <>
-      <nav className="flex items-center justify-between">
-        <Link to="/">
-          <div className="text-3xl font-bold">thockr</div>
+      <nav className="sticky top-0 z-40 flex items-center justify-between border-b border-border/60 bg-background/85 py-3 backdrop-blur">
+        <Link to="/" className="group">
+          <div className="text-3xl font-bold tracking-[-0.08em] text-foreground transition-colors group-hover:text-primary">thockr</div>
         </Link>
         <NavigationMenu>
           <NavigationMenuList>
