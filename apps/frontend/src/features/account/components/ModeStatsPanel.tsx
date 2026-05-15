@@ -1,4 +1,6 @@
+import { BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import type { ModeStats } from "@typing-test/shared";
@@ -34,19 +36,23 @@ export function ModeStatsPanel({
   onModeValueChange,
 }: ModeStatsPanelProps) {
   return (
-    <section className="flex flex-col gap-4 border border-border/70 bg-card/70 p-4 text-card-foreground shadow-sm shadow-black/10">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold tracking-normal text-foreground">
-            Mode stats
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Compare your saved results by test type.
-          </p>
+    <Card className="border p-5 backdrop-blur">
+      <CardHeader className="gap-4 md:flex-row md:items-start md:justify-between">
+        <div className="flex items-start gap-3">
+          <div className="border-border/70 bg-muted/70 flex size-10 items-center justify-center border text-primary">
+            <BarChart3 className="size-4" />
+          </div>
+          <div>
+            <CardTitle className="text-lg">Mode stats</CardTitle>
+            <CardDescription>
+              Compare your saved results by test type and target.
+            </CardDescription>
+          </div>
         </div>
         <div className="flex flex-wrap gap-2">
           {ACCOUNT_MODES.map((mode) => (
             <Button
+              className="capitalize"
               key={mode}
               onClick={() => onModeChange(mode)}
               type="button"
@@ -56,54 +62,58 @@ export function ModeStatsPanel({
             </Button>
           ))}
         </div>
-      </div>
+      </CardHeader>
 
-      <Separator className="bg-border/70" />
+      <Separator className="my-5 bg-border/70" />
 
-      <div className="flex flex-wrap gap-2">
-        {modeStats.length > 0 ? (
-          modeStats.map((stats) => (
-            <Button
-              key={stats.mode_value}
-              onClick={() => onModeValueChange(stats.mode_value)}
-              type="button"
-              variant={
-                activeModeValue === stats.mode_value ? "secondary" : "outline"
-              }
-            >
-              {stats.mode_value}
-            </Button>
-          ))
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            No results saved for this mode yet.
-          </p>
-        )}
-      </div>
+      <CardContent className="flex flex-col gap-5">
+        <div className="flex flex-wrap gap-2">
+          {modeStats.length > 0 ? (
+            modeStats.map((stats) => (
+              <Button
+                key={stats.mode_value}
+                onClick={() => onModeValueChange(stats.mode_value)}
+                type="button"
+                variant={
+                  activeModeValue === stats.mode_value ? "secondary" : "outline"
+                }
+              >
+                {stats.mode_value}
+              </Button>
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              No results saved for this mode yet.
+            </p>
+          )}
+        </div>
 
-      <div
-        className={cn(
-          "grid gap-3 sm:grid-cols-4",
-          !selectedStats && "opacity-60",
-        )}
-      >
-        <ModeStat label="Best WPM" value={formatStat(selectedStats?.best_wpm)} />
-        <ModeStat label="Avg WPM" value={formatStat(selectedStats?.avg_wpm)} />
-        <ModeStat
-          label="Accuracy"
-          value={formatStat(selectedStats?.avg_accuracy, "%")}
-        />
-        <ModeStat label="Tests" value={formatStat(selectedStats?.test_count)} />
-      </div>
-    </section>
+        <div
+          className={cn(
+            "grid gap-3 sm:grid-cols-4",
+            !selectedStats && "opacity-60",
+          )}
+        >
+          <ModeStat label="Best WPM" value={formatStat(selectedStats?.best_wpm)} />
+          <ModeStat label="Avg WPM" value={formatStat(selectedStats?.avg_wpm)} />
+          <ModeStat
+            label="Accuracy"
+            value={formatStat(selectedStats?.avg_accuracy, "%")}
+          />
+          <ModeStat label="Tests" value={formatStat(selectedStats?.test_count)} />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
 function ModeStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1 border border-border/50 bg-muted/60 p-3">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="text-lg font-semibold tracking-normal text-foreground">
+    <div className="border-border/60 bg-muted/45 flex flex-col gap-2 border p-3">
+      <p className="text-muted-foreground text-xs tracking-[0.18em] uppercase">
+        {label}
+      </p>
+      <p className="text-xl font-semibold tracking-[-0.04em] text-foreground">
         {value}
       </p>
     </div>
