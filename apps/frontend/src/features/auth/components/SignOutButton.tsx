@@ -1,3 +1,4 @@
+import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router";
 import { signOut } from "../api/auth";
 import { useAuthStore } from "../store/useAuthStore";
@@ -17,8 +18,10 @@ export default function SignOutButton() {
   return (
     <Button
       onClick={handleClick}
-      className="rounded-lg bg-red-400 p-2 font-bold text-white"
+      variant="outline"
+      className="border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/15 hover:text-destructive"
     >
+      <LogOut className="size-3.5" />
       Sign out
     </Button>
   );
