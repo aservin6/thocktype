@@ -3,5 +3,5 @@ export type PublicUser = {
   username: string;
   email: string;
   email_verified: boolean;
-  created_at: Date;
+  created_at: string;
 };

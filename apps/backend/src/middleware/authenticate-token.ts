@@ -32,7 +32,7 @@ export async function authenticateToken(
       username: user.username,
       email: user.email,
       email_verified: user.email_verified,
-      created_at: user.created_at,
+      created_at: user.created_at.toISOString(),
     };
 
     next();

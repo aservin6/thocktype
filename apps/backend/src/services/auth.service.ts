@@ -40,7 +40,7 @@ export async function register(
     username: newUser.username,
     email: newUser.email,
     email_verified: newUser.email_verified,
-    created_at: newUser.created_at,
+    created_at: newUser.created_at.toISOString(),
     accessToken,
     refreshToken: token,
   };
@@ -66,7 +66,7 @@ export async function signIn(
     username: user.username,
     email: user.email,
     email_verified: user.email_verified,
-    created_at: user.created_at,
+    created_at: user.created_at.toISOString(),
     accessToken,
     refreshToken: token,
   };
