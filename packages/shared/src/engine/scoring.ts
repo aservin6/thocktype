@@ -1,5 +1,5 @@
-import type { EngineState } from "./types";
-import { countCorrect, countTyped } from "./utils";
+import type { EngineState } from "./types.ts";
+import { countCorrect, countTyped } from "./utils.ts";
 
 export function getElapsedTime(state: EngineState): number {
   if (!state.startTime) return 0;

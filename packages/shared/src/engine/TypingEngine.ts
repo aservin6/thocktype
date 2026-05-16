@@ -1,8 +1,8 @@
-import type { EngineContext } from "./context/EngineContext";
+import type { EngineContext } from "./context/EngineContext.ts";
 import type { TypingModeStrategy } from "./modes";
-import { createInitialState } from "./state";
-import type { EngineState, WordState } from "./types";
-import { countCorrect, countTyped } from "./utils";
+import { createInitialState } from "./state.ts";
+import type { EngineState, WordState } from "./types.ts";
+import { countCorrect, countTyped } from "./utils.ts";
 
 // Core typing engine. Owns all mutable test state and delegates finish
 // conditions to a TypingModeStrategy, keeping mode-specific logic out of this

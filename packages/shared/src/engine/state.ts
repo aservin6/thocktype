@@ -1,4 +1,4 @@
-import { EngineState } from "./types";
+import { EngineState } from "./types.ts";
 
 // Splits the target sentence into per-word state. filter(Boolean) drops empty
 // entries from leading/trailing/duplicate spaces so the engine never has to

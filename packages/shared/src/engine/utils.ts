@@ -1,4 +1,4 @@
-import { EngineState } from "./types";
+import { EngineState } from "./types.ts";
 
 // Stat helpers shared by the engine's getters and the scoring module.
 // Both treat per-position correctness independently, so overflow chars

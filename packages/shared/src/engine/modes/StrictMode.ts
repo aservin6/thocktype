@@ -1,6 +1,6 @@
-import type { EngineContext } from "../context/EngineContext";
-import type { Mode } from "../types";
-import type { TypingModeStrategy } from "./TypingModeStrategy";
+import type { EngineContext } from "../context/EngineContext.ts";
+import type { Mode } from "../types.ts";
+import type { TypingModeStrategy } from "./TypingModeStrategy.ts";
 
 export class StrictMode implements TypingModeStrategy {
   // Engine stops once all words have been typed
