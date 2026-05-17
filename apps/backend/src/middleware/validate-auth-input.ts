@@ -1,34 +1,24 @@
+import {
+  forgotPasswordRequestSchema,
+  registerRequestSchema,
+  signInRequestSchema,
+} from "@typing-test/shared";
 import type { Request, Response, NextFunction } from "express";
-import { selectUserByEmail } from "../repositories/user.repository.ts";
 
 export function validateRegisterInput(
   req: Request,
   res: Response,
   next: NextFunction,
 ): void {
-  const { email, password } = req.body;
+  const result = registerRequestSchema.safeParse(req.body);
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const emailIsValid = emailRegex.test(email) && email.length < 255;
-
-  // Email validation
-  if (!emailIsValid) {
-    res.status(400).json({ message: "Not a valid email address" });
+  if (!result.success) {
+    const message =
+      result.error.issues[0]?.message ?? "Invalid register input.";
+    res.status(400).json({ message });
     return;
   }
-
-  // 72-char max is bcrypt's effective input limit. Anything beyond is silently truncated by the algorithm.
-  if (
-    password.length < 8 ||
-    password.length > 72 ||
-    !/[A-Z]/.test(password) ||
-    !/[0-9]/.test(password) ||
-    !/[!@#$%^&*]/.test(password)
-  ) {
-    res.status(400).json({ message: "Password does not meet requirements" });
-    return;
-  }
-
+  req.body = result.data;
   next();
 }
 
@@ -37,21 +27,22 @@ export function validateSignInInput(
   res: Response,
   next: NextFunction,
 ): void {
-  const { email, password } = req.body;
+  const result = signInRequestSchema.safeParse(req.body);
 
-  if (!email || !password) {
-    res.status(400).json({ message: "Confirm sign in details and try again" });
+  if (!result.success) {
+    const message = result.error.issues[0]?.message ?? "Invalid sign in input.";
+    res.status(400).json({ message });
     return;
   }
-
+  req.body = result.data;
   next();
 }
 
-export async function validatePasswordResetInput(
+export function validatePasswordResetInput(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+) {
   const { password, confirmPassword } = req.body;
 
   if (password !== confirmPassword) {
@@ -70,6 +61,21 @@ export async function validatePasswordResetInput(
     res.status(400).json({ message: "Password does not meet requirements" });
     return;
   }
+  next();
+}
 
+export function validateForgotPasswordInput(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const result = forgotPasswordRequestSchema.safeParse(req.body);
+
+  if (!result.success) {
+    const message = result.error.issues[0]?.message ?? "Invalid email input.";
+    res.status(400).json({ message });
+    return;
+  }
+  req.body = result.data;
   next();
 }

@@ -9,6 +9,14 @@ import {
 import { deleteRefreshToken } from "../repositories/refresh-token.repository.ts";
 import { Resend } from "resend";
 import requireEnv from "../utils/require-env.ts";
+import type {
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
+  RegisterRequest,
+  RegisterResponse,
+  SignInRequest,
+  SignInResponse,
+} from "@typing-test/shared";
 
 const isProduction = process.env.NODE_ENV === "production";
 const resend = new Resend(requireEnv("RESEND_API_KEY"));
@@ -18,11 +26,15 @@ export async function registerUser(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const { email, password } = req.body;
+  const { email, password } = req.body as RegisterRequest;
   // Pass user input into register flow
   try {
     const user = await register(email, password);
     const { accessToken, refreshToken, ...publicUser } = user;
+    const responseBody: RegisterResponse = {
+      data: publicUser,
+      message: "New user registered successfully.",
+    };
     // Set auth cookies upon successful user registration
     res.cookie("access_token", accessToken, {
       httpOnly: true,
@@ -34,10 +46,7 @@ export async function registerUser(
       secure: isProduction,
       sameSite: "strict",
     });
-    res.status(201).json({
-      data: publicUser,
-      message: "New user registered successfully",
-    });
+    res.status(201).json(responseBody);
   } catch (err) {
     next(err);
   }
@@ -48,11 +57,15 @@ export async function signInUser(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const { email, password } = req.body;
+  const { email, password } = req.body as SignInRequest;
   // Pass user input into sign in flow
   try {
     const user = await signIn(email, password);
     const { accessToken, refreshToken, ...publicUser } = user;
+    const responseBody: SignInResponse = {
+      data: publicUser,
+      message: "User signed in successfully.",
+    };
     // Set auth cookies upon successful user sign in
     res.cookie("access_token", accessToken, {
       httpOnly: true,
@@ -64,10 +77,7 @@ export async function signInUser(
       secure: isProduction,
       sameSite: "strict",
     });
-    res.status(200).json({
-      data: publicUser,
-      message: "User signed in successfully",
-    });
+    res.status(200).json(responseBody);
   } catch (err) {
     next(err);
   }
@@ -116,7 +126,8 @@ export async function refreshTokens(
   }
   // Refresh tokens and set new cookies
   try {
-    const { accessToken, refreshToken: newRefreshToken } = await refreshAuthTokens(refreshToken);
+    const { accessToken, refreshToken: newRefreshToken } =
+      await refreshAuthTokens(refreshToken);
     res.cookie("access_token", accessToken, {
       httpOnly: true,
       secure: isProduction,
@@ -138,24 +149,31 @@ export async function refreshTokens(
 export async function forgotPassword(
   req: Request,
   res: Response,
-  next: NextFunction,
 ): Promise<void> {
-  const { email } = req.body;
+  const { email } = req.body as ForgotPasswordRequest;
+
+  const responseBody: ForgotPasswordResponse = {
+    message: "Password reset email sent.",
+  };
 
   try {
     const { token } = await createPasswordResetToken(email);
-    if (token) {
-      await resend.emails.send({
-        from: `onboarding@resend.dev`,
-        to: email.toLowerCase(),
-        subject: "Reset your password",
-        html: `<p>Click <a href="http://localhost:5173/reset-password?token=${token}&email=${email.toLowerCase()}">here</a> to reset your password.</p>`,
-      });
+    try {
+      if (token) {
+        await resend.emails.send({
+          from: `onboarding@resend.dev`,
+          to: email.toLowerCase(),
+          subject: "Reset your password",
+          html: `<p>Click <a href="http://localhost:5173/reset-password?token=${token}&email=${email.toLowerCase()}">here</a> to reset your password.</p>`,
+        });
+      }
+    } catch (err) {
+      console.error("Error sending password reset email.", err);
     }
-    res.status(200).json({ message: "Password reset email sent" });
   } catch (err) {
-    next(err);
+    console.error("Error creating password reset token.", err);
   }
+  res.status(200).json(responseBody);
 }
 
 export async function resetPassword(

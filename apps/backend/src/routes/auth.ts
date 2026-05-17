@@ -8,6 +8,7 @@ import {
   signOutUser,
 } from "../controllers/auth.controller.ts";
 import {
+  validateForgotPasswordInput,
   validatePasswordResetInput,
   validateRegisterInput,
   validateSignInInput,
@@ -48,7 +49,12 @@ router.post("/signout", signOutUser);
 
 router.post("/refresh", refreshTokens);
 
-router.post("/forgot-password", forgotPasswordLimiter, forgotPassword);
+router.post(
+  "/forgot-password",
+  forgotPasswordLimiter,
+  validateForgotPasswordInput,
+  forgotPassword,
+);
 
 router.post(
   "/reset-password",
