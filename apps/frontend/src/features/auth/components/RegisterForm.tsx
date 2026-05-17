@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -16,30 +15,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { register } from "../api/auth";
 import { useAuthStore } from "../store/useAuthStore";
-
-const formSchema = z.object({
-  email: z
-    .string()
-    .email("Enter a valid email address.")
-    .max(254, "Email is too long (255+ characters)"),
-  password: z
-    .string()
-    .min(8, "Password is too short. Minimum of 8 characters")
-    .max(72, "Password is too long. Maximum 72 characters."),
-});
+import {
+  type RegisterRequest,
+  registerRequestSchema,
+} from "@typing-test/shared";
 
 export default function RegisterForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<RegisterRequest>({
+    resolver: zodResolver(registerRequestSchema),
   });
   const setUser = useAuthStore((s) => s.setUser);
   const setInitialized = useAuthStore((s) => s.setInitialized);
   const [error, setError] = useState<string | null>(null);
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { email, password } = values;
+  async function onSubmit(values: RegisterRequest) {
     try {
-      const user = await register(email, password);
+      const user = await register(values);
       if (user) {
         setUser(user);
         setInitialized(true);
@@ -50,7 +41,7 @@ export default function RegisterForm() {
   }
 
   return (
-    <Card className="mx-auto mt-10 w-full max-w-xl border bg-card/80 shadow-lg shadow-background/30">
+    <Card className="bg-card/80 shadow-background/30 mx-auto mt-10 w-full max-w-xl border shadow-lg">
       <CardHeader>
         <CardTitle className="text-xl">Register</CardTitle>
       </CardHeader>
@@ -74,7 +65,10 @@ export default function RegisterForm() {
                 </div>
               </Field>
               <Field>
-                <FieldLabel htmlFor="password" className="text-base font-medium">
+                <FieldLabel
+                  htmlFor="password"
+                  className="text-base font-medium"
+                >
                   Password
                 </FieldLabel>
                 <Input
@@ -92,14 +86,20 @@ export default function RegisterForm() {
               </Field>
             </FieldGroup>
           </FieldSet>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-muted-foreground text-sm">
             Already have an account?{" "}
-            <Link to="/signin" className="font-bold text-primary hover:text-primary/80">
+            <Link
+              to="/signin"
+              className="text-primary hover:text-primary/80 font-bold"
+            >
               Sign in
             </Link>
           </div>
           {error && <FieldError>{error}</FieldError>}
-          <Button type="submit" className="w-full py-5 text-base hover:cursor-pointer">
+          <Button
+            type="submit"
+            className="w-full py-5 text-base hover:cursor-pointer"
+          >
             Submit
           </Button>
         </form>

@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   FieldSet,
@@ -13,29 +12,24 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { forgotPassword } from "../api/auth";
-
-const formSchema = z.object({
-  email: z
-    .string()
-    .email("Enter a valid email address.")
-    .max(254, "Email is too long (255+ characters)"),
-});
+import {
+  type ForgotPasswordRequest,
+  forgotPasswordRequestSchema,
+} from "@typing-test/shared";
 
 export default function ForgotPasswordForm({
   onSuccess,
 }: {
   onSuccess: () => void;
 }) {
+  const form = useForm<ForgotPasswordRequest>({
+    resolver: zodResolver(forgotPasswordRequestSchema),
+  });
   const [error, setError] = useState<string | null>(null);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-  });
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { email } = values;
+  async function onSubmit(values: ForgotPasswordRequest) {
     try {
-      await forgotPassword(email);
+      await forgotPassword(values);
       onSuccess();
     } catch (err) {
       if (err instanceof Error) {

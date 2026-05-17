@@ -1,10 +1,16 @@
-import { type PublicUser } from "@typing-test/shared";
+import {
+  type ApiErrorResponse,
+  type ForgotPasswordRequest,
+  type ForgotPasswordResponse,
+  type PublicUser,
+  type RegisterRequest,
+  type RegisterResponse,
+  type SignInRequest,
+  type SignInResponse,
+} from "@typing-test/shared";
 import { apiClient } from "../../../shared/api/client";
 
-export async function signIn(
-  email: string,
-  password: string,
-): Promise<PublicUser> {
+export async function signIn(input: SignInRequest): Promise<PublicUser> {
   const res = await apiClient(
     "/api/v1/auth/signin",
     {
@@ -12,22 +18,19 @@ export async function signIn(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify(input),
     },
     { skipRefresh: true },
   );
   if (!res.ok) {
-    const error = await res.json();
+    const error: ApiErrorResponse = await res.json();
     throw new Error(error.message || "Unknown error");
   }
-  const body = await res.json();
+  const body: SignInResponse = await res.json();
   return body.data;
 }
 
-export async function register(
-  email: string,
-  password: string,
-): Promise<PublicUser> {
+export async function register(input: RegisterRequest): Promise<PublicUser> {
   const res = await apiClient(
     "/api/v1/auth/register",
     {
@@ -35,15 +38,15 @@ export async function register(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify(input),
     },
     { skipRefresh: true },
   );
   if (!res.ok) {
-    const error = await res.json();
+    const error: ApiErrorResponse = await res.json();
     throw new Error(error.message || "Unknown error");
   }
-  const body = await res.json();
+  const body: RegisterResponse = await res.json();
   return body.data;
 }
 
@@ -73,20 +76,24 @@ export async function getMe(): Promise<PublicUser> {
   return body.data;
 }
 
-export async function forgotPassword(email: string): Promise<void> {
+export async function forgotPassword(
+  input: ForgotPasswordRequest,
+): Promise<ForgotPasswordResponse> {
   const res = await apiClient(
     "/api/v1/auth/forgot-password",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify(input),
     },
     { skipRefresh: true },
   );
   if (!res.ok) {
-    const error = await res.json();
+    const error: ApiErrorResponse = await res.json();
     throw new Error(error.message || "Unknown error");
   }
+  const body: ForgotPasswordResponse = await res.json();
+  return body;
 }
 
 export async function fetchToken(tokenParam: string | null) {

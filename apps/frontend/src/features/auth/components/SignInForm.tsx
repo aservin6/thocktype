@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -16,24 +15,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { signIn } from "../api/auth";
 import { useAuthStore } from "../store/useAuthStore";
-
-const formSchema = z.object({
-  email: z.string().email("Enter a valid email address."),
-  password: z.string(),
-});
+import { type SignInRequest, signInRequestSchema } from "@typing-test/shared";
 
 export default function SignInForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<SignInRequest>({
+    resolver: zodResolver(signInRequestSchema),
   });
   const setUser = useAuthStore((s) => s.setUser);
   const setInitialized = useAuthStore((s) => s.setInitialized);
   const [error, setError] = useState<string | null>(null);
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { email, password } = values;
+  async function onSubmit(values: SignInRequest) {
     try {
-      const user = await signIn(email, password);
+      const user = await signIn(values);
       if (user) {
         setUser(user);
         setInitialized(true);
@@ -44,7 +38,7 @@ export default function SignInForm() {
   }
 
   return (
-    <Card className="mx-auto mt-10 w-full max-w-xl border bg-card/80 shadow-lg shadow-background/30">
+    <Card className="bg-card/80 shadow-background/30 mx-auto mt-10 w-full max-w-xl border shadow-lg">
       <CardHeader>
         <CardTitle className="text-xl">Sign In</CardTitle>
       </CardHeader>
@@ -68,7 +62,10 @@ export default function SignInForm() {
                 </div>
               </Field>
               <Field>
-                <FieldLabel htmlFor="password" className="text-base font-medium">
+                <FieldLabel
+                  htmlFor="password"
+                  className="text-base font-medium"
+                >
                   Password
                 </FieldLabel>
                 <Input
@@ -87,19 +84,28 @@ export default function SignInForm() {
             </FieldGroup>
           </FieldSet>
 
-          <div className="flex flex-col items-start gap-3 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex flex-col items-start gap-3 text-sm">
             <div>
               Don't have an account?{" "}
-              <Link to="/register" className="font-bold text-primary hover:text-primary/80">
+              <Link
+                to="/register"
+                className="text-primary hover:text-primary/80 font-bold"
+              >
                 Create account
               </Link>
             </div>
-            <Link to="/forgot-password" className="font-bold text-primary hover:text-primary/80">
+            <Link
+              to="/forgot-password"
+              className="text-primary hover:text-primary/80 font-bold"
+            >
               Forgot password?
             </Link>
           </div>
           {error && <FieldError>{error}</FieldError>}
-          <Button type="submit" className="w-full py-5 text-base hover:cursor-pointer">
+          <Button
+            type="submit"
+            className="w-full py-5 text-base hover:cursor-pointer"
+          >
             Submit
           </Button>
         </form>
