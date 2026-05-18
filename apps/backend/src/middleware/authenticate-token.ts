@@ -15,7 +15,7 @@ export async function authenticateToken(
   const token = req.cookies.access_token;
 
   if (!token) {
-    res.status(401).json({ message: "No token provided" });
+    res.status(401).json({ message: "No token provided." });
     return;
   }
 
@@ -23,7 +23,7 @@ export async function authenticateToken(
     const payload = jwt.verify(token, JWT_SECRET) as { id: string };
     const user = await selectUserById(payload.id);
     if (!user) {
-      res.status(401).json({ message: "User not found" });
+      res.status(401).json({ message: "User not found." });
       return;
     }
 
@@ -40,11 +40,11 @@ export async function authenticateToken(
     // TokenExpiredError is a subclass of JsonWebTokenError, so order matters here.
     // The client uses the "Token expired" message to know a refresh is worth attempting.
     if (err instanceof TokenExpiredError) {
-      res.status(401).json({ message: "Token expired" });
+      res.status(401).json({ message: "Token expired." });
       return;
     }
     if (err instanceof JsonWebTokenError) {
-      res.status(401).json({ message: "Invalid token" });
+      res.status(401).json({ message: "Invalid token." });
       return;
     }
     next(err);

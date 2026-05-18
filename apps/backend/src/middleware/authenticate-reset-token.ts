@@ -12,7 +12,7 @@ export async function authenticateResetToken(
 ): Promise<void> {
   const token = req.query.token as string;
   if (!token) {
-    res.status(401).json({ message: "Unauthorized access" });
+    res.status(401).json({ message: "Unauthorized access." });
     return;
   }
   // Hash the raw token from the URL before querying -- only the hash is stored in the DB.
@@ -20,12 +20,12 @@ export async function authenticateResetToken(
   try {
     const storedToken = await selectPasswordResetToken(hashedToken);
     if (!storedToken) {
-      res.status(401).json({ message: "Unauthorized access" });
+      res.status(401).json({ message: "Unauthorized access." });
       return;
     }
     if (new Date() > new Date(storedToken.expires_at)) {
       await deletePasswordResetToken(storedToken.id);
-      res.status(401).json({ message: "Reset token expired" });
+      res.status(401).json({ message: "Reset token expired." });
       return;
     }
     // Attach to the request so downstream handlers can access user_id and token id without re-querying.

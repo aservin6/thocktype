@@ -27,7 +27,7 @@ async function attemptRefresh(): Promise<void> {
     method: "POST",
     credentials: "include",
   });
-  if (!res.ok) throw new Error("Refresh failed");
+  if (!res.ok) throw new Error("Refresh failed.");
 }
 
 // skipRefresh should be set on auth endpoints (signin, signout, register) where
@@ -49,7 +49,7 @@ export async function apiClient(
   // Only "Token expired" warrants a refresh, no token or invalid token means
   // there's nothing to refresh, so reconstruct the response and return early.
   const error = await res.json();
-  if (error.message !== "Token expired")
+  if (error.message !== "Token expired.")
     return new Response(JSON.stringify({ message: error.message }), {
       headers: res.headers,
       status: res.status,
@@ -74,9 +74,10 @@ export async function apiClient(
   } catch (err) {
     drainQueue(err);
     isRefreshing = false;
-    throw new Error("Token refresh failed");
+    throw new Error("Token refresh failed.");
   }
 
-  if (retry.status === 401) throw new Error("Unauthorized after token refresh");
+  if (retry.status === 401)
+    throw new Error("Unauthorized after token refresh.");
   return retry;
 }
