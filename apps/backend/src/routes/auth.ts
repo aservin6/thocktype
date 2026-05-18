@@ -15,6 +15,7 @@ import {
 } from "../middleware/validate-auth-input.ts";
 import { createRateLimiter } from "../middleware/rate-limit.ts";
 import { authenticateResetToken } from "../middleware/authenticate-reset-token.ts";
+import type { VerifyResetTokenResponse } from "@typing-test/shared";
 
 // All routes are mounted under /api/v1/auth in server.ts
 const router: Router = express.Router();
@@ -63,8 +64,9 @@ router.post(
   resetPassword,
 );
 
-router.get("/verify-reset-token", authenticateResetToken, (req, res) =>
-  res.status(200).json({ message: "Token is valid" }),
-);
+router.get("/verify-reset-token", authenticateResetToken, (req, res) => {
+  const responseBody: VerifyResetTokenResponse = { message: "Token is valid." };
+  res.status(200).json(responseBody);
+});
 
 export { router as authRoutes };

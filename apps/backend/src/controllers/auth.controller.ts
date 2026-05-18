@@ -12,10 +12,14 @@ import requireEnv from "../utils/require-env.ts";
 import type {
   ForgotPasswordRequest,
   ForgotPasswordResponse,
+  RefreshResponse,
   RegisterRequest,
   RegisterResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
   SignInRequest,
   SignInResponse,
+  SignOutResponse,
 } from "@typing-test/shared";
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -83,29 +87,25 @@ export async function signInUser(
   }
 }
 
-export async function signOutUser(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
+export async function signOutUser(req: Request, res: Response): Promise<void> {
+  const responseBody: SignOutResponse = {
+    message: "Signed out successfully.",
+  };
   // Delete current refresh token from DB
   const refreshToken = req.cookies.refresh_token;
-  if (!refreshToken) {
-    res.clearCookie("access_token");
-    res.clearCookie("refresh_token");
-    res.status(200).json({ message: "Signed out successfully" });
-    return;
+  if (refreshToken) {
+    try {
+      await deleteRefreshToken(refreshToken);
+    } catch (err) {
+      console.error(
+        "Error occurred while trying to delete refresh token.",
+        err,
+      );
+    }
   }
-  try {
-    await deleteRefreshToken(refreshToken);
-    // then clear both local cookies (access + refresh)
-    res.clearCookie("access_token");
-    res.clearCookie("refresh_token");
-
-    res.status(200).json({ message: "Signed out successfully" });
-  } catch (err) {
-    next(err);
-  }
+  res.clearCookie("access_token");
+  res.clearCookie("refresh_token");
+  res.status(200).json(responseBody);
 }
 
 export async function getMe(req: Request, res: Response): Promise<void> {
@@ -117,11 +117,14 @@ export async function refreshTokens(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
+  const responseBody: RefreshResponse = {
+    message: "Tokens refreshed successfully.",
+  };
   const refreshToken = req.cookies.refresh_token;
   if (!refreshToken) {
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");
-    res.status(401).json({ message: "No token found. Unauthorized access" });
+    res.status(401).json({ message: "No token found. Unauthorized access." });
     return;
   }
   // Refresh tokens and set new cookies
@@ -138,7 +141,7 @@ export async function refreshTokens(
       secure: isProduction,
       sameSite: "strict",
     });
-    res.status(200).json({ message: "Tokens refreshed successfully" });
+    res.status(200).json(responseBody);
   } catch (err) {
     next(err);
   }
@@ -181,11 +184,14 @@ export async function resetPassword(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const { password } = req.body;
+  const { password } = req.body as ResetPasswordRequest;
   const { user_id, id } = req.passwordResetToken!;
+  const responseBody: ResetPasswordResponse = {
+    message: "Password reset successfully.",
+  };
   try {
     await updatePassword(user_id, password, id);
-    res.status(200).json({ message: "Password reset successfully" });
+    res.status(200).json(responseBody);
   } catch (err) {
     next(err);
   }

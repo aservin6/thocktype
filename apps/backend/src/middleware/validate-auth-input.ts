@@ -1,6 +1,7 @@
 import {
   forgotPasswordRequestSchema,
   registerRequestSchema,
+  resetPasswordRequestSchema,
   signInRequestSchema,
 } from "@typing-test/shared";
 import type { Request, Response, NextFunction } from "express";
@@ -42,25 +43,16 @@ export function validatePasswordResetInput(
   req: Request,
   res: Response,
   next: NextFunction,
-) {
-  const { password, confirmPassword } = req.body;
+): void {
+  const result = resetPasswordRequestSchema.safeParse(req.body);
 
-  if (password !== confirmPassword) {
-    res.status(400).json({ message: "Password fields do not match" });
+  if (!result.success) {
+    const message =
+      result.error.issues[0]?.message ?? "Invalid reset password input.";
+    res.status(400).json({ message });
     return;
   }
-
-  // Same rules as registration. 72-char max is bcrypt's effective input limit.
-  if (
-    password.length < 8 ||
-    password.length > 72 ||
-    !/[A-Z]/.test(password) ||
-    !/[0-9]/.test(password) ||
-    !/[!@#$%^&*]/.test(password)
-  ) {
-    res.status(400).json({ message: "Password does not meet requirements" });
-    return;
-  }
+  req.body = result.data;
   next();
 }
 
@@ -68,7 +60,7 @@ export function validateForgotPasswordInput(
   req: Request,
   res: Response,
   next: NextFunction,
-) {
+): void {
   const result = forgotPasswordRequestSchema.safeParse(req.body);
 
   if (!result.success) {
