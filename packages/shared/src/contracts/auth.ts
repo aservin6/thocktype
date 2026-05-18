@@ -14,21 +14,23 @@ export type ApiErrorResponse = {
   message: string;
 };
 
+const passwordSchema = z
+  .string()
+  .min(8, "Password is too short. Must be at least 8 characters long.")
+  .max(72, "Password is too long.")
+  .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
+  .regex(/[0-9]/, "Password must contain at least one number.")
+  .regex(
+    /[!@#$%^&*]/,
+    "Password must contain at least one allowed special character.",
+  );
+
 export const registerRequestSchema = z.object({
   email: z
     .string()
     .email("Enter a valid email address.")
     .max(254, "Email is too long."),
-  password: z
-    .string()
-    .min(8, "Password is too short. Must be at least 8 characters long.")
-    .max(72, "Password is too long.")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
-    .regex(/[0-9]/, "Password must contain at least one number.")
-    .regex(
-      /[!@#$%^&*]/,
-      "Password must contain at least one allowed special character.",
-    ),
+  password: passwordSchema,
 });
 
 export type RegisterRequest = z.infer<typeof registerRequestSchema>;
@@ -56,3 +58,27 @@ export type ForgotPasswordRequest = z.infer<typeof forgotPasswordRequestSchema>;
 // POST /api/v1/auth/forgot-password always returns success message
 // even if the email is not registered.
 export type ForgotPasswordResponse = ApiMessageResponse;
+
+// POST /api/v1/auth/signout clears httpOnly access_token and refresh_token cookies.
+export type SignOutResponse = ApiMessageResponse;
+
+// POST /api/v1/auth/refresh rotates httpOnly access_token and refresh_token cookies.
+export type RefreshResponse = ApiMessageResponse;
+
+export const resetPasswordRequestSchema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords must match.",
+    path: ["confirmPassword"],
+  });
+
+export type ResetPasswordRequest = z.infer<typeof resetPasswordRequestSchema>;
+
+// POST /api/v1/auth/reset-password requires a valid reset token query param.
+export type ResetPasswordResponse = ApiMessageResponse;
+
+// GET /api/v1/auth/verify-reset-token requires a reset token query param.
+export type VerifyResetTokenResponse = ApiMessageResponse;
