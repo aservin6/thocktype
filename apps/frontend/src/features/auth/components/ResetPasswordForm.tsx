@@ -8,25 +8,15 @@ import {
   FieldError,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { changePassword } from "@/features/account/api/account";
+import { resetPassword } from "@/features/account/api/account";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  resetPasswordRequestSchema,
+  type ResetPasswordRequest,
+} from "@typing-test/shared";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router";
-import z from "zod";
-
-const formSchema = z
-  .object({
-    password: z
-      .string()
-      .min(8, "Password is too short. Minimum of 8 characters")
-      .max(72, "Password is too long. Maximum 72 characters."),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
 
 export default function ResetPasswordForm({
   onSuccess,
@@ -37,14 +27,13 @@ export default function ResetPasswordForm({
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<ResetPasswordRequest>({
+    resolver: zodResolver(resetPasswordRequestSchema),
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { password, confirmPassword } = values;
+  async function onSubmit(values: ResetPasswordRequest) {
     try {
-      await changePassword(token, password, confirmPassword);
+      await resetPassword({ token, input: values });
       onSuccess();
     } catch (err) {
       if (err instanceof Error) {

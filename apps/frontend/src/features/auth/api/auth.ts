@@ -7,6 +7,8 @@ import {
   type RegisterResponse,
   type SignInRequest,
   type SignInResponse,
+  type SignOutResponse,
+  type VerifyResetTokenResponse,
 } from "@typing-test/shared";
 import { apiClient } from "../../../shared/api/client";
 
@@ -50,7 +52,7 @@ export async function register(input: RegisterRequest): Promise<PublicUser> {
   return body.data;
 }
 
-export async function signOut(): Promise<void> {
+export async function signOut(): Promise<SignOutResponse> {
   const res = await apiClient(
     "/api/v1/auth/signout",
     {
@@ -59,9 +61,11 @@ export async function signOut(): Promise<void> {
     { skipRefresh: true },
   );
   if (!res.ok) {
-    const error = await res.json();
+    const error: ApiErrorResponse = await res.json();
     throw new Error(error.message || "Unknown error");
   }
+  const body: SignOutResponse = await res.json();
+  return body;
 }
 
 export async function getMe(): Promise<PublicUser> {
@@ -96,8 +100,10 @@ export async function forgotPassword(
   return body;
 }
 
-export async function fetchToken(tokenParam: string | null) {
-  if (!tokenParam) throw new Error("Invalid token param");
+export async function verifyResetToken(
+  tokenParam: string | null,
+): Promise<VerifyResetTokenResponse> {
+  if (!tokenParam) throw new Error("Invalid token param.");
 
   const res = await apiClient(
     `/api/v1/auth/verify-reset-token?token=${tokenParam}`,
@@ -108,6 +114,6 @@ export async function fetchToken(tokenParam: string | null) {
     const error = await res.json();
     throw new Error(error.message || "Unknown error");
   }
-  const body = await res.json();
-  return body.data;
+  const body: VerifyResetTokenResponse = await res.json();
+  return body;
 }

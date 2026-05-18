@@ -1,7 +1,7 @@
 import { Navigate, useNavigate, useSearchParams } from "react-router";
 import ResetPasswordForm from "../components/ResetPasswordForm";
 import { useEffect, useState } from "react";
-import { fetchToken } from "../api/auth";
+import { verifyResetToken } from "../api/auth";
 
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
@@ -18,7 +18,7 @@ export default function ResetPasswordPage() {
     const tokenParam = searchParams.get("token");
     (async () => {
       try {
-        await fetchToken(tokenParam);
+        await verifyResetToken(tokenParam);
         setStatus("form");
       } catch {
         setStatus("invalid");
