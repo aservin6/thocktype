@@ -12,12 +12,23 @@ export default function Navigation() {
   const user = useAuthStore((s) => s.user);
   return (
     <>
-      <nav className="sticky top-0 z-40 flex items-center justify-between border-b border-border/60 bg-background/85 py-3 backdrop-blur">
+      <nav className="border-border/60 bg-background/85 sticky top-0 z-40 flex items-center justify-between border-b py-3 backdrop-blur">
         <Link to="/" className="group">
-          <div className="text-3xl font-bold tracking-[-0.08em] text-foreground transition-colors group-hover:text-primary">thockr</div>
+          <div className="text-foreground group-hover:text-primary text-3xl font-bold tracking-[-0.08em] transition-colors">
+            thockr
+          </div>
         </Link>
         <NavigationMenu>
           <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuLink
+                asChild
+                className={navigationMenuTriggerStyle()}
+              >
+                <Link to="/leaderboard">Leaderboard</Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
             {user && (
               <NavigationMenuItem>
                 <NavigationMenuLink

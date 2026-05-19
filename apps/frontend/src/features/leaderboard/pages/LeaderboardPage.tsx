@@ -19,15 +19,16 @@ export default function LeaderboardPage() {
   });
 
   if (query.isLoading) return <PageMessage>Loading leaderboard...</PageMessage>;
-  if (query.isError) return <PageMessage>Error loading leaderboard.</PageMessage>;
+  if (query.isError)
+    return <PageMessage>Error loading leaderboard.</PageMessage>;
 
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 py-10">
       <div>
-        <p className="text-xs font-medium tracking-[0.35em] text-muted-foreground uppercase">
+        <p className="text-muted-foreground text-xs font-medium tracking-[0.35em] uppercase">
           Global pace
         </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-[-0.05em] text-foreground">
+        <h1 className="text-foreground mt-2 text-3xl font-semibold tracking-[-0.05em]">
           Leaderboard
         </h1>
       </div>
@@ -38,7 +39,7 @@ export default function LeaderboardPage() {
 
 function PageMessage({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mx-auto flex min-h-80 max-w-4xl items-center justify-center text-muted-foreground">
+    <div className="text-muted-foreground mx-auto flex min-h-80 max-w-4xl items-center justify-center">
       {children}
     </div>
   );
