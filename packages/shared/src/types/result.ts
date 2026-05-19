@@ -8,7 +8,7 @@ export type Result = {
   mode_value: number;
   correct: number;
   incorrect: number;
-  created_at: Date;
+  created_at: string;
 };
 
 export type LeaderboardResult = {
@@ -21,7 +21,21 @@ export type LeaderboardResult = {
   mode_value: number;
   correct: number;
   incorrect: number;
-  created_at: Date;
+  created_at: string;
+};
+
+export type LeaderboardEntry = {
+  id: string;
+  rank: number;
+  username: string;
+  wpm: number;
+  time_elapsed: number;
+  accuracy: number;
+  mode: string;
+  mode_value: number;
+  correct: number;
+  incorrect: number;
+  created_at: string;
 };
 
 export type ModeStats = {
