@@ -6,6 +6,7 @@ import type {
   UserStats,
 } from "../types/result.ts";
 import pool from "../db/pool.ts";
+import { LeaderboardEntry } from "@typing-test/shared";
 
 export async function insertResult({
   user_id,
@@ -79,14 +80,31 @@ export async function selectLeaderboardResults(
   mode_value: number,
   page: number,
   limit: number,
-): Promise<LeaderboardResult[]> {
+): Promise<LeaderboardEntry[]> {
   const offset = (page - 1) * limit;
   const query = `
-    SELECT results.id, username, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, results.created_at FROM results
-    INNER JOIN users
-    ON results.user_id = users.id
-    WHERE mode = $1 AND mode_value = $2
-    ORDER BY wpm DESC
+    WITH ranked_user_results AS (
+      SELECT results.id, users.username, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, results.created_at,
+      ROW_NUMBER() OVER (
+          PARTITION BY results.user_id
+          ORDER BY wpm DESC, accuracy DESC, time_elapsed ASC, results.created_at ASC
+      ) AS personal_ranking
+      FROM results
+      INNER JOIN users
+      ON results.user_id = users.id
+      WHERE mode = $1 AND mode_value = $2
+    ), 
+    user_best_results AS (
+      SELECT id, username, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, created_at,
+      ROW_NUMBER() OVER (
+          ORDER BY wpm DESC, accuracy DESC, time_elapsed ASC, created_at ASC
+      ) AS rank
+      FROM ranked_user_results
+      WHERE personal_ranking = 1
+    )
+    SELECT rank, id, username, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, created_at
+    FROM user_best_results
+    ORDER BY rank ASC
     LIMIT $3 OFFSET $4
 `;
 
