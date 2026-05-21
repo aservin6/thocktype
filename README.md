@@ -18,9 +18,7 @@
 | --- | --- |
 | ![Register page](./docs/screenshots/register.png) | ![Forgot password page](./docs/screenshots/forgot-password.png) |
 
-| Reset password | Settings |
-| --- | --- |
-| ![Reset password page](./docs/screenshots/reset-password.png) | ![Settings page](./docs/screenshots/settings.png) |
+![Reset password page](./docs/screenshots/reset-password.png)
 
 > This README is temporary and will evolve as the project moves toward deployment and contribution-ready documentation.
 
