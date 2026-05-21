@@ -20,7 +20,7 @@ import type {
   SignInRequest,
   SignInResponse,
   SignOutResponse,
-} from "@typing-test/shared";
+} from "@thockr/shared";
 
 const isProduction = process.env.NODE_ENV === "production";
 const resend = new Resend(requireEnv("RESEND_API_KEY"));

@@ -83,7 +83,7 @@ Some implementation highlights:
 - Monorepo structure
 - Docker Compose for local Postgres and Redis
 - Vitest for tests
-- Shared internal package: `@typing-test/shared`
+- Shared internal package: `@thockr/shared`
 
 ## Repository Structure
 

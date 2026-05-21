@@ -1,6 +1,6 @@
 import { Keyboard, Mail } from "lucide-react";
 import SignOutButton from "@/features/auth/components/SignOutButton";
-import type { PublicUser } from "@typing-test/shared";
+import type { PublicUser } from "@thockr/shared";
 
 type AccountHeaderProps = {
   user: PublicUser | null;

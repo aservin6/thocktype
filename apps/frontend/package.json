@@ -1,5 +1,5 @@
 {
-  "name": "@typing-test/frontend",
+  "name": "@thockr/frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -15,7 +15,7 @@
     "@hookform/resolvers": "^3.10.0",
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/react-query": "^5.100.9",
-    "@typing-test/shared": "workspace:*",
+    "@thockr/shared": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.8.0",

@@ -3,7 +3,7 @@ import type {
   ApiErrorResponse,
   ResetPasswordRequest,
   ResetPasswordResponse,
-} from "@typing-test/shared";
+} from "@thockr/shared";
 
 export async function resetPassword({
   token,

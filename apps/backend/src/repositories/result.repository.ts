@@ -6,7 +6,7 @@ import type {
   UserStats,
 } from "../types/result.ts";
 import pool from "../db/pool.ts";
-import { LeaderboardEntry } from "@typing-test/shared";
+import { LeaderboardEntry } from "@thockr/shared";
 
 export async function insertResult({
   user_id,

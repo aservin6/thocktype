@@ -3,7 +3,7 @@ import {
   registerRequestSchema,
   resetPasswordRequestSchema,
   signInRequestSchema,
-} from "@typing-test/shared";
+} from "@thockr/shared";
 import type { Request, Response, NextFunction } from "express";
 
 export function validateRegisterInput(

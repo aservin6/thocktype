@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { TypingEngine, TimedMode } from "@typing-test/shared";
+import { TypingEngine, TimedMode } from "@thockr/shared";
 
 describe("TypingEngine - TimedMode", () => {
   beforeEach(() => {

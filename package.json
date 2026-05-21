@@ -1,9 +1,9 @@
 {
-  "name": "typing-test-monorepo",
+  "name": "thockr-monorepo",
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "concurrently --names frontend,backend,db --prefix-colors blue,green,yellow \"pnpm --filter @typing-test/frontend dev\" \"pnpm --filter @typing-test/backend dev\" \"docker compose up -d\""
+    "dev": "concurrently --names frontend,backend,db --prefix-colors blue,green,yellow \"pnpm --filter @thockr/frontend dev\" \"pnpm --filter @thockr/backend dev\" \"docker compose up -d\""
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

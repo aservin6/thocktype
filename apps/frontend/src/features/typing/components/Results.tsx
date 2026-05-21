@@ -1,4 +1,4 @@
-import { getElapsedTime, getWPM, getAccuracy } from "@typing-test/shared";
+import { getElapsedTime, getWPM, getAccuracy } from "@thockr/shared";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTypingEngine } from "../hooks/useTypingEngine";
 

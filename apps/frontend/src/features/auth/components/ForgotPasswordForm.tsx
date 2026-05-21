@@ -15,7 +15,7 @@ import { forgotPassword } from "../api/auth";
 import {
   type ForgotPasswordRequest,
   forgotPasswordRequestSchema,
-} from "@typing-test/shared";
+} from "@thockr/shared";
 
 export default function ForgotPasswordForm({
   onSuccess,

@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import type { LeaderboardResult } from "@typing-test/shared";
+import type { LeaderboardResult } from "@thockr/shared";
 
 export default function Leaderboard({ data }: { data: LeaderboardResult[] }) {
   return (

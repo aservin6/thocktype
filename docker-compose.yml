@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: typing_test
+      POSTGRES_DB: thockr
     ports:
       - "5432:5432"
     volumes:

@@ -1,5 +1,5 @@
 {
-  "name": "@typing-test/backend",
+  "name": "@thockr/backend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@typing-test/shared": "workspace:*",
+    "@thockr/shared": "workspace:*",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",

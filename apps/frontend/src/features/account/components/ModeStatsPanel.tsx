@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import type { ModeStats } from "@typing-test/shared";
+import type { ModeStats } from "@thockr/shared";
 
 export const ACCOUNT_MODES = ["standard", "timed", "strict"] as const;
 

@@ -1,4 +1,4 @@
-import { type LeaderboardResult } from "@typing-test/shared";
+import { type LeaderboardResult } from "@thockr/shared";
 import { apiClient } from "../../../shared/api/client";
 
 export async function getLeaderboardResults(

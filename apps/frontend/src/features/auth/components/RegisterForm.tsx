@@ -18,7 +18,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import {
   type RegisterRequest,
   registerRequestSchema,
-} from "@typing-test/shared";
+} from "@thockr/shared";
 
 export default function RegisterForm() {
   const form = useForm<RegisterRequest>({

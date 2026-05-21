@@ -9,7 +9,7 @@ import {
   type SignInResponse,
   type SignOutResponse,
   type VerifyResetTokenResponse,
-} from "@typing-test/shared";
+} from "@thockr/shared";
 import { apiClient } from "../../../shared/api/client";
 
 export async function signIn(input: SignInRequest): Promise<PublicUser> {

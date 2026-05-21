@@ -1,4 +1,4 @@
-import type { Result, UserStats } from "@typing-test/shared";
+import type { Result, UserStats } from "@thockr/shared";
 import type { CreateResultPayload } from "@/features/typing/types/types";
 import { apiClient } from "../../../shared/api/client";
 

@@ -3,7 +3,7 @@ export type {
   LeaderboardResult,
   UserStats,
   ModeStats,
-} from "@typing-test/shared";
+} from "@thockr/shared";
 
 export interface ResultCreationDetails {
   user_id: string;

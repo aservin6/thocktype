@@ -4,7 +4,7 @@ import {
   insertUser,
   updateUserPassword,
 } from "../repositories/user.repository.ts";
-import type { PublicUser } from "@typing-test/shared";
+import type { PublicUser } from "@thockr/shared";
 import generateAccessToken from "../utils/generate-access-token.ts";
 import {
   insertRefreshToken,

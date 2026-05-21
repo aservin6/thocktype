@@ -11,7 +11,7 @@ import {
   countTyped,
   getAccuracy,
   getWPM,
-} from "@typing-test/shared";
+} from "@thockr/shared";
 
 export function TypingTest() {
   const [error, setError] = useState<string | null>(null);
