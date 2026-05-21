@@ -2,6 +2,26 @@
 
 **thockr** is a full-stack typing test application built to explore real-time typing mechanics, authentication, persistent user stats, and competitive typing features. The current version includes a polished single-player typing experience with account-based result tracking, leaderboard support, and a shared TypeScript typing engine designed to be reused across the frontend and backend.
 
+![thockr typing test](./docs/screenshots/home-typing-test.png)
+
+## Screenshots
+
+| Typing test | Leaderboard |
+| --- | --- |
+| ![Typing test page](./docs/screenshots/home-typing-test.png) | ![Leaderboard page](./docs/screenshots/leaderboard.png) |
+
+| Account dashboard | Sign in |
+| --- | --- |
+| ![Account dashboard](./docs/screenshots/account-dashboard.png) | ![Sign in page](./docs/screenshots/signin.png) |
+
+| Register | Forgot password |
+| --- | --- |
+| ![Register page](./docs/screenshots/register.png) | ![Forgot password page](./docs/screenshots/forgot-password.png) |
+
+| Reset password | Settings |
+| --- | --- |
+| ![Reset password page](./docs/screenshots/reset-password.png) | ![Settings page](./docs/screenshots/settings.png) |
+
 > This README is temporary and will evolve as the project moves toward deployment and contribution-ready documentation.
 
 ## Project Status
