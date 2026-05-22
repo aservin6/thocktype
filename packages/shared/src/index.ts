@@ -6,3 +6,4 @@ export * from "./types/user.ts";
 export * from "./types/result.ts";
 export * from "./engine/utils.ts";
 export * from "./contracts/auth.ts";
+export * from "./contracts/leaderboard.ts";

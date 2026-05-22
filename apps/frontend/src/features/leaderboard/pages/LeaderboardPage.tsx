@@ -1,4 +1,6 @@
+import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
+import type { LeaderboardEntry } from "@thockr/shared";
 import { useSearchParams } from "react-router";
 import Leaderboard from "../components/Leaderboard";
 import { getLeaderboardResults } from "../api/leaderboard";
@@ -32,8 +34,46 @@ export default function LeaderboardPage() {
           Leaderboard
         </h1>
       </div>
-      {query.data && <Leaderboard data={query.data} />}
+      {query.data?.currentUserEntry ? (
+        <CurrentUserEntryCard entry={query.data.currentUserEntry} />
+      ) : null}
+      {query.data && <Leaderboard data={query.data.data} />}
     </main>
+  );
+}
+
+function CurrentUserEntryCard({ entry }: { entry: LeaderboardEntry }) {
+  return (
+    <Card className="border-primary/35 bg-card/80 shadow-lg shadow-background/30">
+      <CardContent className="flex flex-col gap-4 py-1 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-xs font-medium tracking-[0.3em] text-primary uppercase">
+            Your standing
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Best saved result for this board
+          </p>
+        </div>
+        <div className="grid grid-cols-3 gap-4 text-right">
+          <Stat label="Rank" value={`#${entry.rank}`} />
+          <Stat label="WPM" value={Math.round(entry.wpm).toString()} />
+          <Stat label="Accuracy" value={`${Math.round(entry.accuracy)}%`} />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-[0.65rem] font-medium tracking-[0.22em] text-muted-foreground uppercase">
+        {label}
+      </p>
+      <p className="mt-1 text-lg font-semibold tracking-[-0.04em] text-foreground">
+        {value}
+      </p>
+    </div>
   );
 }
 

@@ -1,14 +1,13 @@
 import {
   insertResult,
   selectLeaderboardResults,
+  selectLeaderboardEntryCount,
+  selectLeaderboardEntryByUser,
 } from "../repositories/result.repository.ts";
 import { selectUserById } from "../repositories/user.repository.ts";
-import type {
-  LeaderboardResult,
-  Result,
-  ResultCreationDetails,
-} from "../types/result.ts";
+import type { Result, ResultCreationDetails } from "../types/result.ts";
 import redis from "../db/redis.ts";
+import type { LeaderboardEntry, LeaderboardResponse } from "@thockr/shared";
 
 const CACHE_TTL = 300;
 // Cap the number of entries fetched from the DB and held in Redis per mode.
@@ -21,9 +20,22 @@ export async function getLeaderboard(
   mode_value: number,
   page: number,
   limit: number,
-): Promise<LeaderboardResult[]> {
+  userId?: string,
+): Promise<LeaderboardResponse> {
   const cacheKey = `leaderboard:${mode}:${mode_value}`;
-  let results = null;
+  let results: LeaderboardEntry[] = [];
+  let currentUserEntry: LeaderboardEntry | null = null;
+
+  const total = await selectLeaderboardEntryCount(mode, mode_value);
+  const totalPages = Math.ceil(total / limit);
+
+  if (userId) {
+    currentUserEntry = await selectLeaderboardEntryByUser(
+      mode,
+      mode_value,
+      userId,
+    );
+  }
 
   try {
     const cached = await redis.get(cacheKey);
@@ -43,10 +55,25 @@ export async function getLeaderboard(
     }
   } catch (err) {
     console.error("Redis read failed, falling through to DB: ", err);
-    return await selectLeaderboardResults(mode, mode_value, page, limit);
+    const fallbackResults = await selectLeaderboardResults(
+      mode,
+      mode_value,
+      page,
+      limit,
+    );
+    return {
+      data: fallbackResults,
+      pagination: { page, limit, total, totalPages },
+      currentUserEntry,
+      message: "Successfully fetched leaderboard results.",
+    };
   }
-
-  return results.slice(limit * (page - 1), limit * page);
+  return {
+    data: results.slice(limit * (page - 1), limit * page),
+    pagination: { page, limit, total, totalPages },
+    currentUserEntry,
+    message: "Successfully fetched leaderboard results.",
+  };
 }
 
 export async function submitResult({

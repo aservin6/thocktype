@@ -1,12 +1,11 @@
 import type {
-  LeaderboardResult,
   ModeStats,
   Result,
   ResultCreationDetails,
   UserStats,
+  LeaderboardEntry,
 } from "../types/result.ts";
 import pool from "../db/pool.ts";
-import { LeaderboardEntry } from "@thockr/shared";
 
 export async function insertResult({
   user_id,
@@ -112,4 +111,55 @@ export async function selectLeaderboardResults(
   const queryResult = await pool.query(query, values);
 
   return queryResult.rows;
+}
+
+export async function selectLeaderboardEntryCount(
+  mode: string,
+  mode_value: number,
+): Promise<number> {
+  const query = `
+    SELECT COUNT(DISTINCT user_id) AS total
+    FROM results
+    WHERE mode = $1 AND mode_value = $2
+`;
+  const values = [mode, mode_value];
+  const queryResult = await pool.query(query, values);
+  const total = parseInt(queryResult.rows[0].total, 10);
+  return total;
+}
+
+export async function selectLeaderboardEntryByUser(
+  mode: string,
+  mode_value: number,
+  user_id: string,
+): Promise<LeaderboardEntry | null> {
+  const query = `
+    WITH ranked_user_results AS (
+      SELECT results.id, results.user_id, users.username, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, results.created_at,
+      ROW_NUMBER() OVER (
+          PARTITION BY results.user_id
+          ORDER BY wpm DESC, accuracy DESC, time_elapsed ASC, results.created_at ASC
+      ) AS personal_ranking
+      FROM results
+      INNER JOIN users
+      ON results.user_id = users.id
+      WHERE mode = $1 AND mode_value = $2
+    ), 
+    user_best_results AS (
+      SELECT id, user_id, username, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, created_at,
+      ROW_NUMBER() OVER (
+          ORDER BY wpm DESC, accuracy DESC, time_elapsed ASC, created_at ASC
+      ) AS rank
+      FROM ranked_user_results
+      WHERE personal_ranking = 1
+    )
+    SELECT rank, id, username, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, created_at
+    FROM user_best_results
+    WHERE user_id = $3
+`;
+
+  const values = [mode, mode_value, user_id];
+  const queryResult = await pool.query(query, values);
+
+  return queryResult.rows[0] ?? null;
 }

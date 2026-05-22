@@ -4,6 +4,7 @@ import {
   selectResultsByUser,
   selectUserStats,
 } from "../repositories/result.repository.ts";
+import type { LeaderboardResponse } from "@thockr/shared";
 
 export async function createResult(
   req: Request,
@@ -81,6 +82,7 @@ export async function getLeaderboardResults(
   let mode_value = parseInt(req.query.mode_value as string);
   let page = parseInt(req.query.page as string);
   let limit = parseInt(req.query.limit as string);
+  const userId = req.user?.id;
 
   // Default and clamp pagination params so the leaderboard endpoint is safe to call without query params.
   if (!["standard", "timed", "strict"].includes(mode)) mode = "standard";
@@ -90,11 +92,14 @@ export async function getLeaderboardResults(
   if (isNaN(limit) || limit < 1 || limit > 100) limit = 25;
 
   try {
-    const results = await getLeaderboard(mode, mode_value, page, limit);
-    res.status(200).json({
-      data: results,
-      message: "Results found",
-    });
+    const response: LeaderboardResponse = await getLeaderboard(
+      mode,
+      mode_value,
+      page,
+      limit,
+      userId,
+    );
+    res.status(200).json(response);
   } catch (err) {
     next(err);
   }

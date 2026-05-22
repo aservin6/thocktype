@@ -1,10 +1,10 @@
-import { type LeaderboardResult } from "@thockr/shared";
+import { type LeaderboardResponse } from "@thockr/shared";
 import { apiClient } from "../../../shared/api/client";
 
 export async function getLeaderboardResults(
   mode: string,
   mode_value: string,
-): Promise<LeaderboardResult[]> {
+): Promise<LeaderboardResponse> {
   const res = await apiClient(
     `/api/v1/leaderboard?mode=${mode}&mode_value=${mode_value}`,
   );
@@ -12,6 +12,5 @@ export async function getLeaderboardResults(
     const error = await res.json();
     throw new Error(error.message || "Unknown error");
   }
-  const body = await res.json();
-  return body.data;
+  return await res.json();
 }

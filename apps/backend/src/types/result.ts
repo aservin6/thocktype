@@ -1,6 +1,6 @@
 export type {
   Result,
-  LeaderboardResult,
+  LeaderboardEntry,
   UserStats,
   ModeStats,
 } from "@thockr/shared";
