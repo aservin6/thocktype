@@ -36,7 +36,7 @@ export default function LeaderboardControls({
           <ChevronRight className="size-6" />
         </Button>
       </div>
-      <div className="absolute right-0 flex-col gap-3 sm:flex-row sm:justify-between">
+      <div className="absolute right-0 flex flex-col gap-3 sm:flex-row sm:justify-between">
         Page {page} of {totalPages}
       </div>
     </div>

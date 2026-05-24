@@ -5,6 +5,7 @@ import { useSearchParams } from "react-router";
 import Leaderboard from "../components/Leaderboard";
 import { getLeaderboardResults } from "../api/leaderboard";
 import LeaderboardControls from "../components/LeaderboardControls";
+import LeaderboardFilters from "../components/LeaderboardFilters";
 
 const modeValues = { standard: "25", timed: "30", strict: "25" };
 
@@ -20,6 +21,14 @@ export default function LeaderboardPage() {
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", page.toString());
+    setSearchParams(params);
+  };
+
+  const handleModeChange = (mode: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("mode", mode);
+    params.set("mode_value", modeValues[mode as keyof typeof modeValues]);
+    params.set("page", "1");
     setSearchParams(params);
   };
 
@@ -40,26 +49,31 @@ export default function LeaderboardPage() {
     return <PageMessage>Error loading leaderboard.</PageMessage>;
 
   return (
-    <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 py-10">
-      <div>
-        <p className="text-muted-foreground text-xs font-medium tracking-[0.35em] uppercase">
-          Global pace
-        </p>
-        <h1 className="text-foreground mt-2 text-3xl font-semibold tracking-[-0.05em]">
-          Leaderboard
-        </h1>
+    <main className="mx-auto w-full">
+      <div className="flex w-full gap-6 py-10">
+        <div className="w-xs">
+          <LeaderboardFilters mode={mode} onChangeMode={handleModeChange} />
+        </div>
+        <div className="flex w-full flex-col gap-3">
+          <p className="text-muted-foreground text-xs font-medium tracking-[0.35em] uppercase">
+            Global pace
+          </p>
+          <h1 className="text-foreground text-3xl font-semibold tracking-[-0.05em]">
+            Leaderboard
+          </h1>
+          {query.data?.currentUserEntry ? (
+            <CurrentUserEntryCard entry={query.data.currentUserEntry} />
+          ) : null}
+          {query.data && <Leaderboard data={query.data.data} />}
+          {query.data?.pagination && query.data?.pagination.totalPages > 1 && (
+            <LeaderboardControls
+              page={query.data.pagination.page}
+              totalPages={query.data.pagination.totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
+        </div>
       </div>
-      {query.data?.currentUserEntry ? (
-        <CurrentUserEntryCard entry={query.data.currentUserEntry} />
-      ) : null}
-      {query.data && <Leaderboard data={query.data.data} />}
-      {query.data?.pagination && query.data?.pagination.totalPages > 1 && (
-        <LeaderboardControls
-          page={query.data.pagination.page}
-          totalPages={query.data.pagination.totalPages}
-          onPageChange={handlePageChange}
-        />
-      )}
     </main>
   );
 }
