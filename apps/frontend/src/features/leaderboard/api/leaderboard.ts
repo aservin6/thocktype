@@ -1,8 +1,8 @@
-import { type LeaderboardResponse } from "@thockr/shared";
+import { type LeaderboardResponse, type Mode } from "@thockr/shared";
 import { apiClient } from "../../../shared/api/client";
 
 export async function getLeaderboardResults(
-  mode: string,
+  mode: Mode,
   mode_value: string,
   page: number,
   limit: number,

@@ -1,22 +1,37 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import type { LeaderboardEntry } from "@thockr/shared";
+import type { Mode } from "@thockr/shared";
 import { useSearchParams } from "react-router";
 import Leaderboard from "../components/Leaderboard";
 import { getLeaderboardResults } from "../api/leaderboard";
 import LeaderboardControls from "../components/LeaderboardControls";
 import LeaderboardFilters from "../components/LeaderboardFilters";
-
-const modeValues = { standard: "25", timed: "30", strict: "25" };
+import { parseMode, parseModeValue } from "../utils/leaderboard-url";
+import { DEFAULT_MODE_VALUES } from "../constants";
+import CurrentUserEntryCard from "../components/CurrentUserEntryCard";
 
 export default function LeaderboardPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const mode = searchParams.get("mode") ?? "standard";
-  const mode_value =
-    searchParams.get("mode_value") ??
-    modeValues[mode as keyof typeof modeValues];
+  const rawMode = searchParams.get("mode");
+  const mode = parseMode(rawMode);
+  const rawModeValue = searchParams.get("mode_value");
+  const modeValue = parseModeValue(rawModeValue, mode);
   const page = searchParams.get("page") ?? "1";
   const limit = searchParams.get("limit") ?? "25";
+
+  const handleModeChange = (mode: Mode) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("mode", mode);
+    params.set("mode_value", DEFAULT_MODE_VALUES[mode]);
+    params.set("page", "1");
+    setSearchParams(params);
+  };
+
+  const handleModeValueChange = (modeValue: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("mode_value", modeValue);
+    params.set("page", "1");
+    setSearchParams(params);
+  };
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams);
@@ -24,20 +39,12 @@ export default function LeaderboardPage() {
     setSearchParams(params);
   };
 
-  const handleModeChange = (mode: string) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("mode", mode);
-    params.set("mode_value", modeValues[mode as keyof typeof modeValues]);
-    params.set("page", "1");
-    setSearchParams(params);
-  };
-
   const query = useQuery({
-    queryKey: ["leaderboard", mode, mode_value, page, limit],
+    queryKey: ["leaderboard", mode, modeValue, page, limit],
     queryFn: () =>
       getLeaderboardResults(
         mode,
-        mode_value,
+        modeValue,
         parseInt(page, 10),
         parseInt(limit, 10),
       ),
@@ -52,7 +59,12 @@ export default function LeaderboardPage() {
     <main className="mx-auto w-full">
       <div className="flex w-full gap-6 py-10">
         <div className="w-xs">
-          <LeaderboardFilters mode={mode} onChangeMode={handleModeChange} />
+          <LeaderboardFilters
+            mode={mode}
+            modeValue={modeValue}
+            onChangeMode={handleModeChange}
+            onChangeModeValue={handleModeValueChange}
+          />
         </div>
         <div className="flex w-full flex-col gap-3">
           <p className="text-muted-foreground text-xs font-medium tracking-[0.35em] uppercase">
@@ -64,7 +76,14 @@ export default function LeaderboardPage() {
           {query.data?.currentUserEntry ? (
             <CurrentUserEntryCard entry={query.data.currentUserEntry} />
           ) : null}
-          {query.data && <Leaderboard data={query.data.data} />}
+          {query.data && (
+            <Leaderboard
+              data={query.data.data}
+              mode={mode}
+              modeValue={modeValue}
+              currentUserEntryId={query.data.currentUserEntry?.id}
+            />
+          )}
           {query.data?.pagination && query.data?.pagination.totalPages > 1 && (
             <LeaderboardControls
               page={query.data.pagination.page}
@@ -75,41 +94,6 @@ export default function LeaderboardPage() {
         </div>
       </div>
     </main>
-  );
-}
-
-function CurrentUserEntryCard({ entry }: { entry: LeaderboardEntry }) {
-  return (
-    <Card className="border-primary/35 bg-card/80 shadow-background/30 shadow-lg">
-      <CardContent className="flex flex-col gap-4 py-1 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-primary text-xs font-medium tracking-[0.3em] uppercase">
-            Your standing
-          </p>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Best saved result for this board
-          </p>
-        </div>
-        <div className="grid grid-cols-3 gap-4 text-right">
-          <Stat label="Rank" value={`#${entry.rank}`} />
-          <Stat label="WPM" value={Math.round(entry.wpm).toString()} />
-          <Stat label="Accuracy" value={`${Math.round(entry.accuracy)}%`} />
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <p className="text-muted-foreground text-[0.65rem] font-medium tracking-[0.22em] uppercase">
-        {label}
-      </p>
-      <p className="text-foreground mt-1 text-lg font-semibold tracking-[-0.04em]">
-        {value}
-      </p>
-    </div>
   );
 }
 
