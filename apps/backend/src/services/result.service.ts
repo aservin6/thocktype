@@ -22,12 +22,11 @@ export async function getLeaderboard(
   limit: number,
   userId?: string,
 ): Promise<LeaderboardResponse> {
-  const cacheKey = `leaderboard:${mode}:${mode_value}`;
+  const topCacheKey = `leaderboard:v2:${mode}:${mode_value}:top`;
+  const countCacheKey = `leaderboard:v2:${mode}:${mode_value}:count`;
   let results: LeaderboardEntry[] = [];
   let currentUserEntry: LeaderboardEntry | null = null;
-
-  const total = await selectLeaderboardEntryCount(mode, mode_value);
-  const totalPages = Math.ceil(total / limit);
+  let total: number;
 
   if (userId) {
     currentUserEntry = await selectLeaderboardEntryByUser(
@@ -38,11 +37,26 @@ export async function getLeaderboard(
   }
 
   try {
-    const cached = await redis.get(cacheKey);
+    const cached = await redis.get(countCacheKey);
+    if (cached) {
+      total = Number(cached);
+      console.log("Count: Cache hit");
+    } else {
+      total = await selectLeaderboardEntryCount(mode, mode_value);
+      await redis.set(countCacheKey, total.toString(), "EX", CACHE_TTL);
+      console.log("Count: Cache miss");
+    }
+  } catch (err) {
+    console.error("Redis count read failed, falling through to DB: ", err);
+    total = await selectLeaderboardEntryCount(mode, mode_value);
+  }
 
+  const totalPages = Math.ceil(total / limit);
+  try {
+    const cached = await redis.get(topCacheKey);
     if (cached) {
       results = JSON.parse(cached);
-      console.log("Cache hit");
+      console.log("Top: Cache hit");
     } else {
       results = await selectLeaderboardResults(
         mode,
@@ -50,11 +64,11 @@ export async function getLeaderboard(
         1,
         LEADERBOARD_TOP_N,
       );
-      await redis.set(cacheKey, JSON.stringify(results), "EX", CACHE_TTL);
-      console.log("Cache miss");
+      await redis.set(topCacheKey, JSON.stringify(results), "EX", CACHE_TTL);
+      console.log("Top: Cache miss");
     }
   } catch (err) {
-    console.error("Redis read failed, falling through to DB: ", err);
+    console.error("Redis top read failed, falling through to DB: ", err);
     const fallbackResults = await selectLeaderboardResults(
       mode,
       mode_value,
@@ -102,9 +116,11 @@ export async function submitResult({
   });
 
   // Invalidate the leaderboard cache for this mode so the next read reflects the new result.
-  const cacheKey = `leaderboard:${mode}:${mode_value}`;
+  const topCacheKey = `leaderboard:v2:${mode}:${mode_value}:top`;
+  const countCacheKey = `leaderboard:v2:${mode}:${mode_value}:count`;
   try {
-    await redis.del(cacheKey);
+    await redis.del(topCacheKey);
+    await redis.del(countCacheKey);
   } catch (err) {
     console.error("Cache invalidation failed: ", err);
   }
