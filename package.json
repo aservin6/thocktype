@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "concurrently --names frontend,backend,db --prefix-colors blue,green,yellow \"pnpm --filter @thockr/frontend dev\" \"pnpm --filter @thockr/backend dev\" \"docker compose up -d\""
+    "dev": "docker compose up -d && concurrently --names frontend,backend,db --prefix-colors blue,green,yellow \"pnpm --filter @thockr/frontend dev\" \"pnpm --filter @thockr/backend dev\""
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
