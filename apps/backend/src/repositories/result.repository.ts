@@ -6,6 +6,7 @@ import type {
   LeaderboardEntry,
 } from "../types/result.ts";
 import pool from "../db/pool.ts";
+import type { Mode } from "@thockr/shared";
 
 export async function insertResult({
   user_id,
@@ -75,7 +76,7 @@ export async function selectUserStats(user_id: string): Promise<UserStats> {
 }
 
 export async function selectLeaderboardResults(
-  mode: string,
+  mode: Mode,
   mode_value: number,
   page: number,
   limit: number,
@@ -114,7 +115,7 @@ export async function selectLeaderboardResults(
 }
 
 export async function selectLeaderboardEntryCount(
-  mode: string,
+  mode: Mode,
   mode_value: number,
 ): Promise<number> {
   const query = `
@@ -129,7 +130,7 @@ export async function selectLeaderboardEntryCount(
 }
 
 export async function selectLeaderboardEntryByUser(
-  mode: string,
+  mode: Mode,
   mode_value: number,
   user_id: string,
 ): Promise<LeaderboardEntry | null> {

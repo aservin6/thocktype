@@ -7,7 +7,11 @@ import {
 import { selectUserById } from "../repositories/user.repository.ts";
 import type { Result, ResultCreationDetails } from "../types/result.ts";
 import redis from "../db/redis.ts";
-import type { LeaderboardEntry, LeaderboardResponse } from "@thockr/shared";
+import type {
+  LeaderboardEntry,
+  LeaderboardResponse,
+  Mode,
+} from "@thockr/shared";
 
 const CACHE_TTL = 300;
 // Cap the number of entries fetched from the DB and held in Redis per mode.
@@ -16,7 +20,7 @@ const LEADERBOARD_TOP_N = 500;
 
 // Cache-aside: check Redis first, fall back to Postgres on miss or Redis failure (fail-open).
 export async function getLeaderboard(
-  mode: string,
+  mode: Mode,
   mode_value: number,
   page: number,
   limit: number,

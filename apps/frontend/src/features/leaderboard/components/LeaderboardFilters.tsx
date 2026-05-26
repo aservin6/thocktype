@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import type { Mode } from "@thockr/shared";
-import { LEADERBOARD_MODES, MODE_VALUES_BY_MODE } from "../constants";
+import { LEADERBOARD_MODES, MODE_VALUES_BY_MODE } from "@thockr/shared";
 
 export default function LeaderboardFilters({
   mode,
@@ -24,7 +24,7 @@ export default function LeaderboardFilters({
             const isActive = mode === value;
             return (
               <Button
-                className="justify-start capitalize tracking-[-0.02em]"
+                className="justify-start tracking-[-0.02em] capitalize"
                 key={value}
                 onClick={() => onChangeMode(value)}
                 variant={isActive ? "default" : "outline"}

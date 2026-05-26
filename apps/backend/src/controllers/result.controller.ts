@@ -5,6 +5,7 @@ import {
   selectUserStats,
 } from "../repositories/result.repository.ts";
 import type { LeaderboardResponse } from "@thockr/shared";
+import { parseMode, parseModeValue } from "@thockr/shared";
 
 export async function createResult(
   req: Request,
@@ -16,7 +17,7 @@ export async function createResult(
 
   try {
     const userId = req.user?.id;
-    if (!userId) throw Error("Unauthorized request");
+    if (!userId) throw Error("Unauthorized request.");
     const result = await submitResult({
       user_id: userId,
       time_elapsed: timeElapsed,
@@ -30,7 +31,7 @@ export async function createResult(
 
     res.status(201).json({
       data: result,
-      message: "New result created successfully",
+      message: "New result created successfully.",
     });
   } catch (err) {
     next(err);
@@ -44,11 +45,11 @@ export async function getUserResults(
 ): Promise<void> {
   try {
     const userId = req.user?.id;
-    if (!userId) throw Error("Unauthorized request");
+    if (!userId) throw Error("Unauthorized request.");
     const result = await selectResultsByUser(userId);
     res.status(200).json({
       data: result,
-      message: "Results found",
+      message: "Results found.",
     });
   } catch (err) {
     next(err);
@@ -62,11 +63,11 @@ export async function getUserStats(
 ): Promise<void> {
   try {
     const userId = req.user?.id;
-    if (!userId) throw Error("Unauthorized request");
+    if (!userId) throw Error("Unauthorized request.");
     const stats = await selectUserStats(userId);
     res.status(200).json({
       data: stats,
-      message: "Stats found",
+      message: "Stats found.",
     });
   } catch (err) {
     next(err);
@@ -78,23 +79,21 @@ export async function getLeaderboardResults(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  let mode = req.query.mode as string;
-  let mode_value = parseInt(req.query.mode_value as string);
+  const mode = parseMode(req.query.mode);
+  const modeValueParam = parseModeValue(req.query.mode_value, mode);
+  const modeValue = parseInt(modeValueParam, 10);
   let page = parseInt(req.query.page as string);
   let limit = parseInt(req.query.limit as string);
   const userId = req.user?.id;
 
   // Default and clamp pagination params so the leaderboard endpoint is safe to call without query params.
-  if (!["standard", "timed", "strict"].includes(mode)) mode = "standard";
-  if (isNaN(mode_value) || mode_value < 1)
-    mode_value = mode === "timed" ? 30 : 25;
   if (isNaN(page) || page < 1) page = 1;
   if (isNaN(limit) || limit < 1 || limit > 100) limit = 25;
 
   try {
     const response: LeaderboardResponse = await getLeaderboard(
       mode,
-      mode_value,
+      modeValue,
       page,
       limit,
       userId,

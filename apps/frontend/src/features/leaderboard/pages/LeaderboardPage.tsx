@@ -5,8 +5,8 @@ import Leaderboard from "../components/Leaderboard";
 import { getLeaderboardResults } from "../api/leaderboard";
 import LeaderboardControls from "../components/LeaderboardControls";
 import LeaderboardFilters from "../components/LeaderboardFilters";
-import { parseMode, parseModeValue } from "../utils/leaderboard-url";
-import { DEFAULT_MODE_VALUES } from "../constants";
+import { parseMode, parseModeValue } from "@thockr/shared";
+import { DEFAULT_MODE_VALUES } from "@thockr/shared";
 import CurrentUserEntryCard from "../components/CurrentUserEntryCard";
 
 export default function LeaderboardPage() {
