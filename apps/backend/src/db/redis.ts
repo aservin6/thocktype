@@ -3,9 +3,7 @@ import requireEnv from "../utils/require-env.ts";
 
 // maxRetriesPerRequest: 1 keeps Redis failures fast so they don't hold up requests.
 // The app treats Redis as optional -- callers are expected to fall back to Postgres on failure.
-const redis = new Redis({
-  port: parseInt(requireEnv("REDIS_PORT"), 10),
-  host: requireEnv("REDIS_HOST"),
+const redis = new Redis(requireEnv("REDIS_URL"), {
   maxRetriesPerRequest: 1,
   connectTimeout: 1000,
 });

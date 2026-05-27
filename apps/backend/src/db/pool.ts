@@ -2,11 +2,7 @@ import { Pool } from "pg";
 import requireEnv from "../utils/require-env.ts";
 
 const pool = new Pool({
-  user: requireEnv("DB_USER"),
-  host: requireEnv("DB_HOST"),
-  database: requireEnv("DB_NAME"),
-  password: requireEnv("DB_PASSWORD"),
-  port: parseInt(requireEnv("DB_PORT"), 10),
+  connectionString: requireEnv("DATABASE_URL"),
 });
 
 pool.on("error", (err) => {

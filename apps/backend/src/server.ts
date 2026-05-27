@@ -11,7 +11,7 @@ import requireEnv from "./utils/require-env.ts";
 import { createRateLimiter } from "./middleware/rate-limit.ts";
 
 const PORT = requireEnv("PORT");
-const FRONTEND_PORT = requireEnv("FRONTEND_PORT");
+const FRONTEND_ORIGIN = requireEnv("FRONTEND_ORIGIN");
 const app = express();
 
 const globalLimiter = createRateLimiter({
@@ -23,7 +23,7 @@ const globalLimiter = createRateLimiter({
 
 app.use(
   express.json(),
-  cors({ origin: `http://localhost:${FRONTEND_PORT}`, credentials: true }),
+  cors({ origin: FRONTEND_ORIGIN, credentials: true }),
   cookieParser(),
   globalLimiter,
 );
