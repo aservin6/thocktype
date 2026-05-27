@@ -5,7 +5,12 @@ import {
   selectUserStats,
 } from "../repositories/result.repository.ts";
 import type { LeaderboardResponse } from "@thockr/shared";
-import { parseMode, parseModeValue } from "@thockr/shared";
+import {
+  parseLimit,
+  parseMode,
+  parseModeValue,
+  parsePage,
+} from "@thockr/shared";
 
 export async function createResult(
   req: Request,
@@ -82,13 +87,9 @@ export async function getLeaderboardResults(
   const mode = parseMode(req.query.mode);
   const modeValueParam = parseModeValue(req.query.mode_value, mode);
   const modeValue = parseInt(modeValueParam, 10);
-  let page = parseInt(req.query.page as string);
-  let limit = parseInt(req.query.limit as string);
+  const page = parsePage(req.query.page);
+  const limit = parseLimit(req.query.limit);
   const userId = req.user?.id;
-
-  // Default and clamp pagination params so the leaderboard endpoint is safe to call without query params.
-  if (isNaN(page) || page < 1) page = 1;
-  if (isNaN(limit) || limit < 1 || limit > 100) limit = 25;
 
   try {
     const response: LeaderboardResponse = await getLeaderboard(
