@@ -1,3 +1,5 @@
+import { Mode } from "@thockr/shared";
+
 export type {
   Result,
   LeaderboardEntry,
@@ -10,7 +12,7 @@ export interface ResultCreationDetails {
   wpm: number;
   time_elapsed: number;
   accuracy: number;
-  mode: string;
+  mode: Mode;
   mode_value: number;
   correct: number;
   incorrect: number;
