@@ -5,8 +5,13 @@ import Leaderboard from "../components/Leaderboard";
 import { getLeaderboardResults } from "../api/leaderboard";
 import LeaderboardControls from "../components/LeaderboardControls";
 import LeaderboardFilters from "../components/LeaderboardFilters";
-import { parseMode, parseModeValue } from "@thockr/shared";
-import { DEFAULT_MODE_VALUES } from "@thockr/shared";
+import {
+  DEFAULT_MODE_VALUES,
+  parseLimit,
+  parseMode,
+  parseModeValue,
+  parsePage,
+} from "@thockr/shared";
 import CurrentUserEntryCard from "../components/CurrentUserEntryCard";
 
 export default function LeaderboardPage() {
@@ -15,8 +20,8 @@ export default function LeaderboardPage() {
   const mode = parseMode(rawMode);
   const rawModeValue = searchParams.get("mode_value");
   const modeValue = parseModeValue(rawModeValue, mode);
-  const page = searchParams.get("page") ?? "1";
-  const limit = searchParams.get("limit") ?? "25";
+  const page = parsePage(searchParams.get("page"));
+  const limit = parseLimit(searchParams.get("limit"));
 
   const handleModeChange = (mode: Mode) => {
     const params = new URLSearchParams(searchParams);
@@ -39,15 +44,16 @@ export default function LeaderboardPage() {
     setSearchParams(params);
   };
 
+  const handleLimitChange = (limit: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("limit", limit.toString());
+    params.set("page", "1");
+    setSearchParams(params);
+  };
+
   const query = useQuery({
     queryKey: ["leaderboard", mode, modeValue, page, limit],
-    queryFn: () =>
-      getLeaderboardResults(
-        mode,
-        modeValue,
-        parseInt(page, 10),
-        parseInt(limit, 10),
-      ),
+    queryFn: () => getLeaderboardResults(mode, modeValue, page, limit),
     staleTime: 5 * 60 * 1000,
   });
 
@@ -60,8 +66,10 @@ export default function LeaderboardPage() {
       <div className="flex w-full gap-6 py-10">
         <div className="w-xs">
           <LeaderboardFilters
+            limit={limit}
             mode={mode}
             modeValue={modeValue}
+            onChangeLimit={handleLimitChange}
             onChangeMode={handleModeChange}
             onChangeModeValue={handleModeValueChange}
           />

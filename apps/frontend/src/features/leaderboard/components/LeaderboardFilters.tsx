@@ -1,15 +1,23 @@
 import { Button } from "@/components/ui/button";
 import type { Mode } from "@thockr/shared";
-import { LEADERBOARD_MODES, MODE_VALUES_BY_MODE } from "@thockr/shared";
+import {
+  LEADERBOARD_MODES,
+  LIMIT_OPTIONS,
+  MODE_VALUES_BY_MODE,
+} from "@thockr/shared";
 
 export default function LeaderboardFilters({
+  limit,
   mode,
   modeValue,
+  onChangeLimit,
   onChangeMode,
   onChangeModeValue,
 }: {
+  limit: number;
   mode: Mode;
   modeValue: string;
+  onChangeLimit: (limit: number) => void;
   onChangeMode: (mode: Mode) => void;
   onChangeModeValue: (modeValue: string) => void;
 }) {
@@ -50,6 +58,29 @@ export default function LeaderboardFilters({
                 className="font-semibold tabular-nums"
                 key={value}
                 onClick={() => onChangeModeValue(value)}
+                variant={isActive ? "secondary" : "outline"}
+              >
+                {value}
+              </Button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="bg-border/70 h-px" />
+
+      <div>
+        <p className="text-muted-foreground mb-3 text-xs font-medium tracking-[0.28em] uppercase">
+          Rows
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          {LIMIT_OPTIONS.map((value) => {
+            const isActive = value === limit;
+            return (
+              <Button
+                className="font-semibold tabular-nums"
+                key={value}
+                onClick={() => onChangeLimit(value)}
                 variant={isActive ? "secondary" : "outline"}
               >
                 {value}
