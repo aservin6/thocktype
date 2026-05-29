@@ -1,6 +1,0 @@
-name: Refresh Tokens
-description: Refresh access and refresh tokens
-method: POST
-url: http://localhost:3000/api/auth/refresh
-options:
-  attach_cookies: true

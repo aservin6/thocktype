@@ -1,6 +1,0 @@
-name: Get My Results
-description: Get all results for the authenticated user
-method: GET
-url: http://localhost:3000/api/me/results
-options:
-  attach_cookies: true

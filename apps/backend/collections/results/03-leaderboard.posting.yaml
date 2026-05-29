@@ -1,4 +1,0 @@
-name: Leaderboard
-description: Get leaderboard for a mode (public, no auth needed)
-method: GET
-url: http://localhost:3000/api/leaderboard/timed

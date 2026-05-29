@@ -1,6 +1,0 @@
-name: Sign Out
-description: Sign out and clear auth cookies
-method: POST
-url: http://localhost:3000/api/auth/signout
-options:
-  attach_cookies: true
