@@ -12,6 +12,7 @@ const router: Router = express.Router();
 router.get("/", authenticateToken, getMe);
 
 router.get("/results", authenticateToken, getUserResults);
+
 router.get("/stats", authenticateToken, getUserStats);
 
 export { router as meRoutes };

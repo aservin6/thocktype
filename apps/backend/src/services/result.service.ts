@@ -105,8 +105,7 @@ export async function submitResult({
   incorrect,
 }: ResultCreationDetails): Promise<Result> {
   const user = await selectUserById(user_id);
-  if (!user) throw new Error("User does not exist");
-  if (wpm < 0 || accuracy < 0) throw new Error("Result data is invalid");
+  if (!user) throw new Error("User does not exist.");
 
   const result = await insertResult({
     user_id,
@@ -128,6 +127,5 @@ export async function submitResult({
   } catch (err) {
     console.error("Cache invalidation failed: ", err);
   }
-
   return result;
 }

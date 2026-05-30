@@ -64,7 +64,7 @@ router.post(
   resetPassword,
 );
 
-router.get("/verify-reset-token", authenticateResetToken, (req, res) => {
+router.get("/verify-reset-token", authenticateResetToken, (_req, res) => {
   const responseBody: VerifyResetTokenResponse = { message: "Token is valid." };
   res.status(200).json(responseBody);
 });

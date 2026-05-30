@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import requireEnv from "../utils/require-env.ts";
 import { selectUserById } from "../repositories/user.repository.ts";
+import { sendErrorResponse } from "../utils/send-error-response.ts";
 
 const { TokenExpiredError, JsonWebTokenError } = jwt;
 
@@ -15,7 +16,10 @@ export async function authenticateToken(
   const token = req.cookies.access_token;
 
   if (!token) {
-    res.status(401).json({ message: "No token provided." });
+    sendErrorResponse(res, 401, {
+      message: "No token provided.",
+      code: "AUTH_REQUIRED",
+    });
     return;
   }
 
@@ -23,7 +27,10 @@ export async function authenticateToken(
     const payload = jwt.verify(token, JWT_SECRET) as { id: string };
     const user = await selectUserById(payload.id);
     if (!user) {
-      res.status(401).json({ message: "User not found." });
+      sendErrorResponse(res, 401, {
+        message: "User not found.",
+        code: "USER_NOT_FOUND",
+      });
       return;
     }
 
@@ -40,11 +47,17 @@ export async function authenticateToken(
     // TokenExpiredError is a subclass of JsonWebTokenError, so order matters here.
     // The client uses the "Token expired." message to know a refresh is worth attempting.
     if (err instanceof TokenExpiredError) {
-      res.status(401).json({ message: "Token expired." });
+      sendErrorResponse(res, 401, {
+        message: "Token expired.",
+        code: "TOKEN_EXPIRED",
+      });
       return;
     }
     if (err instanceof JsonWebTokenError) {
-      res.status(401).json({ message: "Invalid token." });
+      sendErrorResponse(res, 401, {
+        message: "Invalid token.",
+        code: "INVALID_TOKEN",
+      });
       return;
     }
     next(err);

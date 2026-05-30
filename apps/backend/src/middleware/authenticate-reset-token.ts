@@ -4,6 +4,7 @@ import {
   selectPasswordResetToken,
 } from "../repositories/password-reset-token.repository.ts";
 import crypto from "crypto";
+import { sendErrorResponse } from "../utils/send-error-response.ts";
 
 export async function authenticateResetToken(
   req: Request,
@@ -12,7 +13,10 @@ export async function authenticateResetToken(
 ): Promise<void> {
   const token = req.query.token as string;
   if (!token) {
-    res.status(401).json({ message: "Unauthorized access." });
+    sendErrorResponse(res, 401, {
+      message: "Unauthorized access.",
+      code: "AUTH_REQUIRED",
+    });
     return;
   }
   // Hash the raw token from the URL before querying -- only the hash is stored in the DB.
@@ -20,12 +24,18 @@ export async function authenticateResetToken(
   try {
     const storedToken = await selectPasswordResetToken(hashedToken);
     if (!storedToken) {
-      res.status(401).json({ message: "Unauthorized access." });
+      sendErrorResponse(res, 401, {
+        message: "Unauthorized access.",
+        code: "INVALID_RESET_TOKEN",
+      });
       return;
     }
     if (new Date() > new Date(storedToken.expires_at)) {
       await deletePasswordResetToken(storedToken.id);
-      res.status(401).json({ message: "Reset token expired." });
+      sendErrorResponse(res, 401, {
+        message: "Reset token expired.",
+        code: "RESET_TOKEN_EXPIRED",
+      });
       return;
     }
     // Attach to the request so downstream handlers can access user_id and token id without re-querying.
