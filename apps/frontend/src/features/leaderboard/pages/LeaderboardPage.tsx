@@ -53,7 +53,13 @@ export default function LeaderboardPage() {
 
   const query = useQuery({
     queryKey: ["leaderboard", mode, modeValue, page, limit],
-    queryFn: () => getLeaderboardResults(mode, modeValue, page, limit),
+    queryFn: () =>
+      getLeaderboardResults({
+        mode,
+        modeValue: parseInt(modeValue, 10),
+        page,
+        limit,
+      }),
     staleTime: 5 * 60 * 1000,
   });
 

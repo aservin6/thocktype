@@ -4,13 +4,14 @@ import {
   selectResultsByUser,
   selectUserStats,
 } from "../repositories/result.repository.ts";
-import type { LeaderboardResponse } from "@thockr/shared";
-import {
-  parseLimit,
-  parseMode,
-  parseModeValue,
-  parsePage,
+import type {
+  LeaderboardResponse,
+  CreateResultRequest,
+  CreateResultResponse,
+  GetMeResultsResponse,
+  GetMeStatsResponse,
 } from "@thockr/shared";
+import { parseLeaderboardQuery } from "@thockr/shared";
 
 export async function createResult(
   req: Request,
@@ -18,7 +19,7 @@ export async function createResult(
   next: NextFunction,
 ): Promise<void> {
   const { wpm, timeElapsed, accuracy, mode, modeValue, correct, incorrect } =
-    req.body;
+    req.body as CreateResultRequest;
 
   try {
     const userId = req.user?.id;
@@ -33,11 +34,11 @@ export async function createResult(
       correct,
       incorrect,
     });
-
-    res.status(201).json({
+    const responseBody: CreateResultResponse = {
       data: result,
       message: "New result created successfully.",
-    });
+    };
+    res.status(201).json(responseBody);
   } catch (err) {
     next(err);
   }
@@ -52,10 +53,11 @@ export async function getUserResults(
     const userId = req.user?.id;
     if (!userId) throw Error("Unauthorized request.");
     const result = await selectResultsByUser(userId);
-    res.status(200).json({
+    const responseBody: GetMeResultsResponse = {
       data: result,
       message: "Results found.",
-    });
+    };
+    res.status(200).json(responseBody);
   } catch (err) {
     next(err);
   }
@@ -69,11 +71,12 @@ export async function getUserStats(
   try {
     const userId = req.user?.id;
     if (!userId) throw Error("Unauthorized request.");
-    const stats = await selectUserStats(userId);
-    res.status(200).json({
-      data: stats,
+    const result = await selectUserStats(userId);
+    const responseBody: GetMeStatsResponse = {
+      data: result,
       message: "Stats found.",
-    });
+    };
+    res.status(200).json(responseBody);
   } catch (err) {
     next(err);
   }
@@ -84,22 +87,18 @@ export async function getLeaderboardResults(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const mode = parseMode(req.query.mode);
-  const modeValueParam = parseModeValue(req.query.mode_value, mode);
-  const modeValue = parseInt(modeValueParam, 10);
-  const page = parsePage(req.query.page);
-  const limit = parseLimit(req.query.limit);
+  const query = parseLeaderboardQuery(req.query);
   const userId = req.user?.id;
 
   try {
-    const response: LeaderboardResponse = await getLeaderboard(
-      mode,
-      modeValue,
-      page,
-      limit,
+    const responseBody: LeaderboardResponse = await getLeaderboard(
+      query.mode,
+      query.modeValue,
+      query.page,
+      query.limit,
       userId,
     );
-    res.status(200).json(response);
+    res.status(200).json(responseBody);
   } catch (err) {
     next(err);
   }

@@ -1,18 +1,6 @@
-import type { PublicUser } from "../types/user.ts";
 import { z } from "zod";
-
-export type ApiSuccessResponse<TData> = {
-  data: TData;
-  message: string;
-};
-
-export type ApiMessageResponse = {
-  message: string;
-};
-
-export type ApiErrorResponse = {
-  message: string;
-};
+import type { PublicUser } from "../types/user.ts";
+import type { ApiSuccessResponse, ApiMessageResponse } from "./api.ts";
 
 const passwordSchema = z
   .string()

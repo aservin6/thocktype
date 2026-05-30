@@ -2,6 +2,7 @@ import {
   type ApiErrorResponse,
   type ForgotPasswordRequest,
   type ForgotPasswordResponse,
+  type GetMeResponse,
   type PublicUser,
   type RegisterRequest,
   type RegisterResponse,
@@ -73,10 +74,10 @@ export async function getMe(): Promise<PublicUser> {
     method: "GET",
   });
   if (!res.ok) {
-    const error = await res.json();
+    const error: ApiErrorResponse = await res.json();
     throw new Error(error.message || "Unknown error");
   }
-  const body = await res.json();
+  const body: GetMeResponse = await res.json();
   return body.data;
 }
 

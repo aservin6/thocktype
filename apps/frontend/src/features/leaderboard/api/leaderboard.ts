@@ -1,18 +1,24 @@
-import { type LeaderboardResponse, type Mode } from "@thockr/shared";
+import type { LeaderboardQuery, LeaderboardResponse } from "@thockr/shared";
 import { apiClient } from "../../../shared/api/client";
 
-export async function getLeaderboardResults(
-  mode: Mode,
-  mode_value: string,
-  page: number,
-  limit: number,
-): Promise<LeaderboardResponse> {
-  const res = await apiClient(
-    `/api/v1/leaderboard?mode=${mode}&mode_value=${mode_value}&page=${page}&limit=${limit}`,
-  );
+export async function getLeaderboardResults({
+  mode,
+  modeValue,
+  page,
+  limit,
+}: LeaderboardQuery): Promise<LeaderboardResponse> {
+  const params = new URLSearchParams({
+    mode,
+    mode_value: modeValue.toString(),
+    page: page.toString(),
+    limit: limit.toString(),
+  });
+
+  const res = await apiClient(`/api/v1/leaderboard?${params.toString()}`);
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.message || "Unknown error");
   }
-  return await res.json();
+  const body: LeaderboardResponse = await res.json();
+  return body;
 }

@@ -12,6 +12,7 @@ import requireEnv from "../utils/require-env.ts";
 import type {
   ForgotPasswordRequest,
   ForgotPasswordResponse,
+  GetMeResponse,
   RefreshResponse,
   RegisterRequest,
   RegisterResponse,
@@ -21,6 +22,7 @@ import type {
   SignInResponse,
   SignOutResponse,
 } from "@thockr/shared";
+import { sendErrorResponse } from "../utils/send-error-response.ts";
 
 const isProduction = process.env.NODE_ENV === "production";
 const resend = new Resend(requireEnv("RESEND_API_KEY"));
@@ -109,7 +111,14 @@ export async function signOutUser(req: Request, res: Response): Promise<void> {
 }
 
 export async function getMe(req: Request, res: Response): Promise<void> {
-  res.status(200).json({ data: req.user });
+  const user = req.user;
+  if (!user) throw Error("Unauthorized request.");
+
+  const responseBody: GetMeResponse = {
+    data: user,
+    message: "User found.",
+  };
+  res.status(200).json(responseBody);
 }
 
 export async function refreshTokens(
@@ -124,7 +133,10 @@ export async function refreshTokens(
   if (!refreshToken) {
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");
-    res.status(401).json({ message: "No token found. Unauthorized access." });
+    sendErrorResponse(res, 401, {
+      message: "No token found. Unauthorized access.",
+      code: "AUTH_REQUIRED",
+    });
     return;
   }
   // Refresh tokens and set new cookies
