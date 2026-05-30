@@ -1,4 +1,6 @@
-import type { Mode } from "./engine/types";
+export const MODES = ["standard", "timed", "strict"] as const;
+
+export type Mode = (typeof MODES)[number];
 
 export const LEADERBOARD_MODES = ["standard", "timed", "strict"] as const;
 export const DEFAULT_MODE_VALUES: Record<Mode, string> = {

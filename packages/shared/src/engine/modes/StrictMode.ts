@@ -1,5 +1,5 @@
 import type { EngineContext } from "../context/EngineContext.ts";
-import type { Mode } from "../types.ts";
+import type { Mode } from "../../mode.ts";
 import type { TypingModeStrategy } from "./TypingModeStrategy.ts";
 
 export class StrictMode implements TypingModeStrategy {

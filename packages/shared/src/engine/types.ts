@@ -2,6 +2,8 @@
 // owns its typed input independently, which lets the engine model overflow
 // (typed.length > target.length) and lets the user advance or skip words by
 // pressing space without corrupting neighboring words' state.
+import type { Mode } from "../mode.ts";
+
 export interface WordState {
   target: string;
   typed: string;
@@ -15,5 +17,3 @@ export interface EngineState {
   startTime: number | null;
   endTime: number | null;
 }
-
-export type Mode = "standard" | "strict" | "timed";

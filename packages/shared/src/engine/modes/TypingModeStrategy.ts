@@ -1,5 +1,5 @@
 import type { EngineContext } from "../context/EngineContext.ts";
-import type { Mode } from "../types.ts";
+import type { Mode } from "../../mode.ts";
 
 // Interface for each Typing Mode
 export interface TypingModeStrategy {

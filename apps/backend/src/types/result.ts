@@ -1,4 +1,4 @@
-import { Mode } from "@thockr/shared";
+import type { Mode } from "@thockr/shared";
 
 export type {
   Result,
