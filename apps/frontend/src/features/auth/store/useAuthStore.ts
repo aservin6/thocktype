@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { type PublicUser } from "@thockr/shared";
+import { type PublicUser } from "@thocktype/shared";
 
 type AuthState = {
   user: PublicUser | null;

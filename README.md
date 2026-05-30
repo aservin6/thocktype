@@ -1,8 +1,8 @@
-# thockr
+# thocktype
 
-**thockr** is a full-stack typing test application built to explore real-time typing mechanics, authentication, persistent user stats, and competitive typing features. The current version includes a polished single-player typing experience with account-based result tracking, leaderboard support, and a shared TypeScript typing engine designed to be reused across the frontend and backend.
+**thocktype** is a full-stack typing test application built to explore real-time typing mechanics, authentication, persistent user stats, and competitive typing features. The current version includes a polished single-player typing experience with account-based result tracking, leaderboard support, and a shared TypeScript typing engine designed to be reused across the frontend and backend.
 
-![thockr typing test](./docs/screenshots/home-typing-test.png)
+![thocktype typing test](./docs/screenshots/home-typing-test.png)
 
 ## Screenshots
 
@@ -24,7 +24,7 @@
 
 ## Project Status
 
-thockr is currently under active development. The core typing experience, authentication flow, backend API, database schema, and shared typing engine are in place. Upcoming work will focus on multiplayer, richer customization, analytics, deployment, and contributor documentation.
+thocktype is currently under active development. The core typing experience, authentication flow, backend API, database schema, and shared typing engine are in place. Upcoming work will focus on multiplayer, richer customization, analytics, deployment, and contributor documentation.
 
 ## What It Does Today
 
@@ -42,7 +42,7 @@ thockr is currently under active development. The core typing experience, authen
 
 ## Why This Project Is Interesting
 
-thockr is more than a UI exercise. It is structured as a full-stack monorepo with clear separation between frontend, backend, and shared domain logic.
+thocktype is more than a UI exercise. It is structured as a full-stack monorepo with clear separation between frontend, backend, and shared domain logic.
 
 Some implementation highlights:
 
@@ -83,7 +83,7 @@ Some implementation highlights:
 - Monorepo structure
 - Docker Compose for local Postgres and Redis
 - Vitest for tests
-- Shared internal package: `@thockr/shared`
+- Shared internal package: `@thocktype/shared`
 
 ## Repository Structure
 

@@ -3,7 +3,7 @@ import {
   StandardMode,
   StrictMode,
   type Mode,
-} from "@thockr/shared";
+} from "@thocktype/shared";
 import { ObservableTypingEngine } from "../engine/ObservableTypingEngine";
 import { generateText } from "./generate-text";
 

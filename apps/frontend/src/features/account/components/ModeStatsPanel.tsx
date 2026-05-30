@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import type { Mode, ModeStats } from "@thockr/shared";
+import type { Mode, ModeStats } from "@thocktype/shared";
 
 export const ACCOUNT_MODES = ["standard", "timed", "strict"] as const;
 

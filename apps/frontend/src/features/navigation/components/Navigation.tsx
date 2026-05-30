@@ -15,7 +15,7 @@ export default function Navigation() {
       <nav className="border-border/60 bg-background/85 sticky top-0 z-40 flex items-center justify-between border-b py-3 backdrop-blur">
         <Link to="/" className="group">
           <div className="text-foreground group-hover:text-primary text-3xl font-bold tracking-[-0.08em] transition-colors">
-            thockr
+            thocktype
           </div>
         </Link>
         <NavigationMenu>

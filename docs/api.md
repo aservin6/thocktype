@@ -1,4 +1,4 @@
-# Thockr API
+# Thocktype API
 
 Base path: `/api/v1`
 

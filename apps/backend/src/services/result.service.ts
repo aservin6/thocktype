@@ -11,7 +11,7 @@ import type {
   LeaderboardEntry,
   LeaderboardResponse,
   Mode,
-} from "@thockr/shared";
+} from "@thocktype/shared";
 
 const CACHE_TTL = 300;
 // Cap the number of entries fetched from the DB and held in Redis per mode.

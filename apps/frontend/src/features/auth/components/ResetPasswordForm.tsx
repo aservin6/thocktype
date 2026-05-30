@@ -13,7 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   resetPasswordRequestSchema,
   type ResetPasswordRequest,
-} from "@thockr/shared";
+} from "@thocktype/shared";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router";

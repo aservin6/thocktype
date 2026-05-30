@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import type { LeaderboardEntry, Mode } from "@thockr/shared";
+import type { LeaderboardEntry, Mode } from "@thocktype/shared";
 
 const numberFormat = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1,

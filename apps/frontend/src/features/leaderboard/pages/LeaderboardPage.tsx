@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import type { Mode } from "@thockr/shared";
+import type { Mode } from "@thocktype/shared";
 import { useSearchParams } from "react-router";
 import Leaderboard from "../components/Leaderboard";
 import { getLeaderboardResults } from "../api/leaderboard";
@@ -11,7 +11,7 @@ import {
   parseMode,
   parseModeValue,
   parsePage,
-} from "@thockr/shared";
+} from "@thocktype/shared";
 import CurrentUserEntryCard from "../components/CurrentUserEntryCard";
 
 export default function LeaderboardPage() {

@@ -1,7 +1,7 @@
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import type { Result } from "@thockr/shared";
+import type { Result } from "@thocktype/shared";
 
 type RecentResultsTableProps = {
   results: Result[];

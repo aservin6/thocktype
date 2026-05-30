@@ -1,4 +1,4 @@
-import { createResultRequestSchema } from "@thockr/shared";
+import { createResultRequestSchema } from "@thocktype/shared";
 import { validateBody } from "./validate-body.ts";
 import type { RequestHandler } from "express";
 

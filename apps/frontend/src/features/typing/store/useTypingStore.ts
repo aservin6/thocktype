@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { ObservableTypingEngine } from "../engine/ObservableTypingEngine";
-import type { EngineState, Mode } from "@thockr/shared";
+import type { EngineState, Mode } from "@thocktype/shared";
 import { getEngineFromMode } from "../utils/get-engine-from-mode";
 
 // engineUnsubscribe holds the cleanup function returned by ObservableTypingEngine.subscribe.

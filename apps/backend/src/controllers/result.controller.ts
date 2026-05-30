@@ -10,8 +10,8 @@ import type {
   CreateResultResponse,
   GetMeResultsResponse,
   GetMeStatsResponse,
-} from "@thockr/shared";
-import { parseLeaderboardQuery } from "@thockr/shared";
+} from "@thocktype/shared";
+import { parseLeaderboardQuery } from "@thocktype/shared";
 
 export async function createResult(
   req: Request,

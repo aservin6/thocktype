@@ -1,11 +1,11 @@
-import type { Mode } from "@thockr/shared";
+import type { Mode } from "@thocktype/shared";
 
 export type {
   Result,
   LeaderboardEntry,
   UserStats,
   ModeStats,
-} from "@thockr/shared";
+} from "@thocktype/shared";
 
 export interface ResultCreationDetails {
   user_id: string;

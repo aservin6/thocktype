@@ -1,4 +1,4 @@
-import { PublicUser } from "@thockr/shared";
+import { PublicUser } from "@thocktype/shared";
 import { PasswordResetToken } from "./token.ts";
 
 declare global {

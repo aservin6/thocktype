@@ -10,7 +10,7 @@ import {
   type SignInResponse,
   type SignOutResponse,
   type VerifyResetTokenResponse,
-} from "@thockr/shared";
+} from "@thocktype/shared";
 import { apiClient } from "../../../shared/api/client";
 
 export async function signIn(input: SignInRequest): Promise<PublicUser> {

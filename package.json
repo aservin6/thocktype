@@ -1,9 +1,9 @@
 {
-  "name": "thockr-monorepo",
+  "name": "thocktype-monorepo",
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "docker compose up -d && concurrently --names frontend,backend,db --prefix-colors blue,green,yellow \"pnpm --filter @thockr/frontend dev\" \"pnpm --filter @thockr/backend dev\""
+    "dev": "docker compose up -d && concurrently --names frontend,backend,db --prefix-colors blue,green,yellow \"pnpm --filter @thocktype/frontend dev\" \"pnpm --filter @thocktype/backend dev\""
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

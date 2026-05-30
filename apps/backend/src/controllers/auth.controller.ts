@@ -21,7 +21,7 @@ import type {
   SignInRequest,
   SignInResponse,
   SignOutResponse,
-} from "@thockr/shared";
+} from "@thocktype/shared";
 import { sendErrorResponse } from "../utils/send-error-response.ts";
 
 const isProduction = process.env.NODE_ENV === "production";

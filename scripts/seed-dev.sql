@@ -6,7 +6,7 @@ RESTART IDENTITY CASCADE;
 INSERT INTO users (username, email, password_hash, email_verified, created_at)
 SELECT
   'pilot_' || LPAD(n::text, 2, '0') AS username,
-  'pilot_' || LPAD(n::text, 2, '0') || '@thockr.test' AS email,
+  'pilot_' || LPAD(n::text, 2, '0') || '@thocktype.test' AS email,
   '$2b$10$A4S0YXED84jvY2KhnlColOwMekLSqqzQssjZrHVnlmg3/zhbyVXzO' AS password_hash,
   TRUE AS email_verified,
   NOW() - (n || ' days')::interval AS created_at
@@ -17,7 +17,7 @@ WITH seeded_users AS (
     id,
     ROW_NUMBER() OVER (ORDER BY username) AS user_index
   FROM users
-  WHERE email LIKE '%@thockr.test'
+  WHERE email LIKE '%@thocktype.test'
 ), leaderboard_boards AS (
   SELECT *
   FROM (

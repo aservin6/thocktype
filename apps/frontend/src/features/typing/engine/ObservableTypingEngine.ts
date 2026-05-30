@@ -1,4 +1,4 @@
-import { TypingEngine, type EngineState } from "@thockr/shared";
+import { TypingEngine, type EngineState } from "@thocktype/shared";
 
 // Extends the core TypingEngine with an observer pattern so the Zustand store
 // can react to engine state changes without polling or lifting all state into

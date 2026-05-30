@@ -1,4 +1,4 @@
-import type { LeaderboardQuery, LeaderboardResponse } from "@thockr/shared";
+import type { LeaderboardQuery, LeaderboardResponse } from "@thocktype/shared";
 import { apiClient } from "../../../shared/api/client";
 
 export async function getLeaderboardResults({

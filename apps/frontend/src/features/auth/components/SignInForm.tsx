@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { signIn } from "../api/auth";
 import { useAuthStore } from "../store/useAuthStore";
-import { type SignInRequest, signInRequestSchema } from "@thockr/shared";
+import { type SignInRequest, signInRequestSchema } from "@thocktype/shared";
 
 export default function SignInForm() {
   const form = useForm<SignInRequest>({

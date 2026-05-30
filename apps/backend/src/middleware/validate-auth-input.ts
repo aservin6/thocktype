@@ -3,7 +3,7 @@ import {
   registerRequestSchema,
   resetPasswordRequestSchema,
   signInRequestSchema,
-} from "@thockr/shared";
+} from "@thocktype/shared";
 import { validateBody } from "./validate-body.ts";
 import type { RequestHandler } from "express";
 

@@ -1,6 +1,6 @@
 import { Gauge, Percent, Sigma, Trophy } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import type { UserStats } from "@thockr/shared";
+import type { UserStats } from "@thocktype/shared";
 
 type StatsOverviewProps = {
   stats: UserStats["overall"];

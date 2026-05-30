@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import type { LeaderboardEntry } from "@thockr/shared";
+import type { LeaderboardEntry } from "@thocktype/shared";
 
 export default function CurrentUserEntryCard({
   entry,

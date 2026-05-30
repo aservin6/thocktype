@@ -25,7 +25,7 @@ importers:
 
   apps/backend:
     dependencies:
-      '@thockr/shared':
+      '@thocktype/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       bcrypt:
@@ -107,7 +107,7 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.100.9
         version: 5.100.9(react@19.2.5)
-      '@thockr/shared':
+      '@thocktype/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       class-variance-authority:

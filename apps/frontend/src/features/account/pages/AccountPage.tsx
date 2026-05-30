@@ -7,7 +7,7 @@ import { ModeStatsPanel } from "../components/ModeStatsPanel";
 import { RecentResultsTable } from "../components/RecentResultsTable";
 import { StatsOverview } from "../components/StatsOverview";
 import { getMeResults, getMeStats } from "../api/results";
-import type { Mode } from "@thockr/shared";
+import type { Mode } from "@thocktype/shared";
 
 const DEFAULT_MODE_VALUE: Record<Mode, number> = {
   standard: 25,

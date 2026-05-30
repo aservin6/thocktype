@@ -6,7 +6,7 @@ import type {
   LeaderboardEntry,
 } from "../types/result.ts";
 import pool from "../db/pool.ts";
-import type { Mode } from "@thockr/shared";
+import type { Mode } from "@thocktype/shared";
 
 export async function insertResult({
   user_id,

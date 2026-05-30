@@ -6,7 +6,7 @@ import type {
   GetMeStatsResponse,
   Result,
   UserStats,
-} from "@thockr/shared";
+} from "@thocktype/shared";
 import { apiClient } from "../../../shared/api/client";
 
 export async function postResult(

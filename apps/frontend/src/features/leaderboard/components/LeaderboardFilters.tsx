@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
-import type { Mode } from "@thockr/shared";
+import type { Mode } from "@thocktype/shared";
 import {
   LEADERBOARD_MODES,
   LIMIT_OPTIONS,
   MODE_VALUES_BY_MODE,
-} from "@thockr/shared";
+} from "@thocktype/shared";
 
 export default function LeaderboardFilters({
   limit,
