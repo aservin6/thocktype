@@ -25,6 +25,7 @@ import type {
 import { sendErrorResponse } from "../utils/send-error-response.ts";
 
 const isProduction = process.env.NODE_ENV === "production";
+const frontendOrigin = requireEnv("FRONTEND_ORIGIN");
 const resend = new Resend(requireEnv("RESEND_API_KEY"));
 
 export async function registerUser(
@@ -179,7 +180,7 @@ export async function forgotPassword(
           from: `onboarding@resend.dev`,
           to: email.toLowerCase(),
           subject: "Reset your password",
-          html: `<p>Click <a href="http://localhost:5173/reset-password?token=${token}&email=${email.toLowerCase()}">here</a> to reset your password.</p>`,
+          html: `<p>Click <a href="${frontendOrigin}/reset-password?token=${token}&email=${encodeURIComponent(email.toLowerCase())}">here</a> to reset your password.</p>`,
         });
       }
     } catch (err) {

@@ -24,7 +24,7 @@ export async function register(
 ): Promise<PublicUser & { accessToken: string; refreshToken: string }> {
   email = email.toLowerCase();
   const user = await selectUserByEmail(email.toLowerCase());
-  if (user) throw new Error("User already exists");
+  if (user) throw new Error("User already exists.");
 
   // Username is derived from the email prefix for now.
   const username = email.toLowerCase().split("@")[0];
@@ -53,9 +53,9 @@ export async function signIn(
   email = email.toLowerCase();
   const user = await selectUserByEmail(email);
   // Same error for both missing user and wrong password to prevent email enumeration.
-  if (!user) throw new Error("Confirm sign in details and try again");
+  if (!user) throw new Error("Confirm sign in details and try again.");
   const isValid = await bcrypt.compare(password, user.password_hash);
-  if (!isValid) throw new Error("Confirm sign in details and try again");
+  if (!isValid) throw new Error("Confirm sign in details and try again.");
 
   const accessToken = generateAccessToken(user.id);
   const { token, expiresAt } = generateRefreshToken();
@@ -78,11 +78,11 @@ export async function refreshAuthTokens(
   refreshToken: string,
 ): Promise<{ accessToken: string; refreshToken: string }> {
   const storedToken = await selectRefreshToken(refreshToken);
-  if (!storedToken) throw new Error("Refresh token not found");
+  if (!storedToken) throw new Error("Refresh token not found.");
 
   if (new Date() > new Date(storedToken.expires_at)) {
     await deleteRefreshToken(refreshToken);
-    throw new Error("Refresh token has expired");
+    throw new Error("Refresh token has expired.");
   }
 
   await deleteRefreshToken(refreshToken);
