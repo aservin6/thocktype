@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node --env-file=.env --watch src/server.ts",
     "build": "tsc",
-    "start": "node --env-file=.env server.ts",
+    "start": "node --env-file=.env dist/src/server.js",
     "test": "vitest",
     "db:migrate": "node-pg-migrate up -m migrations --envPath .env --tsx",
     "db:rollback": "node-pg-migrate down -m migrations --envPath .env --tsx",
@@ -26,13 +26,11 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
-    "@types/body-parser": "^1.19.6",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/pg": "^8.20.0",
-    "body-parser": "^2.2.2",
     "node-pg-migrate": "^8.0.4",
     "tsx": "^4.22.3",
     "typescript": "^5.9.3"
