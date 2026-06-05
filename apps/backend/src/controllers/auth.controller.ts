@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express";
+import type { CookieOptions, NextFunction, Request, Response } from "express";
 import {
   refreshAuthTokens,
   register,
@@ -28,6 +28,26 @@ const isProduction = process.env.NODE_ENV === "production";
 const frontendOrigin = requireEnv("FRONTEND_ORIGIN");
 const resend = new Resend(requireEnv("RESEND_API_KEY"));
 
+const authCookieOptions: CookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: "strict",
+};
+
+function setAuthCookies(
+  res: Response,
+  accessToken: string,
+  refreshToken: string,
+) {
+  res.cookie("access_token", accessToken, authCookieOptions);
+  res.cookie("refresh_token", refreshToken, authCookieOptions);
+}
+
+function clearAuthCookies(res: Response) {
+  res.clearCookie("access_token");
+  res.clearCookie("refresh_token");
+}
+
 export async function registerUser(
   req: Request,
   res: Response,
@@ -42,17 +62,7 @@ export async function registerUser(
       data: publicUser,
       message: "New user registered successfully.",
     };
-    // Set auth cookies upon successful user registration
-    res.cookie("access_token", accessToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: "strict",
-    });
-    res.cookie("refresh_token", refreshToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: "strict",
-    });
+    setAuthCookies(res, accessToken, refreshToken);
     res.status(201).json(responseBody);
   } catch (err) {
     next(err);
@@ -73,17 +83,7 @@ export async function signInUser(
       data: publicUser,
       message: "User signed in successfully.",
     };
-    // Set auth cookies upon successful user sign in
-    res.cookie("access_token", accessToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: "strict",
-    });
-    res.cookie("refresh_token", refreshToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: "strict",
-    });
+    setAuthCookies(res, accessToken, refreshToken);
     res.status(200).json(responseBody);
   } catch (err) {
     next(err);
@@ -106,8 +106,7 @@ export async function signOutUser(req: Request, res: Response): Promise<void> {
       );
     }
   }
-  res.clearCookie("access_token");
-  res.clearCookie("refresh_token");
+  clearAuthCookies(res);
   res.status(200).json(responseBody);
 }
 
@@ -132,8 +131,7 @@ export async function refreshTokens(
   };
   const refreshToken = req.cookies.refresh_token;
   if (!refreshToken) {
-    res.clearCookie("access_token");
-    res.clearCookie("refresh_token");
+    clearAuthCookies(res);
     sendErrorResponse(res, 401, {
       message: "No token found. Unauthorized access.",
       code: "AUTH_REQUIRED",
@@ -144,16 +142,7 @@ export async function refreshTokens(
   try {
     const { accessToken, refreshToken: newRefreshToken } =
       await refreshAuthTokens(refreshToken);
-    res.cookie("access_token", accessToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: "strict",
-    });
-    res.cookie("refresh_token", newRefreshToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: "strict",
-    });
+    setAuthCookies(res, accessToken, newRefreshToken);
     res.status(200).json(responseBody);
   } catch (err) {
     next(err);
