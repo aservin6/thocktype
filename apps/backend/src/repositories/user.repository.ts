@@ -15,7 +15,7 @@ export async function insertUser({
   const query = `
     INSERT INTO users (email, username, password_hash)
     VALUES ($1, $2, $3)
-    RETURNING *;
+    RETURNING id, username, email, password_hash, email_verified, created_at;
 `;
   const values = [email, username, password_hash];
   const queryResult = await pool.query(query, values);
@@ -25,7 +25,8 @@ export async function insertUser({
 
 export async function selectUserByEmail(email: string): Promise<User | null> {
   const query = `
-    SELECT * FROM users
+    SELECT id, username, email, password_hash, email_verified, created_at
+    FROM users
     WHERE email = $1
 `;
   const values = [email];
@@ -36,7 +37,8 @@ export async function selectUserByEmail(email: string): Promise<User | null> {
 
 export async function selectUserById(id: string): Promise<User | null> {
   const query = `
-    SELECT * FROM users
+    SELECT id, username, email, password_hash, email_verified, created_at
+    FROM users
     WHERE id = $1
 `;
   const values = [id];

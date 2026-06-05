@@ -9,7 +9,7 @@ export async function insertPasswordResetToken(
   const query = `
     INSERT INTO password_reset_tokens (user_id, token, expires_at)
     VALUES ($1, $2, $3)
-    RETURNING *
+    RETURNING id, user_id, token, expires_at, created_at
 `;
 
   const values = [userId, token, expiresAt];
@@ -23,7 +23,8 @@ export async function selectPasswordResetToken(
   hashedToken: string,
 ): Promise<PasswordResetToken | null> {
   const query = `
-    SELECT * FROM password_reset_tokens
+    SELECT id, user_id, token, expires_at, created_at
+    FROM password_reset_tokens
     WHERE token = $1
 `;
   const values = [hashedToken];

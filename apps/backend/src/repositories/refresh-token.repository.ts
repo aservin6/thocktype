@@ -9,7 +9,7 @@ export async function insertRefreshToken(
   const query = `
     INSERT INTO refresh_tokens (user_id, token, expires_at)
     VALUES ($1, $2, $3)
-    RETURNING *
+    RETURNING id, user_id, token, expires_at, created_at
 `;
 
   const values = [userId, token, expiresAt];
@@ -22,7 +22,8 @@ export async function selectRefreshToken(
   token: string,
 ): Promise<RefreshToken | null> {
   const query = `
-    SELECT * FROM refresh_tokens
+    SELECT id, user_id, token, expires_at, created_at
+    FROM refresh_tokens
     WHERE token = $1
 `;
 

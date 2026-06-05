@@ -21,7 +21,7 @@ export async function insertResult({
   const query = `
     INSERT INTO results (user_id, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-    RETURNING *
+    RETURNING id, user_id, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, created_at
 `;
 
   const values = [
@@ -41,7 +41,8 @@ export async function insertResult({
 
 export async function selectResultsByUser(user_id: string): Promise<Result[]> {
   const query = `
-    SELECT * FROM results
+    SELECT id, user_id, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, created_at
+    FROM results
     WHERE user_id = $1
 `;
 
