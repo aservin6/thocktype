@@ -1,12 +1,12 @@
-import type { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import requireEnv from "../utils/require-env.ts";
 import { selectUserById } from "../repositories/user.repository.ts";
+import requireEnv from "../utils/require-env.ts";
 import { sendErrorResponse } from "../utils/send-error-response.ts";
 
 const { TokenExpiredError, JsonWebTokenError } = jwt;
 
-const JWT_SECRET = requireEnv("JWT_SECRET");
+const jwtSecret = requireEnv("JWT_SECRET");
 
 export async function authenticateToken(
   req: Request,
@@ -24,7 +24,7 @@ export async function authenticateToken(
   }
 
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as { id: string };
+    const payload = jwt.verify(token, jwtSecret) as { id: string };
     const user = await selectUserById(payload.id);
     if (!user) {
       sendErrorResponse(res, 401, {
@@ -76,7 +76,7 @@ export async function optionalAuthenticateToken(
     return;
   }
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as { id: string };
+    const payload = jwt.verify(token, jwtSecret) as { id: string };
     const user = await selectUserById(payload.id);
 
     if (user) {

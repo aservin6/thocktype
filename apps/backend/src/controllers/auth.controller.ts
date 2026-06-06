@@ -1,14 +1,3 @@
-import type { CookieOptions, NextFunction, Request, Response } from "express";
-import {
-  refreshAuthTokens,
-  register,
-  signIn,
-  createPasswordResetToken,
-  updatePassword,
-} from "../services/auth.service.ts";
-import { deleteRefreshToken } from "../repositories/refresh-token.repository.ts";
-import { Resend } from "resend";
-import requireEnv from "../utils/require-env.ts";
 import type {
   ForgotPasswordRequest,
   ForgotPasswordResponse,
@@ -22,31 +11,22 @@ import type {
   SignInResponse,
   SignOutResponse,
 } from "@thocktype/shared";
+import type { NextFunction, Request, Response } from "express";
+import { Resend } from "resend";
+import { deleteRefreshToken } from "../repositories/refresh-token.repository.ts";
+import {
+  createPasswordResetToken,
+  refreshAuthTokens,
+  register,
+  signIn,
+  updatePassword,
+} from "../services/auth.service.ts";
+import { clearAuthCookies, setAuthCookies } from "../utils/cookies.ts";
+import requireEnv from "../utils/require-env.ts";
 import { sendErrorResponse } from "../utils/send-error-response.ts";
 
-const isProduction = process.env.NODE_ENV === "production";
 const frontendOrigin = requireEnv("FRONTEND_ORIGIN");
 const resend = new Resend(requireEnv("RESEND_API_KEY"));
-
-const authCookieOptions: CookieOptions = {
-  httpOnly: true,
-  secure: isProduction,
-  sameSite: "strict",
-};
-
-function setAuthCookies(
-  res: Response,
-  accessToken: string,
-  refreshToken: string,
-) {
-  res.cookie("access_token", accessToken, authCookieOptions);
-  res.cookie("refresh_token", refreshToken, authCookieOptions);
-}
-
-function clearAuthCookies(res: Response) {
-  res.clearCookie("access_token");
-  res.clearCookie("refresh_token");
-}
 
 export async function registerUser(
   req: Request,

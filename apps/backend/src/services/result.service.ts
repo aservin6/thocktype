@@ -1,17 +1,17 @@
-import {
-  insertResult,
-  selectLeaderboardResults,
-  selectLeaderboardEntryCount,
-  selectLeaderboardEntryByUser,
-} from "../repositories/result.repository.ts";
-import { selectUserById } from "../repositories/user.repository.ts";
-import type { Result, ResultCreationDetails } from "../types/result.ts";
-import redis from "../db/redis.ts";
 import type {
   LeaderboardEntry,
   LeaderboardResponse,
   Mode,
 } from "@thocktype/shared";
+import redis from "../db/redis.ts";
+import {
+  insertResult,
+  selectLeaderboardEntryByUser,
+  selectLeaderboardEntryCount,
+  selectLeaderboardResults,
+} from "../repositories/result.repository.ts";
+import { selectUserById } from "../repositories/user.repository.ts";
+import type { Result, ResultCreationDetails } from "../types/result.ts";
 
 const CACHE_TTL = 300;
 // Cap the number of entries fetched from the DB and held in Redis per mode.

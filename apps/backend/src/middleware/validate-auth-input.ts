@@ -4,8 +4,8 @@ import {
   resetPasswordRequestSchema,
   signInRequestSchema,
 } from "@thocktype/shared";
-import { validateBody } from "./validate-body.ts";
 import type { RequestHandler } from "express";
+import { validateBody } from "./validate-body.ts";
 
 export const validateRegisterInput: RequestHandler = validateBody(
   registerRequestSchema,

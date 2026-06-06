@@ -10,8 +10,8 @@ import redis from "./db/redis.ts";
 import requireEnv from "./utils/require-env.ts";
 import { createRateLimiter } from "./middleware/rate-limit.ts";
 
-const PORT = requireEnv("PORT");
-const FRONTEND_ORIGIN = requireEnv("FRONTEND_ORIGIN");
+const port = requireEnv("PORT");
+const frontendOrigin = requireEnv("FRONTEND_ORIGIN");
 const app = express();
 
 const globalLimiter = createRateLimiter({
@@ -23,7 +23,7 @@ const globalLimiter = createRateLimiter({
 
 app.use(
   express.json(),
-  cors({ origin: FRONTEND_ORIGIN, credentials: true }),
+  cors({ origin: frontendOrigin, credentials: true }),
   cookieParser(),
   globalLimiter,
 );
@@ -36,8 +36,8 @@ app.use("/api/v1/me", meRoutes);
 // Error handling
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`LISTENING ON PORT ${PORT}`);
+app.listen(port, () => {
+  console.log(`LISTENING ON PORT: ${port}`);
 });
 
 // Closes Redis and Postgres connections before the process exits.

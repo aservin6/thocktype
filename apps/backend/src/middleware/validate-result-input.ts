@@ -1,6 +1,6 @@
 import { createResultRequestSchema } from "@thocktype/shared";
-import { validateBody } from "./validate-body.ts";
 import type { RequestHandler } from "express";
+import { validateBody } from "./validate-body.ts";
 
 export const validateResultInput: RequestHandler = validateBody(
   createResultRequestSchema,

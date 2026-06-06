@@ -1,12 +1,12 @@
+import type { Mode } from "@thocktype/shared";
+import pool from "../db/pool.ts";
 import type {
+  LeaderboardEntry,
   ModeStats,
   Result,
   ResultCreationDetails,
   UserStats,
-  LeaderboardEntry,
 } from "../types/result.ts";
-import pool from "../db/pool.ts";
-import type { Mode } from "@thocktype/shared";
 
 export async function insertResult({
   user_id,

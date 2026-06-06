@@ -1,22 +1,22 @@
-import bcrypt from "bcrypt";
-import {
-  selectUserByEmail,
-  insertUser,
-  updateUserPassword,
-} from "../repositories/user.repository.ts";
 import type { PublicUser } from "@thocktype/shared";
-import generateAccessToken from "../utils/generate-access-token.ts";
-import {
-  insertRefreshToken,
-  deleteRefreshToken,
-  selectRefreshToken,
-} from "../repositories/refresh-token.repository.ts";
-import generateRefreshToken from "../utils/generate-refresh-token.ts";
-import generatePasswordResetToken from "../utils/generate-password-reset-token.ts";
+import bcrypt from "bcrypt";
 import {
   deletePasswordResetToken,
   insertPasswordResetToken,
 } from "../repositories/password-reset-token.repository.ts";
+import {
+  deleteRefreshToken,
+  insertRefreshToken,
+  selectRefreshToken,
+} from "../repositories/refresh-token.repository.ts";
+import {
+  insertUser,
+  selectUserByEmail,
+  updateUserPassword,
+} from "../repositories/user.repository.ts";
+import generateAccessToken from "../utils/generate-access-token.ts";
+import generatePasswordResetToken from "../utils/generate-password-reset-token.ts";
+import generateRefreshToken from "../utils/generate-refresh-token.ts";
 
 export async function register(
   email: string,
@@ -29,7 +29,11 @@ export async function register(
   // Username is derived from the email prefix for now.
   const username = email.toLowerCase().split("@")[0];
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = await insertUser({ email, username, password_hash: hashedPassword });
+  const newUser = await insertUser({
+    email,
+    username,
+    password_hash: hashedPassword,
+  });
 
   const accessToken = generateAccessToken(newUser.id);
   const { token, expiresAt } = generateRefreshToken();

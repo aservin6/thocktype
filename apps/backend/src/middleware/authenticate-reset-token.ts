@@ -1,9 +1,9 @@
-import type { Request, Response, NextFunction } from "express";
+import crypto from "crypto";
+import type { NextFunction, Request, Response } from "express";
 import {
   deletePasswordResetToken,
   selectPasswordResetToken,
 } from "../repositories/password-reset-token.repository.ts";
-import crypto from "crypto";
 import { sendErrorResponse } from "../utils/send-error-response.ts";
 
 export async function authenticateResetToken(

@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import {
-  getLeaderboardResults,
   createResult,
+  getLeaderboardResults,
 } from "../controllers/result.controller.ts";
 import {
   authenticateToken,

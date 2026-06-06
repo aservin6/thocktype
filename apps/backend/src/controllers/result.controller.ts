@@ -1,17 +1,17 @@
-import type { Request, Response, NextFunction } from "express";
-import { submitResult, getLeaderboard } from "../services/result.service.ts";
-import {
-  selectResultsByUser,
-  selectUserStats,
-} from "../repositories/result.repository.ts";
 import type {
-  LeaderboardResponse,
   CreateResultRequest,
   CreateResultResponse,
   GetMeResultsResponse,
   GetMeStatsResponse,
+  LeaderboardResponse,
 } from "@thocktype/shared";
 import { parseLeaderboardQuery } from "@thocktype/shared";
+import type { NextFunction, Request, Response } from "express";
+import {
+  selectResultsByUser,
+  selectUserStats,
+} from "../repositories/result.repository.ts";
+import { getLeaderboard, submitResult } from "../services/result.service.ts";
 
 export async function createResult(
   req: Request,

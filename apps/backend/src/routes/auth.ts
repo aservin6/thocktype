@@ -1,21 +1,21 @@
+import type { VerifyResetTokenResponse } from "@thocktype/shared";
 import express, { Router } from "express";
 import {
+  forgotPassword,
   refreshTokens,
   registerUser,
-  forgotPassword,
   resetPassword,
   signInUser,
   signOutUser,
 } from "../controllers/auth.controller.ts";
+import { authenticateResetToken } from "../middleware/authenticate-reset-token.ts";
+import { createRateLimiter } from "../middleware/rate-limit.ts";
 import {
   validateForgotPasswordInput,
   validatePasswordResetInput,
   validateRegisterInput,
   validateSignInInput,
 } from "../middleware/validate-auth-input.ts";
-import { createRateLimiter } from "../middleware/rate-limit.ts";
-import { authenticateResetToken } from "../middleware/authenticate-reset-token.ts";
-import type { VerifyResetTokenResponse } from "@thocktype/shared";
 
 // All routes are mounted under /api/v1/auth in server.ts
 const router: Router = express.Router();
