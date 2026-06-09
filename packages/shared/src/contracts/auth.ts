@@ -23,7 +23,7 @@ export const registerRequestSchema = z.object({
 
 export type RegisterRequest = z.infer<typeof registerRequestSchema>;
 
-// POST /api/v1/auth/register also sets httpOnly access_token and refresh_token cookies.
+// POST /api/v1/auth/register also sets httpOnly access_token and session_token cookies.
 // The tokens are intentionally excluded from the JSON response contract.
 export type RegisterResponse = ApiSuccessResponse<PublicUser>;
 
@@ -34,7 +34,7 @@ export const signInRequestSchema = z.object({
 
 export type SignInRequest = z.infer<typeof signInRequestSchema>;
 
-// POST /api/v1/auth/signin also sets httpOnly access_token and refresh_token cookies.
+// POST /api/v1/auth/signin also sets httpOnly access_token and session_token cookies.
 export type SignInResponse = ApiSuccessResponse<PublicUser>;
 
 export const forgotPasswordRequestSchema = z.object({
@@ -47,10 +47,10 @@ export type ForgotPasswordRequest = z.infer<typeof forgotPasswordRequestSchema>;
 // even if the email is not registered.
 export type ForgotPasswordResponse = ApiMessageResponse;
 
-// POST /api/v1/auth/signout clears httpOnly access_token and refresh_token cookies.
+// POST /api/v1/auth/signout clears httpOnly access_token and session_token cookies.
 export type SignOutResponse = ApiMessageResponse;
 
-// POST /api/v1/auth/refresh rotates httpOnly access_token and refresh_token cookies.
+// POST /api/v1/auth/refresh rotates httpOnly access_token and session_token cookies.
 export type RefreshResponse = ApiMessageResponse;
 
 export const resetPasswordRequestSchema = z

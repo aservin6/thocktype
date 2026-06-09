@@ -1,6 +1,10 @@
-import { CookieOptions, Response } from "express";
+import type { CookieOptions, Response } from "express";
 
 const isProduction = process.env.NODE_ENV === "production";
+
+export const ACCESS_TOKEN_COOKIE = "access_token";
+export const SESSION_TOKEN_COOKIE = "session_token";
+export const LEGACY_SESSION_TOKEN_COOKIE = "refresh_token";
 
 const authCookieOptions: CookieOptions = {
   httpOnly: true,
@@ -11,13 +15,15 @@ const authCookieOptions: CookieOptions = {
 export function setAuthCookies(
   res: Response,
   accessToken: string,
-  refreshToken: string,
+  sessionToken: string,
 ) {
-  res.cookie("access_token", accessToken, authCookieOptions);
-  res.cookie("refresh_token", refreshToken, authCookieOptions);
+  res.cookie(ACCESS_TOKEN_COOKIE, accessToken, authCookieOptions);
+  res.cookie(SESSION_TOKEN_COOKIE, sessionToken, authCookieOptions);
+  res.clearCookie(LEGACY_SESSION_TOKEN_COOKIE);
 }
 
 export function clearAuthCookies(res: Response) {
-  res.clearCookie("access_token");
-  res.clearCookie("refresh_token");
+  res.clearCookie(ACCESS_TOKEN_COOKIE);
+  res.clearCookie(SESSION_TOKEN_COOKIE);
+  res.clearCookie(LEGACY_SESSION_TOKEN_COOKIE);
 }

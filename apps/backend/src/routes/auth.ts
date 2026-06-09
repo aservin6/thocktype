@@ -2,7 +2,7 @@ import type { VerifyResetTokenResponse } from "@thocktype/shared";
 import express, { Router } from "express";
 import {
   forgotPassword,
-  refreshTokens,
+  refreshSession,
   registerUser,
   resetPassword,
   signInUser,
@@ -48,7 +48,7 @@ router.post("/signin", signinLimiter, validateSignInInput, signInUser);
 
 router.post("/signout", signOutUser);
 
-router.post("/refresh", refreshTokens);
+router.post("/refresh", refreshSession);
 
 router.post(
   "/forgot-password",

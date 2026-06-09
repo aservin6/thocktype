@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { selectUserById } from "../repositories/user.repository.ts";
+import { ACCESS_TOKEN_COOKIE } from "../utils/cookies.ts";
 import requireEnv from "../utils/require-env.ts";
 import { sendErrorResponse } from "../utils/send-error-response.ts";
 
@@ -13,7 +14,7 @@ export async function authenticateToken(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const token = req.cookies.access_token;
+  const token = req.cookies[ACCESS_TOKEN_COOKIE];
 
   if (!token) {
     sendErrorResponse(res, 401, {
@@ -69,7 +70,7 @@ export async function optionalAuthenticateToken(
   _res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const token = req.cookies.access_token;
+  const token = req.cookies[ACCESS_TOKEN_COOKIE];
 
   if (!token) {
     next();

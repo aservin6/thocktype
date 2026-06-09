@@ -6,9 +6,9 @@ import { sendErrorResponse } from "../utils/send-error-response.ts";
 const errorCodes: Record<string, number> = {
   "User already exists.": 409,
   "Confirm sign in details and try again.": 401,
-  "Refresh token not found.": 401,
-  "Refresh token has expired.": 401,
-  "No token found. Unauthorized access.": 401,
+  "Session not found.": 401,
+  "Session has expired.": 401,
+  "No session found. Unauthorized access.": 401,
   "Unauthorized request.": 401,
   "User does not exist.": 401,
   "Result data is invalid.": 400,

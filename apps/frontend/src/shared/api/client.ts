@@ -1,7 +1,7 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 // Module-level state is intentional here. All in-flight requests share the same
-// refresh lock so only one token refresh happens regardless of how many 401s fire
+// refresh lock so only one session refresh happens regardless of how many 401s fire
 // concurrently. The queue holds the resolve/reject callbacks of callers waiting
 // on that refresh.
 let isRefreshing = false;
@@ -27,7 +27,7 @@ async function attemptRefresh(): Promise<void> {
     method: "POST",
     credentials: "include",
   });
-  if (!res.ok) throw new Error("Refresh failed.");
+  if (!res.ok) throw new Error("Session refresh failed.");
 }
 
 // skipRefresh should be set on auth endpoints (signin, signout, register) where
@@ -74,10 +74,10 @@ export async function apiClient(
   } catch (err) {
     drainQueue(err);
     isRefreshing = false;
-    throw new Error("Token refresh failed.");
+    throw new Error("Session refresh failed.");
   }
 
   if (retry.status === 401)
-    throw new Error("Unauthorized after token refresh.");
+    throw new Error("Unauthorized after session refresh.");
   return retry;
 }

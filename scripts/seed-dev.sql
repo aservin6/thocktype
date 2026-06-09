@@ -1,6 +1,6 @@
 BEGIN;
 
-TRUNCATE TABLE password_reset_tokens, refresh_tokens, results, users
+TRUNCATE TABLE password_reset_tokens, sessions, results, users
 RESTART IDENTITY CASCADE;
 
 INSERT INTO users (username, email, password_hash, email_verified, created_at)

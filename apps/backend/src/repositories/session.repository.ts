@@ -1,13 +1,13 @@
 import pool from "../db/pool.ts";
-import type { RefreshToken } from "../types/token.ts";
+import type { Session } from "../types/token.ts";
 
-export async function insertRefreshToken(
+export async function createSession(
   userId: string,
   token: string,
   expiresAt: Date,
-): Promise<RefreshToken> {
+): Promise<Session> {
   const query = `
-    INSERT INTO refresh_tokens (user_id, token, expires_at)
+    INSERT INTO sessions (user_id, token, expires_at)
     VALUES ($1, $2, $3)
     RETURNING id, user_id, token, expires_at, created_at
 `;
@@ -18,12 +18,12 @@ export async function insertRefreshToken(
   return queryResult.rows[0];
 }
 
-export async function selectRefreshToken(
+export async function findSessionByToken(
   token: string,
-): Promise<RefreshToken | null> {
+): Promise<Session | null> {
   const query = `
     SELECT id, user_id, token, expires_at, created_at
-    FROM refresh_tokens
+    FROM sessions
     WHERE token = $1
 `;
 
@@ -33,9 +33,9 @@ export async function selectRefreshToken(
   return queryResult.rows[0] ?? null;
 }
 
-export async function deleteRefreshToken(token: string): Promise<void> {
+export async function deleteSession(token: string): Promise<void> {
   const query = `
-    DELETE FROM refresh_tokens
+    DELETE FROM sessions
     WHERE token = $1
 `;
 
@@ -44,11 +44,9 @@ export async function deleteRefreshToken(token: string): Promise<void> {
 }
 
 // Used to revoke all active sessions for a user, e.g. on password change.
-export async function deleteAllUserRefreshTokens(
-  userId: string,
-): Promise<void> {
+export async function deleteUserSessions(userId: string): Promise<void> {
   const query = `
-    DELETE FROM refresh_tokens
+    DELETE FROM sessions
     WHERE user_id = $1
 `;
 

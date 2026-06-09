@@ -13,15 +13,20 @@ import type {
 } from "@thocktype/shared";
 import type { NextFunction, Request, Response } from "express";
 import { Resend } from "resend";
-import { deleteRefreshToken } from "../repositories/refresh-token.repository.ts";
+import { deleteSession } from "../repositories/session.repository.ts";
 import {
   createPasswordResetToken,
-  refreshAuthTokens,
+  refreshSession as refreshAuthSession,
   register,
   signIn,
   updatePassword,
 } from "../services/auth.service.ts";
-import { clearAuthCookies, setAuthCookies } from "../utils/cookies.ts";
+import {
+  clearAuthCookies,
+  LEGACY_SESSION_TOKEN_COOKIE,
+  SESSION_TOKEN_COOKIE,
+  setAuthCookies,
+} from "../utils/cookies.ts";
 import requireEnv from "../utils/require-env.ts";
 import { sendErrorResponse } from "../utils/send-error-response.ts";
 
@@ -37,12 +42,12 @@ export async function registerUser(
   // Pass user input into register flow
   try {
     const user = await register(email, password);
-    const { accessToken, refreshToken, ...publicUser } = user;
+    const { accessToken, sessionToken, ...publicUser } = user;
     const responseBody: RegisterResponse = {
       data: publicUser,
       message: "New user registered successfully.",
     };
-    setAuthCookies(res, accessToken, refreshToken);
+    setAuthCookies(res, accessToken, sessionToken);
     res.status(201).json(responseBody);
   } catch (err) {
     next(err);
@@ -58,12 +63,12 @@ export async function signInUser(
   // Pass user input into sign in flow
   try {
     const user = await signIn(email, password);
-    const { accessToken, refreshToken, ...publicUser } = user;
+    const { accessToken, sessionToken, ...publicUser } = user;
     const responseBody: SignInResponse = {
       data: publicUser,
       message: "User signed in successfully.",
     };
-    setAuthCookies(res, accessToken, refreshToken);
+    setAuthCookies(res, accessToken, sessionToken);
     res.status(200).json(responseBody);
   } catch (err) {
     next(err);
@@ -74,16 +79,15 @@ export async function signOutUser(req: Request, res: Response): Promise<void> {
   const responseBody: SignOutResponse = {
     message: "Signed out successfully.",
   };
-  // Delete current refresh token from DB
-  const refreshToken = req.cookies.refresh_token;
-  if (refreshToken) {
+  // Delete current session from DB.
+  const sessionToken =
+    req.cookies[SESSION_TOKEN_COOKIE] ??
+    req.cookies[LEGACY_SESSION_TOKEN_COOKIE];
+  if (sessionToken) {
     try {
-      await deleteRefreshToken(refreshToken);
+      await deleteSession(sessionToken);
     } catch (err) {
-      console.error(
-        "Error occurred while trying to delete refresh token.",
-        err,
-      );
+      console.error("Error occurred while trying to delete session.", err);
     }
   }
   clearAuthCookies(res);
@@ -101,28 +105,30 @@ export async function getMe(req: Request, res: Response): Promise<void> {
   res.status(200).json(responseBody);
 }
 
-export async function refreshTokens(
+export async function refreshSession(
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> {
   const responseBody: RefreshResponse = {
-    message: "Tokens refreshed successfully.",
+    message: "Session refreshed successfully.",
   };
-  const refreshToken = req.cookies.refresh_token;
-  if (!refreshToken) {
+  const sessionToken =
+    req.cookies[SESSION_TOKEN_COOKIE] ??
+    req.cookies[LEGACY_SESSION_TOKEN_COOKIE];
+  if (!sessionToken) {
     clearAuthCookies(res);
     sendErrorResponse(res, 401, {
-      message: "No token found. Unauthorized access.",
+      message: "No session found. Unauthorized access.",
       code: "AUTH_REQUIRED",
     });
     return;
   }
-  // Refresh tokens and set new cookies
+  // Rotate the session and set new auth cookies.
   try {
-    const { accessToken, refreshToken: newRefreshToken } =
-      await refreshAuthTokens(refreshToken);
-    setAuthCookies(res, accessToken, newRefreshToken);
+    const { accessToken, sessionToken: newSessionToken } =
+      await refreshAuthSession(sessionToken);
+    setAuthCookies(res, accessToken, newSessionToken);
     res.status(200).json(responseBody);
   } catch (err) {
     next(err);

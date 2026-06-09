@@ -5,10 +5,10 @@ import {
   insertPasswordResetToken,
 } from "../repositories/password-reset-token.repository.ts";
 import {
-  deleteRefreshToken,
-  insertRefreshToken,
-  selectRefreshToken,
-} from "../repositories/refresh-token.repository.ts";
+  createSession,
+  deleteSession,
+  findSessionByToken,
+} from "../repositories/session.repository.ts";
 import {
   insertUser,
   selectUserByEmail,
@@ -16,12 +16,12 @@ import {
 } from "../repositories/user.repository.ts";
 import generateAccessToken from "../utils/generate-access-token.ts";
 import generatePasswordResetToken from "../utils/generate-password-reset-token.ts";
-import generateRefreshToken from "../utils/generate-refresh-token.ts";
+import generateSessionToken from "../utils/generate-session-token.ts";
 
 export async function register(
   email: string,
   password: string,
-): Promise<PublicUser & { accessToken: string; refreshToken: string }> {
+): Promise<PublicUser & { accessToken: string; sessionToken: string }> {
   email = email.toLowerCase();
   const user = await selectUserByEmail(email.toLowerCase());
   if (user) throw new Error("User already exists.");
@@ -36,8 +36,8 @@ export async function register(
   });
 
   const accessToken = generateAccessToken(newUser.id);
-  const { token, expiresAt } = generateRefreshToken();
-  await insertRefreshToken(newUser.id, token, expiresAt);
+  const { token, expiresAt } = generateSessionToken();
+  await createSession(newUser.id, token, expiresAt);
 
   return {
     id: newUser.id,
@@ -46,14 +46,14 @@ export async function register(
     email_verified: newUser.email_verified,
     created_at: newUser.created_at.toISOString(),
     accessToken,
-    refreshToken: token,
+    sessionToken: token,
   };
 }
 
 export async function signIn(
   email: string,
   password: string,
-): Promise<PublicUser & { accessToken: string; refreshToken: string }> {
+): Promise<PublicUser & { accessToken: string; sessionToken: string }> {
   email = email.toLowerCase();
   const user = await selectUserByEmail(email);
   // Same error for both missing user and wrong password to prevent email enumeration.
@@ -62,8 +62,8 @@ export async function signIn(
   if (!isValid) throw new Error("Confirm sign in details and try again.");
 
   const accessToken = generateAccessToken(user.id);
-  const { token, expiresAt } = generateRefreshToken();
-  await insertRefreshToken(user.id, token, expiresAt);
+  const { token, expiresAt } = generateSessionToken();
+  await createSession(user.id, token, expiresAt);
 
   return {
     id: user.id,
@@ -72,31 +72,31 @@ export async function signIn(
     email_verified: user.email_verified,
     created_at: user.created_at.toISOString(),
     accessToken,
-    refreshToken: token,
+    sessionToken: token,
   };
 }
 
-// Token rotation: the incoming refresh token is deleted and a new pair is issued.
-// This limits the window for stolen token reuse.
-export async function refreshAuthTokens(
-  refreshToken: string,
-): Promise<{ accessToken: string; refreshToken: string }> {
-  const storedToken = await selectRefreshToken(refreshToken);
-  if (!storedToken) throw new Error("Refresh token not found.");
+// Session rotation: the incoming session token is deleted and a new auth pair is issued.
+// This limits the window for stolen session token reuse.
+export async function refreshSession(
+  sessionToken: string,
+): Promise<{ accessToken: string; sessionToken: string }> {
+  const session = await findSessionByToken(sessionToken);
+  if (!session) throw new Error("Session not found.");
 
-  if (new Date() > new Date(storedToken.expires_at)) {
-    await deleteRefreshToken(refreshToken);
-    throw new Error("Refresh token has expired.");
+  if (new Date() > new Date(session.expires_at)) {
+    await deleteSession(sessionToken);
+    throw new Error("Session has expired.");
   }
 
-  await deleteRefreshToken(refreshToken);
-  const { token, expiresAt } = generateRefreshToken();
-  const { user_id } = storedToken;
+  await deleteSession(sessionToken);
+  const { token, expiresAt } = generateSessionToken();
+  const { user_id } = session;
 
-  await insertRefreshToken(user_id, token, expiresAt);
+  await createSession(user_id, token, expiresAt);
   const accessToken = generateAccessToken(user_id);
 
-  return { accessToken, refreshToken: token };
+  return { accessToken, sessionToken: token };
 }
 
 // Returns silently with an empty token when the email is not found.
