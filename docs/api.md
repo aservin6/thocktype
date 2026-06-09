@@ -3,7 +3,7 @@
 Base path: `/api/v1`
 
 The API uses JSON request/response bodies and cookie-based authentication.
-Authenticated endpoints require the `access_token` HTTP-only cookie. Token refresh uses the `refresh_token` HTTP-only cookie.
+Authenticated endpoints require the `access_token` HTTP-only cookie. Session continuity uses the `session_token` HTTP-only cookie.
 
 ## Response envelopes
 
@@ -53,7 +53,7 @@ Validation error example:
 
 ### `POST /auth/register`
 
-Registers a new user and sets `access_token` and `refresh_token` cookies.
+Registers a new user and sets `access_token` and `session_token` cookies.
 
 Auth required: no
 
@@ -86,7 +86,7 @@ Success: `201`
 
 ### `POST /auth/signin`
 
-Signs in an existing user and sets `access_token` and `refresh_token` cookies.
+Signs in an existing user and sets `access_token` and `session_token` cookies.
 
 Auth required: no
 
@@ -112,7 +112,7 @@ Success: `200`
 
 ### `POST /auth/signout`
 
-Deletes the current refresh token if present and clears auth cookies.
+Deletes the current session if present and clears auth cookies.
 
 Auth required: no
 
@@ -128,15 +128,15 @@ Success: `200`
 
 ### `POST /auth/refresh`
 
-Rotates auth cookies using the `refresh_token` cookie.
+Rotates auth cookies using the `session_token` cookie.
 
-Auth required: refresh cookie
+Auth required: session cookie
 
 Success: `200`
 
 ```ts
 {
-  message: "Tokens refreshed successfully.";
+  message: "Session refreshed successfully.";
 }
 ```
 
@@ -144,7 +144,7 @@ Common errors:
 
 ```ts
 {
-  message: "No token found. Unauthorized access.";
+  message: "No session found. Unauthorized access.";
   code: "AUTH_REQUIRED";
 }
 ```
