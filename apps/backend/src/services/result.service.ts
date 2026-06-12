@@ -10,7 +10,6 @@ import {
   selectLeaderboardEntryCount,
   selectLeaderboardResults,
 } from "../repositories/result.repository.ts";
-import { selectUserById } from "../repositories/user.repository.ts";
 import type { Result, ResultCreationDetails } from "../types/result.ts";
 
 const CACHE_TTL = 300;
@@ -104,9 +103,6 @@ export async function submitResult({
   correct,
   incorrect,
 }: ResultCreationDetails): Promise<Result> {
-  const user = await selectUserById(user_id);
-  if (!user) throw new Error("User does not exist.");
-
   const result = await insertResult({
     user_id,
     wpm,
