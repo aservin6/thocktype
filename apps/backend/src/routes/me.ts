@@ -4,15 +4,15 @@ import {
   getUserResults,
   getUserStats,
 } from "../controllers/result.controller.ts";
-import { authenticateToken } from "../middleware/authenticate-token.ts";
+import { authenticateSession } from "../middleware/authenticate-session.ts";
 
-// All routes are mounted under /api/v1/me in server.ts and require a valid access token.
+// All routes are mounted under /api/v1/me in server.ts and require a valid session.
 const router: Router = express.Router();
 
-router.get("/", authenticateToken, getMe);
+router.get("/", authenticateSession, getMe);
 
-router.get("/results", authenticateToken, getUserResults);
+router.get("/results", authenticateSession, getUserResults);
 
-router.get("/stats", authenticateToken, getUserStats);
+router.get("/stats", authenticateSession, getUserStats);
 
 export { router as meRoutes };

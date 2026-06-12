@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { toNodeHandler } from "better-auth/node";
 import { authRoutes } from "./routes/auth.ts";
 import { resultsRoutes } from "./routes/results.ts";
 import { meRoutes } from "./routes/me.ts";
@@ -8,6 +9,7 @@ import { errorHandler } from "./middleware/error-handler.ts";
 import pool from "./db/pool.ts";
 import redis from "./db/redis.ts";
 import requireEnv from "./utils/require-env.ts";
+import { auth } from "./auth/auth.ts";
 import { createRateLimiter } from "./middleware/rate-limit.ts";
 
 const port = requireEnv("PORT");
@@ -21,12 +23,11 @@ const globalLimiter = createRateLimiter({
   failOpen: true,
 });
 
-app.use(
-  express.json(),
-  cors({ origin: frontendOrigin, credentials: true }),
-  cookieParser(),
-  globalLimiter,
-);
+app.use(cors({ origin: frontendOrigin, credentials: true }), globalLimiter);
+
+app.all("/api/auth/*splat", toNodeHandler(auth));
+
+app.use(express.json(), cookieParser());
 
 // Routes
 app.use("/api/v1/auth", authRoutes);
