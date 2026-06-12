@@ -1,22 +1,36 @@
 BEGIN;
 
-TRUNCATE TABLE password_reset_tokens, sessions, results, users
+TRUNCATE TABLE verification, account, session, results, "user"
 RESTART IDENTITY CASCADE;
 
-INSERT INTO users (username, email, password_hash, email_verified, created_at)
+INSERT INTO "user" (
+  id,
+  name,
+  email,
+  email_verified,
+  image,
+  created_at,
+  updated_at,
+  username,
+  display_username
+)
 SELECT
-  'pilot_' || LPAD(n::text, 2, '0') AS username,
+  '00000000-0000-0000-0000-' || LPAD(n::text, 12, '0') AS id,
+  'pilot_' || LPAD(n::text, 2, '0') AS name,
   'pilot_' || LPAD(n::text, 2, '0') || '@thocktype.test' AS email,
-  '$2b$10$A4S0YXED84jvY2KhnlColOwMekLSqqzQssjZrHVnlmg3/zhbyVXzO' AS password_hash,
   TRUE AS email_verified,
-  NOW() - (n || ' days')::interval AS created_at
+  NULL AS image,
+  NOW() - (n || ' days')::interval AS created_at,
+  NOW() - (n || ' days')::interval AS updated_at,
+  'pilot_' || LPAD(n::text, 2, '0') AS username,
+  'pilot_' || LPAD(n::text, 2, '0') AS display_username
 FROM generate_series(1, 40) AS n;
 
 WITH seeded_users AS (
   SELECT
     id,
     ROW_NUMBER() OVER (ORDER BY username) AS user_index
-  FROM users
+  FROM "user"
   WHERE email LIKE '%@thocktype.test'
 ), leaderboard_boards AS (
   SELECT *
