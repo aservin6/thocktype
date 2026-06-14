@@ -85,7 +85,7 @@ export async function selectLeaderboardResults(
   const offset = (page - 1) * limit;
   const query = `
     WITH ranked_user_results AS (
-      SELECT results.id, COALESCE(auth_user.display_username, auth_user.username, auth_user.name) AS username, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, results.created_at,
+      SELECT results.id, COALESCE(auth_user."displayUsername", auth_user.username, auth_user.name) AS username, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, results.created_at,
       ROW_NUMBER() OVER (
           PARTITION BY results.user_id
           ORDER BY wpm DESC, accuracy DESC, time_elapsed ASC, results.created_at ASC
@@ -137,7 +137,7 @@ export async function selectLeaderboardEntryByUser(
 ): Promise<LeaderboardEntry | null> {
   const query = `
     WITH ranked_user_results AS (
-      SELECT results.id, results.user_id, COALESCE(auth_user.display_username, auth_user.username, auth_user.name) AS username, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, results.created_at,
+      SELECT results.id, results.user_id, COALESCE(auth_user."displayUsername", auth_user.username, auth_user.name) AS username, wpm, time_elapsed, accuracy, mode, mode_value, correct, incorrect, results.created_at,
       ROW_NUMBER() OVER (
           PARTITION BY results.user_id
           ORDER BY wpm DESC, accuracy DESC, time_elapsed ASC, results.created_at ASC
