@@ -7,24 +7,45 @@ INSERT INTO "user" (
   id,
   name,
   email,
-  email_verified,
+  "emailVerified",
   image,
-  created_at,
-  updated_at,
+  "createdAt",
+  "updatedAt",
   username,
-  display_username
+  "displayUsername"
 )
 SELECT
   '00000000-0000-0000-0000-' || LPAD(n::text, 12, '0') AS id,
   'pilot_' || LPAD(n::text, 2, '0') AS name,
   'pilot_' || LPAD(n::text, 2, '0') || '@thocktype.test' AS email,
-  TRUE AS email_verified,
+  TRUE AS "emailVerified",
   NULL AS image,
-  NOW() - (n || ' days')::interval AS created_at,
-  NOW() - (n || ' days')::interval AS updated_at,
+  NOW() - (n || ' days')::interval AS "createdAt",
+  NOW() - (n || ' days')::interval AS "updatedAt",
   'pilot_' || LPAD(n::text, 2, '0') AS username,
-  'pilot_' || LPAD(n::text, 2, '0') AS display_username
+  'pilot_' || LPAD(n::text, 2, '0') AS "displayUsername"
 FROM generate_series(1, 40) AS n;
+
+-- Dev users all use Password1! for local sign-in.
+INSERT INTO account (
+  id,
+  "accountId",
+  "providerId",
+  "userId",
+  password,
+  "createdAt",
+  "updatedAt"
+)
+SELECT
+  'credential-' || id AS id,
+  id AS "accountId",
+  'credential' AS "providerId",
+  id AS "userId",
+  'ade68e037d02c3c5af4260db96188f58:e8ca15af1ed53992b0188ee8dd14d90da9a5675e0c346fc6a8aee0dc9cfe92f82a4c13f0099ba2ccbe972c6ba024ddc8e0b22cf73bf0a1109489735c3b1d47bd' AS password,
+  "createdAt",
+  "updatedAt"
+FROM "user"
+WHERE email LIKE '%@thocktype.test';
 
 WITH seeded_users AS (
   SELECT

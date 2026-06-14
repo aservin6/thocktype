@@ -32,12 +32,12 @@ thocktype is currently under active development. The core typing experience, aut
 - Multiple test modes, including standard, strict, and timed strategies
 - Configurable word count or time-based tests depending on mode
 - WPM, accuracy, elapsed time, correct, and incorrect character scoring
-- User registration, sign in, sign out, session refresh, and password reset flow
+- Better Auth-powered registration, sign in, sign out, sessions, and password reset flow
 - Authenticated result submission
 - Public leaderboard endpoint and frontend page
 - Account page with recent results and user statistics
 - Rate-limited auth and API routes using Redis
-- PostgreSQL-backed persistence for users, sessions, reset tokens, and results
+- PostgreSQL-backed persistence for Better Auth users/sessions and typing results
 - Shared TypeScript package for engine logic, scoring utilities, contracts, and result/user types
 
 ## Why This Project Is Interesting
@@ -49,7 +49,7 @@ Some implementation highlights:
 - **Custom typing engine**: Core typing behavior is implemented in a reusable TypeScript engine rather than being tightly coupled to React components.
 - **Strategy-based modes**: Typing modes are modeled with a strategy pattern, making future modes easier to add.
 - **Shared package architecture**: The frontend and backend both consume shared contracts, types, scoring logic, and engine utilities.
-- **Production-minded backend**: The API includes authentication, session tokens, password reset tokens, Redis-backed rate limiting, error middleware, and database migrations.
+- **Production-minded backend**: The API includes Better Auth integration, Redis-backed rate limiting, error middleware, and database migrations.
 - **Modern frontend stack**: The client uses React, TypeScript, Vite, Tailwind CSS, shadcn-style UI components, Zustand, React Query, and React Router.
 
 ## Tech Stack
@@ -73,8 +73,7 @@ Some implementation highlights:
 - TypeScript
 - PostgreSQL
 - Redis
-- JWT authentication
-- bcrypt password hashing
+- Better Auth
 - Resend integration for password reset emails
 
 ### Tooling & Architecture
@@ -112,7 +111,7 @@ packages/
 
 - Register and sign in
 - Sign out
-- Session-token flow
+- Better Auth session flow
 - Protected account page
 - Forgot password and reset password flow
 - User-specific result history and stats
@@ -141,6 +140,8 @@ The following features are planned for future iterations:
 ## Development Notes
 
 Local setup documentation is still being finalized. The project already includes Docker Compose support for PostgreSQL and Redis, plus pnpm workspace scripts for running the frontend and backend together.
+
+The development seed creates `pilot_01@thocktype.test` through `pilot_40@thocktype.test`; each seeded account uses `Password1!` for local sign-in.
 
 A more complete contributor guide will be added soon, including:
 
