@@ -4,7 +4,7 @@ import Results from "./Results";
 import TypingTestOptions from "./TypingTestOptions";
 import TestWidget from "./TestWidget";
 import { useEffect, useRef, useState } from "react";
-import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 import { postResult } from "@/features/account/api/results";
 import {
   countCorrect,
@@ -23,7 +23,7 @@ export function TypingTest() {
     timeLimit,
     wordCount,
   } = useTypingEngine();
-  const user = useAuthStore((s) => s.user);
+  const { user } = useCurrentUser();
   // Ref instead of state so changes don't trigger a re-render. Guards against
   // React StrictMode double-invoking the effect and posting the result twice.
   const hasPosted = useRef(false);
@@ -36,6 +36,7 @@ export function TypingTest() {
     if (state?.status !== "finished") return;
     // Skip posting if the user is not logged in — results are guest-only.
     if (hasPosted.current || !user) return;
+    hasPosted.current = true;
     (async () => {
       try {
         await postResult({
@@ -47,12 +48,12 @@ export function TypingTest() {
           incorrect: countTyped(state) - countCorrect(state),
           modeValue: state.mode === "timed" ? timeLimit : wordCount,
         });
-        hasPosted.current = true;
       } catch {
+        hasPosted.current = false;
         setError("Error occured while trying to save results");
       }
     })();
-  }, [state?.status]);
+  }, [state, timeElapsed, timeLimit, user, wordCount]);
 
   function handleInput(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (!state) return;

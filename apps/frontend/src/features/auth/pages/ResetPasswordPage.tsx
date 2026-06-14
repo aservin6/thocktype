@@ -1,51 +1,35 @@
 import { Navigate, useNavigate, useSearchParams } from "react-router";
 import ResetPasswordForm from "../components/ResetPasswordForm";
 import { useEffect, useState } from "react";
-import { verifyResetToken } from "../api/auth";
 
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
-  const [status, setStatus] = useState<
-    "loading" | "invalid" | "form" | "success"
-  >("loading");
+  const token = searchParams.get("token");
+  const resetError = searchParams.get("error");
+  const [status, setStatus] = useState<"form" | "success">("form");
   const navigate = useNavigate();
   const onSuccess = () => setStatus("success");
   const [timeLeft, setTimeLeft] = useState(5);
 
-  // Validate the token from the URL before showing the form. Redirects to "/"
-  // on failure so users can't see the reset form with an expired/invalid token.
-  useEffect(() => {
-    const tokenParam = searchParams.get("token");
-    (async () => {
-      try {
-        await verifyResetToken(tokenParam);
-        setStatus("form");
-      } catch {
-        setStatus("invalid");
-      }
-    })();
-  }, []);
-
   // On success, run a visual countdown and then navigate to /signin.
   // Both the interval and the timeout are cleaned up if the component unmounts.
   useEffect(() => {
-    if (status === "success") {
-      const countdownId = setInterval(() => {
-        setTimeLeft((timeLeft) => timeLeft - 1);
-      }, 1000);
-      const timerId = setTimeout(() => {
-        navigate("/signin");
-      }, 5000);
+    if (status !== "success") return;
 
-      return () => {
-        clearInterval(countdownId);
-        clearTimeout(timerId);
-      };
-    }
-  }, [status]);
+    const countdownId = setInterval(() => {
+      setTimeLeft((timeLeft) => timeLeft - 1);
+    }, 1000);
+    const timerId = setTimeout(() => {
+      navigate("/signin");
+    }, 5000);
 
-  if (status === "loading") return <div>Loading...</div>;
-  if (status === "invalid") return <Navigate to="/" replace />;
+    return () => {
+      clearInterval(countdownId);
+      clearTimeout(timerId);
+    };
+  }, [navigate, status]);
+
+  if (resetError || !token) return <Navigate to="/" replace />;
   return (
     <div>
       {status === "form" && <ResetPasswordForm onSuccess={onSuccess} />}

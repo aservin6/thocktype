@@ -1,10 +1,11 @@
 import { Navigate } from "react-router";
 import RegisterForm from "../components/RegisterForm";
-import { useAuthStore } from "../store/useAuthStore";
+import { useCurrentUser } from "../hooks/useCurrentUser";
 
 export default function RegisterPage() {
-  const user = useAuthStore((s) => s.user);
+  const { user, isPending } = useCurrentUser();
 
+  if (isPending) return <div>Loading...</div>;
   if (user) return <Navigate to="/account" replace />;
 
   return (

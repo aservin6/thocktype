@@ -1,7 +1,7 @@
 import { Activity } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 import { AccountHeader } from "../components/AccountHeader";
 import { ModeStatsPanel } from "../components/ModeStatsPanel";
 import { RecentResultsTable } from "../components/RecentResultsTable";
@@ -16,7 +16,7 @@ const DEFAULT_MODE_VALUE: Record<Mode, number> = {
 };
 
 export default function AccountPage() {
-  const user = useAuthStore((s) => s.user);
+  const { user } = useCurrentUser();
 
   const statsQuery = useQuery({
     queryKey: ["me", "stats"],

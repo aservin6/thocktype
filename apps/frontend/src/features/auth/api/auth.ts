@@ -1,13 +1,15 @@
 import {
+  deriveUsernameFromEmail,
   type ApiErrorResponse,
   type ForgotPasswordRequest,
   type ForgotPasswordResponse,
   type GetMeResponse,
   type PublicUser,
   type RegisterRequest,
+  type ResetPasswordRequest,
+  type ResetPasswordResponse,
   type SignInRequest,
   type SignOutResponse,
-  type VerifyResetTokenResponse,
 } from "@thocktype/shared";
 import { apiClient } from "../../../shared/api/client";
 import { authClient } from "../lib/auth-client";
@@ -18,10 +20,6 @@ interface BetterAuthClientError {
 
 function getAuthErrorMessage(error: BetterAuthClientError | null | undefined) {
   return error?.message || "Authentication failed.";
-}
-
-function deriveUsername(email: string) {
-  return email.toLowerCase().split("@")[0];
 }
 
 export async function signIn(input: SignInRequest): Promise<PublicUser> {
@@ -35,7 +33,7 @@ export async function signIn(input: SignInRequest): Promise<PublicUser> {
 }
 
 export async function register(input: RegisterRequest): Promise<PublicUser> {
-  const username = deriveUsername(input.email);
+  const username = deriveUsernameFromEmail(input.email);
   const { error } = await authClient.signUp.email({
     email: input.email.toLowerCase(),
     password: input.password,
@@ -69,34 +67,29 @@ export async function getMe(): Promise<PublicUser> {
 export async function forgotPassword(
   input: ForgotPasswordRequest,
 ): Promise<ForgotPasswordResponse> {
-  const res = await apiClient("/api/v1/auth/forgot-password", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
+  const { error } = await authClient.requestPasswordReset({
+    email: input.email.toLowerCase(),
+    redirectTo: `${window.location.origin}/reset-password`,
   });
-  if (!res.ok) {
-    const error: ApiErrorResponse = await res.json();
-    throw new Error(error.message || "Unknown error");
-  }
-  const body: ForgotPasswordResponse = await res.json();
-  return body;
+
+  if (error) throw new Error(getAuthErrorMessage(error));
+  return { message: "Password reset email sent." };
 }
 
-export async function verifyResetToken(
-  tokenParam: string | null,
-): Promise<VerifyResetTokenResponse> {
-  if (!tokenParam) throw new Error("Invalid token param.");
+export async function resetPassword({
+  token,
+  input,
+}: {
+  token: string | null;
+  input: ResetPasswordRequest;
+}): Promise<ResetPasswordResponse> {
+  if (!token) throw new Error("Invalid token");
 
-  const res = await apiClient(
-    `/api/v1/auth/verify-reset-token?token=${tokenParam}`,
-    {
-      method: "GET",
-    },
-  );
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Unknown error");
-  }
-  const body: VerifyResetTokenResponse = await res.json();
-  return body;
+  const { error } = await authClient.resetPassword({
+    newPassword: input.password,
+    token,
+  });
+
+  if (error) throw new Error(getAuthErrorMessage(error));
+  return { message: "Password reset successfully." };
 }

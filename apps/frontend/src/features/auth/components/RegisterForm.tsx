@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { register } from "../api/auth";
-import { useAuthStore } from "../store/useAuthStore";
 import {
   type RegisterRequest,
   registerRequestSchema,
@@ -24,17 +23,13 @@ export default function RegisterForm() {
   const form = useForm<RegisterRequest>({
     resolver: zodResolver(registerRequestSchema),
   });
-  const setUser = useAuthStore((s) => s.setUser);
-  const setInitialized = useAuthStore((s) => s.setInitialized);
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(values: RegisterRequest) {
     try {
-      const user = await register(values);
-      if (user) {
-        setUser(user);
-        setInitialized(true);
-      }
+      await register(values);
+      navigate("/account");
     } catch (err) {
       if (err instanceof Error) setError(err.message);
     }

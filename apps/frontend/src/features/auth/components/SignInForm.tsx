@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -14,24 +14,19 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { signIn } from "../api/auth";
-import { useAuthStore } from "../store/useAuthStore";
 import { type SignInRequest, signInRequestSchema } from "@thocktype/shared";
 
 export default function SignInForm() {
   const form = useForm<SignInRequest>({
     resolver: zodResolver(signInRequestSchema),
   });
-  const setUser = useAuthStore((s) => s.setUser);
-  const setInitialized = useAuthStore((s) => s.setInitialized);
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(values: SignInRequest) {
     try {
-      const user = await signIn(values);
-      if (user) {
-        setUser(user);
-        setInitialized(true);
-      }
+      await signIn(values);
+      navigate("/account");
     } catch (err) {
       if (err instanceof Error) setError(err.message);
     }

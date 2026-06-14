@@ -8,7 +8,7 @@ import {
   FieldError,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { resetPassword } from "@/features/account/api/account";
+import { resetPassword } from "../api/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   resetPasswordRequestSchema,

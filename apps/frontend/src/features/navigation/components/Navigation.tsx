@@ -5,7 +5,7 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 import { buttonVariants } from "@/components/ui/button";
-import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 import { cn } from "@/lib/utils";
 import { NavLink, Outlet } from "react-router";
 
@@ -22,7 +22,7 @@ const primaryNavLinkClassName = cn(
 );
 
 export default function Navigation() {
-  const user = useAuthStore((s) => s.user);
+  const { user } = useCurrentUser();
   return (
     <>
       <nav className="border-border/70 bg-background/82 shadow-background/30 sticky top-0 z-40 overflow-hidden border-b shadow-sm backdrop-blur-md">
