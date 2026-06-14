@@ -6,7 +6,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
   pgm.sql(`
     CREATE TABLE results (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      user_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
       wpm NUMERIC(10, 2) NOT NULL,
       time_elapsed NUMERIC(10, 2) NOT NULL,
       accuracy NUMERIC(10, 2) NOT NULL,
