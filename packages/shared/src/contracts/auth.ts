@@ -1,6 +1,5 @@
 import { z } from "zod";
-import type { PublicUser } from "../types/user.ts";
-import type { ApiSuccessResponse, ApiMessageResponse } from "./api.ts";
+import type { ApiMessageResponse } from "./api.ts";
 
 const passwordSchema = z
   .string()
@@ -23,10 +22,6 @@ export const registerRequestSchema = z.object({
 
 export type RegisterRequest = z.infer<typeof registerRequestSchema>;
 
-// POST /api/v1/auth/register also sets httpOnly access_token and session_token cookies.
-// The tokens are intentionally excluded from the JSON response contract.
-export type RegisterResponse = ApiSuccessResponse<PublicUser>;
-
 export const signInRequestSchema = z.object({
   email: z.string().email("Enter a valid email address."),
   password: z.string().min(1, "Enter your password."),
@@ -34,24 +29,17 @@ export const signInRequestSchema = z.object({
 
 export type SignInRequest = z.infer<typeof signInRequestSchema>;
 
-// POST /api/v1/auth/signin also sets httpOnly access_token and session_token cookies.
-export type SignInResponse = ApiSuccessResponse<PublicUser>;
-
 export const forgotPasswordRequestSchema = z.object({
   email: z.string().email("Enter a valid email address."),
 });
 
 export type ForgotPasswordRequest = z.infer<typeof forgotPasswordRequestSchema>;
 
-// POST /api/v1/auth/forgot-password always returns success message
-// even if the email is not registered.
+// Password reset is handled by Better Auth. This response type keeps UI wrappers
+// independent from Better Auth's raw client response shape.
 export type ForgotPasswordResponse = ApiMessageResponse;
 
-// POST /api/v1/auth/signout clears httpOnly access_token and session_token cookies.
 export type SignOutResponse = ApiMessageResponse;
-
-// POST /api/v1/auth/refresh rotates httpOnly access_token and session_token cookies.
-export type RefreshResponse = ApiMessageResponse;
 
 export const resetPasswordRequestSchema = z
   .object({
@@ -65,8 +53,6 @@ export const resetPasswordRequestSchema = z
 
 export type ResetPasswordRequest = z.infer<typeof resetPasswordRequestSchema>;
 
-// POST /api/v1/auth/reset-password requires a valid reset token query param.
+// Password reset is handled by Better Auth. This response type keeps UI wrappers
+// independent from Better Auth's raw client response shape.
 export type ResetPasswordResponse = ApiMessageResponse;
-
-// GET /api/v1/auth/verify-reset-token requires a reset token query param.
-export type VerifyResetTokenResponse = ApiMessageResponse;
