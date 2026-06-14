@@ -1,8 +1,6 @@
 import express from "express";
 import cors from "cors";
-import cookieParser from "cookie-parser";
 import { toNodeHandler } from "better-auth/node";
-import { authRoutes } from "./routes/auth.ts";
 import { resultsRoutes } from "./routes/results.ts";
 import { meRoutes } from "./routes/me.ts";
 import { errorHandler } from "./middleware/error-handler.ts";
@@ -27,10 +25,9 @@ app.use(cors({ origin: frontendOrigin, credentials: true }), globalLimiter);
 
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
-app.use(express.json(), cookieParser());
+app.use(express.json());
 
 // Routes
-app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1", resultsRoutes);
 app.use("/api/v1/me", meRoutes);
 

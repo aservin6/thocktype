@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { getMe } from "../controllers/auth.controller.ts";
+import { getMe } from "../controllers/me.controller.ts";
 import {
   getUserResults,
   getUserStats,

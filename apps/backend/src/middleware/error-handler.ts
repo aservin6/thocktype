@@ -4,15 +4,8 @@ import { sendErrorResponse } from "../utils/send-error-response.ts";
 // Maps known service-layer error messages to HTTP status codes.
 // Anything not listed here is treated as an unexpected 500 and the message is scrubbed from the response.
 const errorCodes: Record<string, number> = {
-  "User already exists.": 409,
-  "Confirm sign in details and try again.": 401,
-  "Session not found.": 401,
-  "Session has expired.": 401,
-  "No session found. Unauthorized access.": 401,
   "Unauthorized request.": 401,
-  "User does not exist.": 401,
   "Result data is invalid.": 400,
-  "Email sent.": 200,
 };
 
 export function errorHandler(

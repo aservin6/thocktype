@@ -1,11 +1,9 @@
-import { PublicUser } from "@thocktype/shared";
-import { PasswordResetToken } from "./token.ts";
+import type { PublicUser } from "@thocktype/shared";
 
 declare global {
   namespace Express {
     interface Request {
       user?: PublicUser;
-      passwordResetToken?: PasswordResetToken;
     }
   }
 }
