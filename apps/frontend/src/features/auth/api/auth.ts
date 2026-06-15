@@ -1,4 +1,6 @@
 import {
+  AUTH_USERNAME_AVAILABILITY_ATTEMPTS,
+  createAuthUsernameCandidate,
   deriveUsernameFromEmail,
   type ApiErrorResponse,
   type ForgotPasswordRequest,
@@ -15,11 +17,28 @@ import { apiClient } from "../../../shared/api/client";
 import { authClient } from "../lib/auth-client";
 
 interface BetterAuthClientError {
+  code?: string;
   message?: string;
 }
 
 function getAuthErrorMessage(error: BetterAuthClientError | null | undefined) {
   return error?.message || "Authentication failed.";
+}
+
+function isUsernameAlreadyTaken(
+  error: BetterAuthClientError | null | undefined,
+) {
+  return (
+    error?.code === "USERNAME_IS_ALREADY_TAKEN" ||
+    error?.message === "Username is already taken. Please try another."
+  );
+}
+
+async function isUsernameAvailable(username: string) {
+  const { data, error } = await authClient.isUsernameAvailable({ username });
+
+  if (error) throw new Error(getAuthErrorMessage(error));
+  return data?.available === true;
 }
 
 export async function signIn(input: SignInRequest): Promise<PublicUser> {
@@ -33,17 +52,35 @@ export async function signIn(input: SignInRequest): Promise<PublicUser> {
 }
 
 export async function register(input: RegisterRequest): Promise<PublicUser> {
-  const username = deriveUsernameFromEmail(input.email);
-  const { error } = await authClient.signUp.email({
-    email: input.email.toLowerCase(),
-    password: input.password,
-    name: username,
-    username,
-    displayUsername: username,
-  });
+  const email = input.email.toLowerCase();
+  const usernameBase = deriveUsernameFromEmail(email);
 
-  if (error) throw new Error(getAuthErrorMessage(error));
-  return getMe();
+  for (
+    let attempt = 0;
+    attempt < AUTH_USERNAME_AVAILABILITY_ATTEMPTS;
+    attempt += 1
+  ) {
+    const username = createAuthUsernameCandidate(usernameBase, attempt);
+
+    if (!(await isUsernameAvailable(username))) continue;
+
+    const { error } = await authClient.signUp.email({
+      email,
+      password: input.password,
+      name: username,
+      username,
+      displayUsername: username,
+    });
+
+    if (!error) return getMe();
+    if (!isUsernameAlreadyTaken(error)) {
+      throw new Error(getAuthErrorMessage(error));
+    }
+  }
+
+  throw new Error(
+    "Could not find an available username. Try a different email address.",
+  );
 }
 
 export async function signOut(): Promise<SignOutResponse> {

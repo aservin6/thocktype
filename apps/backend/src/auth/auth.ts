@@ -1,3 +1,7 @@
+import {
+  AUTH_USERNAME_MAX_LENGTH,
+  AUTH_USERNAME_MIN_LENGTH,
+} from "@thocktype/shared";
 import { betterAuth, type Auth, type BetterAuthOptions } from "better-auth";
 import { username } from "better-auth/plugins";
 import { Resend } from "resend";
@@ -23,7 +27,12 @@ const authOptions: BetterAuthOptions = {
       });
     },
   },
-  plugins: [username()],
+  plugins: [
+    username({
+      minUsernameLength: AUTH_USERNAME_MIN_LENGTH,
+      maxUsernameLength: AUTH_USERNAME_MAX_LENGTH,
+    }),
+  ],
 };
 
 export const auth: Auth = betterAuth(authOptions);
