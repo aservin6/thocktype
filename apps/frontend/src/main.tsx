@@ -2,7 +2,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
-import ProtectedRoute from "./features/auth/components/ProtectedRoute.tsx";
+import AuthGate from "./features/auth/components/AuthGate.tsx";
 import SignInPage from "./features/auth/pages/SignInPage.tsx";
 import RegisterPage from "./features/auth/pages/RegisterPage.tsx";
 import LeaderboardPage from "./features/leaderboard/pages/LeaderboardPage.tsx";
@@ -32,18 +32,39 @@ createRoot(document.getElementById("root")!).render(
           <Route element={<Container />}>
             <Route element={<Navigation />}>
               <Route path="/" element={<App />} />
-              <Route path="/signin" element={<SignInPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route
+                path="/signin"
+                element={
+                  <AuthGate access="guest">
+                    <SignInPage />
+                  </AuthGate>
+                }
+              />
+              <Route
+                path="/register"
+                element={
+                  <AuthGate access="guest">
+                    <RegisterPage />
+                  </AuthGate>
+                }
+              />
+              <Route
+                path="/forgot-password"
+                element={
+                  <AuthGate access="guest">
+                    <ForgotPasswordPage />
+                  </AuthGate>
+                }
+              />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/leaderboard" element={<LeaderboardPage />} />
               <Route
                 path="/account"
                 element={
-                  <ProtectedRoute>
+                  <AuthGate access="authenticated">
                     <AccountPage />
-                  </ProtectedRoute>
+                  </AuthGate>
                 }
               />
             </Route>

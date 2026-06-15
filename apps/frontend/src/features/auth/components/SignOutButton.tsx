@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router";
 import { signOut } from "../api/auth";
@@ -5,9 +6,11 @@ import { Button } from "@/components/ui/button";
 
 export default function SignOutButton() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   async function handleClick() {
     await signOut();
+    queryClient.removeQueries({ queryKey: ["me"] });
     navigate("/signin");
   }
 
