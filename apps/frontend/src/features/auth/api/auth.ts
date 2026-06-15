@@ -1,5 +1,4 @@
 import {
-  deriveUsernameFromEmail,
   type ForgotPasswordRequest,
   type ForgotPasswordResponse,
   type RegisterRequest,
@@ -9,6 +8,8 @@ import {
   type SignOutResponse,
 } from "@thocktype/shared";
 import { authClient } from "../lib/auth-client";
+
+const SIGN_UP_NAME_PLACEHOLDER = "new-user";
 
 interface BetterAuthClientError {
   code?: string;
@@ -35,7 +36,7 @@ export async function register(input: RegisterRequest): Promise<void> {
     password: input.password,
     // Better Auth requires `name` on sign-up. The backend replaces this
     // placeholder with the final unique username before the user is inserted.
-    name: deriveUsernameFromEmail(email),
+    name: SIGN_UP_NAME_PLACEHOLDER,
   });
 
   if (error) throw new Error(getAuthErrorMessage(error));
