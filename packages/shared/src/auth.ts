@@ -10,10 +10,14 @@ export type AuthUserLike = {
   displayUsername?: string | null;
 };
 
+// Keep these in shared so the frontend can show the same derived placeholder
+// name that the backend later uses as the base for final username allocation.
 export const AUTH_USERNAME_MIN_LENGTH = 3;
 export const AUTH_USERNAME_MAX_LENGTH = 30;
 export const AUTH_USERNAME_AVAILABILITY_ATTEMPTS = 100;
 
+// Produces a Better Auth username-safe base from user-controlled text. The
+// backend still owns uniqueness; this only normalizes the candidate shape.
 export function normalizeAuthUsernameBase(value: string) {
   const normalizedValue = value
     .toLowerCase()
@@ -24,6 +28,8 @@ export function normalizeAuthUsernameBase(value: string) {
   return normalizedValue || "user";
 }
 
+// attempt 0 keeps the base unchanged; later attempts append a stable suffix
+// while preserving the max length accepted by the Better Auth username plugin.
 export function createAuthUsernameCandidate(base: string, attempt: number) {
   const suffix = attempt === 0 ? "" : `_${attempt + 1}`;
   const maxBaseLength = AUTH_USERNAME_MAX_LENGTH - suffix.length;
@@ -33,12 +39,16 @@ export function createAuthUsernameCandidate(base: string, attempt: number) {
   return `${paddedBase.slice(0, maxBaseLength)}${suffix}`;
 }
 
+// Uses only the email local-part as a human-friendly seed. The final username
+// may differ if the backend detects a collision.
 export function deriveUsernameFromEmail(email: string) {
   const normalizedEmail = email.toLowerCase();
   const localPart = normalizedEmail.split("@")[0] || normalizedEmail;
   return createAuthUsernameCandidate(localPart, 0);
 }
 
+// Prefer the explicit display username, then the normalized username, then
+// Better Auth's required `name` field for older or partially populated users.
 export function getAuthDisplayUsername(
   user: Pick<AuthUserLike, "name"> &
     Partial<Pick<AuthUserLike, "displayUsername" | "username">>,
