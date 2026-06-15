@@ -1,9 +1,9 @@
-import { authUserToPublicUser } from "@thocktype/shared";
+import { authUserToPublicUser, type PublicUser } from "@thocktype/shared";
 import { fromNodeHeaders } from "better-auth/node";
 import type { Request } from "express";
 import { auth } from "./auth.ts";
 
-export async function getRequestUser(req: Request) {
+export async function getRequestUser(req: Request): Promise<PublicUser | null> {
   const session = await auth.api.getSession({
     headers: fromNodeHeaders(req.headers),
   });
@@ -11,12 +11,12 @@ export async function getRequestUser(req: Request) {
   return session ? authUserToPublicUser(session.user) : null;
 }
 
-export function requireUser(req: Request) {
+export function requireUser(req: Request): PublicUser {
   const user = req.user;
   if (!user) throw Error("Unauthorized request.");
   return user;
 }
 
-export function requireUserId(req: Request) {
+export function requireUserId(req: Request): string {
   return requireUser(req).id;
 }
