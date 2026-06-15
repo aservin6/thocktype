@@ -19,13 +19,15 @@ export default function AccountPage() {
   const { user } = useCurrentUser();
 
   const statsQuery = useQuery({
-    queryKey: ["me", "stats"],
+    queryKey: ["me", user?.id, "stats"],
     queryFn: getMeStats,
+    enabled: Boolean(user),
   });
 
   const resultsQuery = useQuery({
-    queryKey: ["me", "results"],
+    queryKey: ["me", user?.id, "results"],
     queryFn: getMeResults,
+    enabled: Boolean(user),
   });
 
   const [activeMode, setActiveMode] = useState<Mode>("standard");
@@ -38,7 +40,7 @@ export default function AccountPage() {
     setActiveSubMode(DEFAULT_MODE_VALUE[mode]);
   };
 
-  if (statsQuery.isLoading || resultsQuery.isLoading) {
+  if (!user || statsQuery.isLoading || resultsQuery.isLoading) {
     return <AccountPageMessage>Loading...</AccountPageMessage>;
   }
 
