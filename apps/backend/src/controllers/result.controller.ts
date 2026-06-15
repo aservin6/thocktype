@@ -7,6 +7,7 @@ import type {
 } from "@thocktype/shared";
 import { parseLeaderboardQuery } from "@thocktype/shared";
 import type { NextFunction, Request, Response } from "express";
+import { requireUserId } from "../auth/session.ts";
 import {
   selectResultsByUser,
   selectUserStats,
@@ -22,8 +23,7 @@ export async function createResult(
     req.body as CreateResultRequest;
 
   try {
-    const userId = req.user?.id;
-    if (!userId) throw Error("Unauthorized request.");
+    const userId = requireUserId(req);
     const result = await submitResult({
       user_id: userId,
       time_elapsed: timeElapsed,
@@ -50,8 +50,7 @@ export async function getUserResults(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const userId = req.user?.id;
-    if (!userId) throw Error("Unauthorized request.");
+    const userId = requireUserId(req);
     const result = await selectResultsByUser(userId);
     const responseBody: GetMeResultsResponse = {
       data: result,
@@ -69,8 +68,7 @@ export async function getUserStats(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const userId = req.user?.id;
-    if (!userId) throw Error("Unauthorized request.");
+    const userId = requireUserId(req);
     const result = await selectUserStats(userId);
     const responseBody: GetMeStatsResponse = {
       data: result,

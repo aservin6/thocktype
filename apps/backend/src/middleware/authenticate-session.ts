@@ -1,7 +1,5 @@
-import { authUserToPublicUser } from "@thocktype/shared";
-import { fromNodeHeaders } from "better-auth/node";
 import type { NextFunction, Request, Response } from "express";
-import { auth } from "../auth/auth.ts";
+import { getRequestUser } from "../auth/session.ts";
 import { sendErrorResponse } from "../utils/send-error-response.ts";
 
 export async function authenticateSession(
@@ -10,11 +8,9 @@ export async function authenticateSession(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const session = await auth.api.getSession({
-      headers: fromNodeHeaders(req.headers),
-    });
+    const user = await getRequestUser(req);
 
-    if (!session) {
+    if (!user) {
       sendErrorResponse(res, 401, {
         message: "Unauthorized request.",
         code: "AUTH_REQUIRED",
@@ -22,7 +18,7 @@ export async function authenticateSession(
       return;
     }
 
-    req.user = authUserToPublicUser(session.user);
+    req.user = user;
     next();
   } catch (err) {
     next(err);
@@ -35,12 +31,10 @@ export async function optionalAuthenticateSession(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const session = await auth.api.getSession({
-      headers: fromNodeHeaders(req.headers),
-    });
+    const user = await getRequestUser(req);
 
-    if (session) {
-      req.user = authUserToPublicUser(session.user);
+    if (user) {
+      req.user = user;
     }
   } catch {
     // Ignore auth errors on public routes; request continues as guest.
