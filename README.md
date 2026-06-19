@@ -143,6 +143,13 @@ Local setup documentation is still being finalized. The project already includes
 
 The development seed creates `pilot_01@thocktype.test` through `pilot_40@thocktype.test`; each seeded account uses `Password1!` for local sign-in.
 
+Backend auth/password-reset email requires Better Auth and Resend environment variables:
+
+- `BETTER_AUTH_URL`
+- `BETTER_AUTH_SECRET`
+- `RESEND_API_KEY`
+- `AUTH_EMAIL_FROM`
+
 A more complete contributor guide will be added soon, including:
 
 - Environment variable setup
