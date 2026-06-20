@@ -1,16 +1,47 @@
 import { z } from "zod";
 import type { ApiMessageResponse } from "./api.ts";
 
-const passwordSchema = z
-  .string()
-  .min(8, "Password is too short. Must be at least 8 characters long.")
-  .max(72, "Password is too long.")
-  .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
-  .regex(/[0-9]/, "Password must contain at least one number.")
-  .regex(
-    /[!@#$%^&*]/,
-    "Password must contain at least one allowed special character.",
-  );
+export const PASSWORD_MIN_LENGTH = 8;
+export const PASSWORD_MAX_LENGTH = 72;
+
+const PASSWORD_UPPERCASE_REGEX = /[A-Z]/;
+const PASSWORD_NUMBER_REGEX = /[0-9]/;
+const PASSWORD_ALLOWED_SPECIAL_CHARACTER_REGEX = /[!@#$%^&*]/;
+
+export function getPasswordPolicyErrors(password: string) {
+  const errors: string[] = [];
+
+  if (password.length < PASSWORD_MIN_LENGTH) {
+    errors.push(
+      "Password is too short. Must be at least 8 characters long.",
+    );
+  }
+  if (password.length > PASSWORD_MAX_LENGTH) {
+    errors.push("Password is too long.");
+  }
+  if (!PASSWORD_UPPERCASE_REGEX.test(password)) {
+    errors.push("Password must contain at least one uppercase letter.");
+  }
+  if (!PASSWORD_NUMBER_REGEX.test(password)) {
+    errors.push("Password must contain at least one number.");
+  }
+  if (!PASSWORD_ALLOWED_SPECIAL_CHARACTER_REGEX.test(password)) {
+    errors.push(
+      "Password must contain at least one allowed special character.",
+    );
+  }
+
+  return errors;
+}
+
+const passwordSchema = z.string().superRefine((password, ctx) => {
+  getPasswordPolicyErrors(password).forEach((message) => {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message,
+    });
+  });
+});
 
 export const registerRequestSchema = z.object({
   email: z
