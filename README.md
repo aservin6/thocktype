@@ -139,9 +139,9 @@ The following features are planned for future iterations:
 
 ## Development Notes
 
-Local setup documentation is still being finalized. The project already includes Docker Compose support for PostgreSQL and Redis, plus pnpm workspace scripts for running the frontend and backend together.
+See [`docs/local-development.md`](./docs/local-development.md) for local setup, environment variables, migrations, seed data, and common troubleshooting steps.
 
-The development seed creates `pilot_01@thocktype.test` through `pilot_40@thocktype.test`; each seeded account uses `Password1!` for local sign-in.
+The project includes Docker Compose support for PostgreSQL and Redis, plus pnpm workspace scripts for running the frontend and backend together. The development seed creates `pilot_01@thocktype.test` through `pilot_40@thocktype.test`; each seeded account uses `Password1!` for local sign-in.
 
 Backend auth/password-reset email requires Better Auth and Resend environment variables:
 
@@ -149,14 +149,6 @@ Backend auth/password-reset email requires Better Auth and Resend environment va
 - `BETTER_AUTH_SECRET`
 - `RESEND_API_KEY`
 - `AUTH_EMAIL_FROM`
-
-A more complete contributor guide will be added soon, including:
-
-- Environment variable setup
-- Database migration instructions
-- Local development commands
-- Testing workflow
-- Contribution guidelines
 
 ## Testing
 
